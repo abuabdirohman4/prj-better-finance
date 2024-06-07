@@ -39,6 +39,7 @@ export async function fetchTransaction(sheetName) {
 }
 
 export function getCashValue(data) {
+  let amount = "";
   const ATM = ["Mandiri", "BCA"];
   const Platform = [
     "Ponch",
@@ -50,19 +51,22 @@ export function getCashValue(data) {
     "MyTelkomsel",
     "Ovo",
   ];
+
   if (data.Account === "Wallet") {
-    return parseInt(data.Wallet);
+    amount = data.Wallet;
   } else if (ATM.includes(data.Account)) {
-    return parseInt(data.ATM);
+    amount = data.ATM;
   } else if (Platform.includes(data.Account)) {
-    return parseInt(data.Platform);
+    amount = data.Platform;
   } else if (data.Account === "BNI") {
-    return parseInt(data.INVESTMENT);
+    amount = data.INVESTMENT;
   } else if (data.Account === "AR") {
-    return parseInt(data.AR);
+    amount = data.AR;
   } else if (data.Account === "AP") {
-    return parseInt(data.AP);
+    amount = data.AP;
   } else {
-    return parseInt(data.NET);
+    amount = data.NET;
   }
+
+  return parseInt(amount);
 }
