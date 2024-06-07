@@ -1,57 +1,22 @@
+"use client";
 import Card from "@/components/Card";
-import { getData } from "@/utils/fetch";
+import { fetchTransaction } from "@/utils/fetchTransaction";
 import formatRupiah from "@/utils/formatRupiah";
+import { useEffect, useState } from "react";
 
-async function fetchTransaction() {
-  try {
-    const sheetId = "1mVgdePlteuewjY6DvdUmNyHf0CPoAoHY3Sh3lDymV5A";
-    const sheetName = encodeURIComponent("Jun");
-    const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
+// export default async function Transactions() {
+export default function Transactions() {
+  const [transaction, setTransaction] = useState([]);
+  const [selectedSheet, setSelectedSheet] = useState("May");
 
-    const res = await getData({
-      url: sheetURL,
-    });
-
-    if (res.status === 200) {
-      const data = parseCSV(res.data);
-      console.log(data[1]);
-      return data.sort().reverse();
-    } else {
-      throw new Error(`Failed to fetch data: ${res.status}`);
-    }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return [];
-  }
-}
-
-function parseCSV(data) {
-  // Mengganti newline yang tidak sesuai
-  data = data.replace("Category\nor Account", "Category or Account");
-  // Split data menjadi baris-baris
-  const rows = data.split("\n").filter((row) => row.trim() !== "");
-  // Ambil header dan bersihkan dari tanda kutip
-  const headers = rows[0]
-    .split(",")
-    .map((header) => header.trim().replace(/"/g, ""));
-  // Parse setiap baris data menjadi objek
-  return rows.slice(1).map((row) => {
-    const values = row
-      .split(",")
-      .map((value) => value.trim().replace(/"/g, ""));
-    const rowData = {};
-    headers.forEach((header, index) => {
-      if (header) {
-        // Pastikan header tidak kosong
-        rowData[header] = values[index];
-      }
-    });
-    return rowData;
-  });
-}
-
-export default async function Transactions() {
-  const transaction = await fetchTransaction();
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchTransaction(selectedSheet);
+      console.log("data", data);
+      setTransaction(data);
+    };
+    fetchData();
+  }, [selectedSheet]);
 
   const getCashValue = (data) => {
     const ATM = ["Mandiri", "BCA"];
@@ -96,7 +61,7 @@ export default async function Transactions() {
         } else {
           // Jika tidak valid, log pesan kesalahan
           console.error(
-            `Invalid cash value for transaction: ${JSON.stringify(data)}`
+            `Invalid cash value for transaction: ${JSON.stringify(data.Note)}`
           );
         }
       }
@@ -110,6 +75,23 @@ export default async function Transactions() {
   return (
     <main className="">
       <div className="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+        <select
+          value={selectedSheet}
+          onChange={(e) => setSelectedSheet(e.target.value)}
+        >
+          <option value="Jan">Jan</option>
+          <option value="Feb">Feb</option>
+          <option value="Mar">Mar</option>
+          <option value="Apr">Apr</option>
+          <option value="May">May</option>
+          <option value="Jun">Jun</option>
+          <option value="Jul">Jul</option>
+          <option value="Aug">Aug</option>
+          <option value="Sep">Sep</option>
+          <option value="Oct">Oct</option>
+          <option value="Nov">Nov</option>
+          <option value="Dec">Dec</option>
+        </select>
         <h5>Spending : {formatRupiah(spending)}</h5>
         <h5>Earning : {formatRupiah(earning)}</h5>
         <div className="flex items-center justify-between mb-4">
