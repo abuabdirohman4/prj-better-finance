@@ -34,6 +34,6 @@ export async function fetchTransaction(sheetName) {
     url: sheetURL,
   });
   if (res.status == 200) {
-    return parseCSV(res.data);
+    return parseCSV(res.data).sort().reverse();
   }
 }
