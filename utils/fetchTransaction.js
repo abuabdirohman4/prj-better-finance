@@ -37,3 +37,32 @@ export async function fetchTransaction(sheetName) {
     return parseCSV(res.data).sort().reverse();
   }
 }
+
+export function getCashValue(data) {
+  const ATM = ["Mandiri", "BCA"];
+  const Platform = [
+    "Ponch",
+    "Dana",
+    "Flip",
+    "Gopay",
+    "Grab",
+    "Jenius",
+    "MyTelkomsel",
+    "Ovo",
+  ];
+  if (data.Account === "Wallet") {
+    return parseInt(data.Wallet);
+  } else if (ATM.includes(data.Account)) {
+    return parseInt(data.ATM);
+  } else if (Platform.includes(data.Account)) {
+    return parseInt(data.Platform);
+  } else if (data.Account === "BNI") {
+    return parseInt(data.INVESTMENT);
+  } else if (data.Account === "AR") {
+    return parseInt(data.AR);
+  } else if (data.Account === "AP") {
+    return parseInt(data.AP);
+  } else {
+    return parseInt(data.NET);
+  }
+}

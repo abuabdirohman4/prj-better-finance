@@ -1,5 +1,5 @@
-export default function formatRupiah(amount) {
-  if (amount) {
+export function formatRupiah(amount) {
+  if (amount || amount == 0) {
     // Lakukan parsing terlebih dahulu jika amount masih dalam format string
     const parsedAmount =
       typeof amount === "string" ? parseFloat(amount) : amount;
@@ -14,3 +14,9 @@ export default function formatRupiah(amount) {
     return formattedAmount;
   }
 }
+
+export function getDefaultSheetName(months) {
+  const currentMonth = new Date().getMonth();
+  return months[currentMonth];
+}
+

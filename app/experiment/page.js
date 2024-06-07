@@ -1,7 +1,5 @@
 "use client";
-import Card from "@/components/Card";
 import { getData } from "@/utils/fetch";
-import formatRupiah from "@/utils/formatRupiah";
 import { useEffect } from "react";
 
 export default function Home() {
@@ -40,7 +38,6 @@ export default function Home() {
       });
 
       if (res.status === 200) {
-        console.log('res.data', res.data);
         const data = parseCSV(res.data);
         console.log(data[1]);
         return data.sort().reverse();
