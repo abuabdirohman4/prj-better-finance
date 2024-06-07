@@ -2,23 +2,21 @@
 import Card from "@/components/Card";
 import { fetchTransaction } from "@/utils/fetchTransaction";
 import formatRupiah from "@/utils/formatRupiah";
+import { months } from "@/utils/constants";
 import { useEffect, useState } from "react";
 
-// export default async function Transactions() {
 export default function Transactions() {
   const [transaction, setTransaction] = useState([]);
-  const [selectedSheet, setSelectedSheet] = useState("May");
+  const [selectedMonth, setSelectedMonth] = useState(
+    getDefaultSheetName(months)
+  );
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchTransaction(selectedSheet);
-      console.log("data", data);
-      setTransaction(data);
-    };
-    fetchData();
-  }, [selectedSheet]);
+  function getDefaultSheetName(months) {
+    const currentMonth = new Date().getMonth();
+    return months[currentMonth];
+  }
 
-  const getCashValue = (data) => {
+  function getCashValue(data) {
     const ATM = ["Mandiri", "BCA"];
     const Platform = [
       "Ponch",
@@ -45,9 +43,9 @@ export default function Transactions() {
     } else {
       return data.NET;
     }
-  };
+  }
 
-  const getTotalCash = (transactions, type) => {
+  function getTotalCash(transactions, type) {
     // Inisialisasi total cash
     let total = 0;
 
@@ -68,29 +66,33 @@ export default function Transactions() {
     });
 
     return total;
-  };
+  }
 
   const spending = getTotalCash(transaction, "Spending");
   const earning = getTotalCash(transaction, "Earning");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchTransaction(selectedMonth);
+      console.log("data", data);
+      setTransaction(data);
+    };
+    fetchData();
+  }, [selectedMonth]);
+
   return (
     <main className="">
       <div className="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
         <select
-          value={selectedSheet}
-          onChange={(e) => setSelectedSheet(e.target.value)}
+          id="month"
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(e.target.value)}
         >
-          <option value="Jan">Jan</option>
-          <option value="Feb">Feb</option>
-          <option value="Mar">Mar</option>
-          <option value="Apr">Apr</option>
-          <option value="May">May</option>
-          <option value="Jun">Jun</option>
-          <option value="Jul">Jul</option>
-          <option value="Aug">Aug</option>
-          <option value="Sep">Sep</option>
-          <option value="Oct">Oct</option>
-          <option value="Nov">Nov</option>
-          <option value="Dec">Dec</option>
+          {months.map((month) => (
+            <option key={month} value={month}>
+              {month}
+            </option>
+          ))}
         </select>
         <h5>Spending : {formatRupiah(spending)}</h5>
         <h5>Earning : {formatRupiah(earning)}</h5>
