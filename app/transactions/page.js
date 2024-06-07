@@ -4,8 +4,8 @@ import formatRupiah from "@/utils/formatRupiah";
 
 async function fetchTransaction() {
   try {
-    const sheetId = "1BwFgQbQR7RVGpeOwYp8w7j_fgpd74yjoSKcB8B-CBK0";
-    const sheetName = encodeURIComponent("Sheet53");
+    const sheetId = "1mVgdePlteuewjY6DvdUmNyHf0CPoAoHY3Sh3lDymV5A";
+    const sheetName = encodeURIComponent("Jun");
     const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
 
     const res = await getData({
@@ -50,7 +50,7 @@ function parseCSV(data) {
   });
 }
 
-export default async function Home() {
+export default async function Transactions() {
   const transaction = await fetchTransaction();
 
   const getCashValue = (data) => {
