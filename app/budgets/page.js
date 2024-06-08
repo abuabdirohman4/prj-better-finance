@@ -31,13 +31,11 @@ export default function Budgets() {
       const newSubCategorySpending = {};
       const newCategorySpending = {};
       for (const category of categoryList) {
-        console.log("category", category);
         const transactionsInCategory = transaction.filter(
           (item) =>
             item["Category or Account"] === category &&
             item.Transaction === typeTransaction
         );
-        console.log("transactionsInCategory", transactionsInCategory);
         const totalAmount = transactionsInCategory.reduce(
           (acc, item) => acc + getCashValue(item),
           0
@@ -57,7 +55,6 @@ export default function Budgets() {
           newSubCategorySpending[parentCategory][category] = totalAmount;
         }
       }
-      console.log("newSubCategorySpending", newSubCategorySpending);
 
       for (const category in categories) {
         const totalAmount = Object.values(
@@ -66,7 +63,6 @@ export default function Budgets() {
         newCategorySpending[category] = totalAmount;
       }
 
-      console.log("newCategorySpending", newCategorySpending);
       setCategorySpending(newCategorySpending);
       return newCategorySpending;
     },
