@@ -55,6 +55,7 @@ export default function Transactions() {
             width={100}
             height={100}
             alt="Picture of the author"
+            priority={true}
           />
         </div>
         <div className="flex items-center justify-between ">

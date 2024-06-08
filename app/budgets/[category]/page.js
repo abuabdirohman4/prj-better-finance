@@ -11,7 +11,7 @@ import {
 import Link from "next/link";
 
 const budgetCategory = {
-  living: {
+  Living: {
     Charge: 100000,
     Children: 100000,
     Credit: 100000,
@@ -22,7 +22,7 @@ const budgetCategory = {
     Transport: 100000,
     "Other Spend": 100000,
   },
-  saving: {
+  Saving: {
     AP: 100000,
     AR: 100000,
     Emergency: 100000,
@@ -30,13 +30,13 @@ const budgetCategory = {
     Retained: 100000,
     Wishlist: 10000,
   },
-  investing: {
+  Investing: {
     Business: 100000,
     Knowledge: 100000,
     Tools: 100000,
     Subscribe: 10000,
   },
-  giving: {
+  Giving: {
     "Infaq Rezeki": 100000,
     "Tax Salary": 100000,
     Shodaqoh: 100000,

@@ -14,7 +14,7 @@ export const months = [
 ];
 
 export const categories = {
-  living: [
+  Living: [
     "Charge",
     "Children",
     "Credit",
@@ -25,9 +25,9 @@ export const categories = {
     "Transport",
     "Other Spend",
   ],
-  saving: ["AP", "AR", "Emergency", "Investment", "Retained", "Wishlist"],
-  investing: ["Business", "Knowledge", "Tools", "Subscribe"],
-  giving: [
+  Saving: ["AP", "AR", "Emergency", "Investment", "Retained", "Wishlist"],
+  Investing: ["Business", "Knowledge", "Tools", "Subscribe"],
+  Giving: [
     "Infaq Rezeki",
     "Tax Salary",
     "Shodaqoh",

@@ -12,10 +12,10 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 const budgetCategory = {
-  living: 4000000,
-  saving: 2000000,
-  investing: 3000000,
-  giving: 3579642,
+  Living: 4000000,
+  Saving: 2000000,
+  Investing: 3000000,
+  Giving: 3579642,
 };
 
 export default function Budgets() {
@@ -84,10 +84,10 @@ export default function Budgets() {
       const totalSpendingCategory = sumCategory(
         data,
         [
-          ...categories.living,
-          ...categories.saving,
-          ...categories.investing,
-          ...categories.giving,
+          ...categories.Living,
+          ...categories.Saving,
+          ...categories.Investing,
+          ...categories.Giving,
         ],
         "Spending"
       );
