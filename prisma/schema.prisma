@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Brand {
+  id       Int       @id @default(autoincrement())
+  name     String
+  products Product[]
+}
+
+model Product {
+  id        Int      @id @default(autoincrement())
+  title     String
+  price     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  brand     Brand    @relation(fields: [brandId], references: [id])
+  brandId   Int
+}
+
+model Client {
+  id                     Int                     @id @default(autoincrement())
+  clientId               Int                     @unique
+  name                   String
+  email                  String                  @unique
+  categories             CategoryBudget[]
+  categoryGroups         CategoryBudgetGroup[]
+  monthlyCategoryBudgets MonthlyCategoryBudget[]
+  // transactions Transaction[]
+}
+
+model CategoryBudget {
+  id                     Int                       @id @default(autoincrement())
+  client                 Client                    @relation(fields: [clientId], references: [clientId])
+  clientId               Int
+  name                   String
+  memberships            CategoryGroupMembership[]
+  monthlyCategoryBudgets MonthlyCategoryBudget[]
+  // transactions Transaction[]
+}
+
+model CategoryBudgetGroup {
+  id          Int                       @id @default(autoincrement())
+  client      Client                    @relation(fields: [clientId], references: [clientId])
+  clientId    Int
+  name        String
+  memberships CategoryGroupMembership[]
+}
+
+model CategoryGroupMembership {
+  categoryBudget CategoryBudget      @relation(fields: [categoryId], references: [id])
+  categoryId     Int
+  group          CategoryBudgetGroup @relation(fields: [groupId], references: [id])
+  groupId        Int
+
+  @@id([categoryId, groupId])
+}
+
+model MonthlyCategoryBudget {
+  id             Int            @id @default(autoincrement())
+  categoryBudget CategoryBudget @relation(fields: [categoryId], references: [id])
+  categoryId     Int
+  client         Client         @relation(fields: [clientId], references: [clientId])
+  clientId       Int
+  year           Int
+  month          Int
+  amount         Float
+
+  @@unique([categoryId, clientId, year, month])
+}
+
+// model Transaction {
+//   id             Int            @id @default(autoincrement())
+//   categoryBudget CategoryBudget @relation(fields: [categoryId], references: [id])
+//   categoryId     Int
+//   client         Client         @relation(fields: [clientId], references: [clientId])
+//   clientId       Int
+//   amount         Float
+//   date           DateTime
+// }
