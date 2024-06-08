@@ -5,8 +5,8 @@ export default function BottomNav() {
     <div className="fixed bottom-0 mx-auto z-50 w-full max-w-md h-16 bg-[#F1F3F4] border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
       <div className="mt-0.5 flex h-full justify-evenly font-medium">
         <Link
-          href={'/transactions'}
-          className="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x hover:bg-gray-50 dark:hover:bg-gray-800 group dark:border-gray-600"
+          href={"/transactions"}
+          className="inline-flex flex-col items-center justify-center w-32 px-5 border-gray-200 border-x hover:bg-gray-50 dark:hover:bg-gray-800 group dark:border-gray-600"
         >
           <svg
             className="w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
@@ -22,8 +22,8 @@ export default function BottomNav() {
           </span>
         </Link>
         <Link
-          href={'/budgets'}
-          className="inline-flex flex-col items-center justify-center px-5 border-e border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 group dark:border-gray-600"
+          href={"/budgets"}
+          className="inline-flex flex-col items-center justify-center w-32 px-5 border-e border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 group dark:border-gray-600"
         >
           <svg
             className="w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"

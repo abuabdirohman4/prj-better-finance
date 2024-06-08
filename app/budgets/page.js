@@ -2,37 +2,42 @@
 import Budget from "@/components/Card/Budget";
 import { categories, months } from "@/utils/constants";
 import { fetchTransaction } from "@/utils/fetchTransaction";
-import { getCashValue, getDefaultSheetName } from "@/utils/helper";
+import {
+  formatRupiah,
+  getCashValue,
+  getDefaultSheetName,
+  getTotalObjectValue,
+} from "@/utils/helper";
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
-const alokasiLiving = {
-  Charge: 500000,
-  Children: 500000,
-  Credit: 500000,
-  Food: 500000,
-  Groceries: 500000,
-  "Grab Credit": 500000,
-  Health: 500000,
-  Transport: 500000,
-  "Other Spend": 500000,
+const budgetCategory = {
+  living: 4000000,
+  saving: 2000000,
+  investing: 3000000,
+  giving: 3579642,
 };
 
 export default function Budgets() {
-  const [categoryTotal, setCategoryTotal] = useState([]);
+  const [categorySpending, setCategorySpending] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(
     getDefaultSheetName(months)
   );
+  const [totalSpending, setTotalSpending] = useState(0);
+  const [totalBudget, setTotalBudget] = useState(0);
 
   const sumCategory = useCallback(
     (transaction, categoryList, typeTransaction) => {
-      const newSubCategoryTotal = {};
-      const newCategoryTotal = {};
+      const newSubCategorySpending = {};
+      const newCategorySpending = {};
       for (const category of categoryList) {
+        console.log("category", category);
         const transactionsInCategory = transaction.filter(
           (item) =>
             item["Category or Account"] === category &&
             item.Transaction === typeTransaction
         );
+        console.log("transactionsInCategory", transactionsInCategory);
         const totalAmount = transactionsInCategory.reduce(
           (acc, item) => acc + getCashValue(item),
           0
@@ -46,30 +51,37 @@ export default function Budgets() {
         }
         // Menambahkan nilai total ke kategori yang sesuai
         if (parentCategory) {
-          if (!newSubCategoryTotal[parentCategory]) {
-            newSubCategoryTotal[parentCategory] = {};
+          if (!newSubCategorySpending[parentCategory]) {
+            newSubCategorySpending[parentCategory] = {};
           }
-          newSubCategoryTotal[parentCategory][category] = totalAmount;
+          newSubCategorySpending[parentCategory][category] = totalAmount;
         }
       }
+      console.log("newSubCategorySpending", newSubCategorySpending);
 
       for (const category in categories) {
-        const totalAmount = Object.values(newSubCategoryTotal[category]).reduce(
-          (acc, curr) => acc + curr,
-          0
-        );
-        newCategoryTotal[category] = totalAmount;
+        const totalAmount = Object.values(
+          newSubCategorySpending[category]
+        ).reduce((acc, curr) => acc + curr, 0);
+        newCategorySpending[category] = totalAmount;
       }
 
-      setCategoryTotal(newCategoryTotal);
+      console.log("newCategorySpending", newCategorySpending);
+      setCategorySpending(newCategorySpending);
+      return newCategorySpending;
     },
     []
   );
 
+  const balance = parseFloat(totalSpending) + parseFloat(totalBudget);
+  const percentage =
+    (parseFloat(totalSpending) / -parseFloat(totalBudget)) * 100;
+  const stringPercent = percentage.toFixed(0);
+
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchTransaction(selectedMonth);
-      sumCategory(
+      const totalSpendingCategory = sumCategory(
         data,
         [
           ...categories.living,
@@ -79,37 +91,95 @@ export default function Budgets() {
         ],
         "Spending"
       );
+      setTotalSpending(getTotalObjectValue(totalSpendingCategory));
+      setTotalBudget(getTotalObjectValue(budgetCategory));
     };
     fetchData();
   }, [selectedMonth, sumCategory]);
 
   return (
     <main>
-      <div className="w-full max-w-md h-screen p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
-        <div className="flex items-center justify-between mb-4">
+      <div className="w-full max-w-md min-h-screen p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+        <div className="flex items-center justify-between mb-8">
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
             Budgets
           </h5>
-          <a
-            href="#"
+          <select
+            id="month"
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
             className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
           >
-            View all
-          </a>
+            {months.map((month) => (
+              <option key={month} value={month}>
+                {month}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex items-center justify-between ">
+          <h5 className="text-center">
+            <p className="text-base font-medium text-gray-900 truncate dark:text-white">
+              Budget
+            </p>
+            <div className="text-base font-semibold text-gray-900 dark:text-white">
+              {formatRupiah(totalBudget)}
+            </div>
+          </h5>
+          <h5 className="text-center">
+            <p className="text-base font-medium text-gray-900 truncate dark:text-white">
+              Balance
+            </p>
+            <div
+              className={`text-base font-semibold text-gray-900 dark:text-white ${
+                balance < 0 && "text-red-500"
+              }`}
+            >
+              {formatRupiah(balance)}
+            </div>
+          </h5>
+          <h5 className="text-center">
+            <p className="text-base font-medium text-gray-900 truncate dark:text-white">
+              Spending
+            </p>
+            <div className="text-base font-semibold text-red-600 dark:text-white">
+              {formatRupiah(totalSpending)}
+            </div>
+          </h5>
+        </div>
+        <div className="flex items-center justify-center mt-4 mb-3">
+          <p className="text-sm text-gray-500 truncate me-2">
+            {stringPercent}%
+          </p>
+          <div className="w-8/12 bg-gray-200 rounded-full">
+            <div
+              className={`bg-blue-600 text-xs h-2 font-medium text-center p-0.5 leading-none rounded-full`}
+              style={{ width: `${percentage > 100 ? "100" : stringPercent}%` }}
+            ></div>
+          </div>
         </div>
         <div className="flow-root">
           <ul
             role="list"
-            className="divide-y divide-gray-200 dark:divide-gray-700"
+            className="border-y-[1.5px] border-y-gray-200 divide-y divide-gray-200 dark:divide-gray-700"
           >
             {Object.keys(categories).map((category, key) => {
+              const totalSpending = categorySpending[category];
+              const totalBudget = budgetCategory[category];
               return (
                 <div key={key}>
-                  <Budget
-                    category={category}
-                    budget={10000}
-                    actual={categoryTotal[category]}
-                  />
+                  <Link
+                    href={{
+                      pathname: `/budgets/${category}`,
+                      query: {},
+                    }}
+                  >
+                    <Budget
+                      category={category}
+                      budget={totalBudget}
+                      spending={totalSpending}
+                    />
+                  </Link>
                 </div>
               );
             })}

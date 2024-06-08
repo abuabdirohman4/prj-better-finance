@@ -8,7 +8,7 @@ import {
   formatRupiah,
   getCashValue,
   getDefaultSheetName,
-  getTotalCash,
+  getTotalCashGroupedByDate,
 } from "@/utils/helper";
 import Image from "next/image";
 
@@ -18,8 +18,8 @@ export default function Transactions() {
     getDefaultSheetName(months)
   );
 
-  const spending = getTotalCash(transaction, "Spending");
-  const earning = getTotalCash(transaction, "Earning");
+  const spending = getTotalCashGroupedByDate(transaction, "Spending");
+  const earning = getTotalCashGroupedByDate(transaction, "Earning");
 
   const groupTransactionsByDate = (transactions) => {
     return transactions.reduce((groups, transaction) => {
@@ -47,7 +47,7 @@ export default function Transactions() {
   }, [selectedMonth]);
 
   return (
-    <main>
+    <main className="mb-8">
       <div className="p-4 bg-[#F1F3F4] rounded-t-lg border-gray-200 shadow sm:p-8">
         <div className="flex justify-center">
           <Image

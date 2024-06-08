@@ -54,10 +54,37 @@ export function getCashValue(data) {
     amount = data.NET;
   }
 
+  if (!amount) {
+    amount = '0'
+  }
+
   return parseInt(amount);
 }
 
-export function getTotalCash(groupedTransactions, type) {
+export function getTotalCashTransactions(transactions, type) {
+  // Inisialisasi total cash
+  let total = 0;
+
+  transactions.forEach((data) => {
+    if (data.Transaction === type) {
+      // Periksa apakah nilai cash dapat diubah menjadi angka
+      const cashValue = parseFloat(getCashValue(data));
+      if (!isNaN(cashValue)) {
+        // Jika valid, tambahkan ke total
+        total += cashValue;
+      } else {
+        // Jika tidak valid, log pesan kesalahan
+        console.error(
+          `Invalid cash value for transaction: ${JSON.stringify(data.Note)}`
+        );
+      }
+    }
+  });
+
+  return total;
+}
+
+export function getTotalCashGroupedByDate(groupedTransactions, type) {
   // Inisialisasi total cash
   let total = 0;
 
@@ -81,8 +108,10 @@ export function getTotalCash(groupedTransactions, type) {
 
   return total;
 }
+export function getTotalObjectValue(data) {
+  return Object.values(data).reduce((total, value) => total + value, 0);
+}
 
-// Fungsi untuk memformat tanggal
 export const formatDate = (dateString) => {
   const options = { day: "2-digit", month: "short", year: "numeric" };
   const date = new Date(dateString.split("/").reverse().join("-"));
