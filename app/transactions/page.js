@@ -1,9 +1,13 @@
 "use client";
-import { fetchTransaction, getCashValue } from "@/utils/fetchTransaction";
+import { fetchTransaction } from "@/utils/fetchTransaction";
 import { months } from "@/utils/constants";
 import { useEffect, useState } from "react";
 import Transaction from "@/components/Card/Transaction";
-import { formatRupiah, getDefaultSheetName } from "@/utils/helper";
+import {
+  formatRupiah,
+  getCashValue,
+  getDefaultSheetName,
+} from "@/utils/helper";
 
 export default function Transactions() {
   const [transaction, setTransaction] = useState([]);
@@ -40,7 +44,6 @@ export default function Transactions() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchTransaction(selectedMonth);
-      console.log("data", data);
       setTransaction(data);
     };
     fetchData();
@@ -60,8 +63,6 @@ export default function Transactions() {
             </option>
           ))}
         </select>
-        <h5>Spending : {formatRupiah(spending)}</h5>
-        <h5>Earning : {formatRupiah(earning)}</h5>
         <div className="flex items-center justify-between mb-4">
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
             Latest Transaction
@@ -74,6 +75,8 @@ export default function Transactions() {
           </a>
         </div>
         <div className="flow-root">
+          <h5>Spending : {formatRupiah(spending)}</h5>
+          <h5>Earning : {formatRupiah(earning)}</h5>
           <ul
             role="list"
             className="divide-y divide-gray-200 dark:divide-gray-700"

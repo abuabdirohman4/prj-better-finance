@@ -1,8 +1,8 @@
 "use client";
 import Budget from "@/components/Card/Budget";
 import { categories, months } from "@/utils/constants";
-import { fetchTransaction, getCashValue } from "@/utils/fetchTransaction";
-import { getDefaultSheetName } from "@/utils/helper";
+import { fetchTransaction } from "@/utils/fetchTransaction";
+import { getCashValue, getDefaultSheetName } from "@/utils/helper";
 import { useCallback, useEffect, useState } from "react";
 
 const alokasiLiving = {
@@ -85,7 +85,7 @@ export default function Budgets() {
 
   return (
     <main>
-      <div className="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+      <div className="w-full max-w-md h-screen p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex items-center justify-between mb-4">
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
             Budgets

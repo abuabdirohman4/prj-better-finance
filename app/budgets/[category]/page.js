@@ -1,56 +1,25 @@
-"use client";
 import Budget from "@/components/Card/Budget";
 import { categories, months } from "@/utils/constants";
-import { fetchTransaction, getCashValue } from "@/utils/fetchTransaction";
-import { getDefaultSheetName } from "@/utils/helper";
-import { useCallback, useEffect, useState } from "react";
+import { fetchTransaction } from "@/utils/fetchTransaction";
+import { getCashValue, getDefaultSheetName } from "@/utils/helper";
 
-const alokasiLiving = {
-  Charge: 500000,
-  Children: 500000,
-  Credit: 500000,
-  Food: 500000,
-  Groceries: 500000,
-  "Grab Credit": 500000,
-  Health: 500000,
-  Transport: 500000,
-  "Other Spend": 500000,
-};
+export default async function Budgets({ params }) {
+  const transaction = await fetchTransaction(getDefaultSheetName(months));
 
-export default function Budgets({ params }) {
-  const [categoryTotal, setCategoryTotal] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState(
-    getDefaultSheetName(months)
-  );
-
-  const sumCategory = useCallback(
-    (transaction, categories, typeTransaction) => {
-      const newCategoryTotal = {};
-      categories.forEach((category) => {
-        const transactionsInCategory = transaction.filter(
-          (item) =>
-            item["Category or Account"] === category &&
-            item.Transaction === typeTransaction
-        );
-        const totalAmount = transactionsInCategory.reduce(
-          (acc, item) => acc + getCashValue(item),
-          0
-        );
-        newCategoryTotal[category] = totalAmount;
-      });
-
-      setCategoryTotal(newCategoryTotal);
-    },
-    []
-  );
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchTransaction(selectedMonth);
-      sumCategory(data, [...categories[params.category]], "Spending");
-    };
-    fetchData();
-  }, [selectedMonth, sumCategory, params.category]);
+  const categoryTotal = {};
+  console.log("transaction", transaction);
+  categories[params.category].forEach((category) => {
+    const transactionsInCategory = transaction.filter(
+      (item) =>
+        item["Category or Account"] === category &&
+        item.Transaction === "Spending"
+    );
+    const totalAmount = transactionsInCategory.reduce(
+      (acc, item) => acc + getCashValue(item),
+      0
+    );
+    categoryTotal[category] = totalAmount;
+  });
 
   return (
     <main>
@@ -75,7 +44,7 @@ export default function Budgets({ params }) {
               <div key={key}>
                 <Budget
                   category={category}
-                  budget={alokasiLiving[category]}
+                  budget={"1000000"}
                   actual={actual}
                 />
               </div>
