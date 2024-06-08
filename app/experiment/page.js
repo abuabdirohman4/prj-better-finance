@@ -39,7 +39,6 @@ export default function Home() {
 
       if (res.status === 200) {
         const data = parseCSV(res.data);
-        console.log(data[1]);
         return data.sort().reverse();
       } else {
         throw new Error(`Failed to fetch data: ${res.status}`);

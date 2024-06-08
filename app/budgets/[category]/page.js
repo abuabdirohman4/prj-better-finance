@@ -7,7 +7,6 @@ export default async function Budgets({ params }) {
   const transaction = await fetchTransaction(getDefaultSheetName(months));
 
   const categoryTotal = {};
-  console.log("transaction", transaction);
   categories[params.category].forEach((category) => {
     const transactionsInCategory = transaction.filter(
       (item) =>
