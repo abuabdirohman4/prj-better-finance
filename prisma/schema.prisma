@@ -37,7 +37,8 @@ model Client {
   categories             CategoryBudget[]
   categoryGroups         CategoryBudgetGroup[]
   monthlyCategoryBudgets MonthlyCategoryBudget[]
-  // transactions Transaction[]
+  transactions           Transaction[]
+  monthlyIncomes         MonthlyIncome[]
 }
 
 model CategoryBudget {
@@ -45,9 +46,11 @@ model CategoryBudget {
   client                 Client                    @relation(fields: [clientId], references: [clientId])
   clientId               Int
   name                   String
+  type                   String // "earning" or "spending"
   memberships            CategoryGroupMembership[]
   monthlyCategoryBudgets MonthlyCategoryBudget[]
-  // transactions Transaction[]
+  transactions           Transaction[]
+  monthlyIncomes         MonthlyIncome[]
 }
 
 model CategoryBudgetGroup {
@@ -76,16 +79,30 @@ model MonthlyCategoryBudget {
   year           Int
   month          Int
   amount         Float
+  type           String // "income" or "expense"
 
   @@unique([categoryId, clientId, year, month])
 }
 
-// model Transaction {
-//   id             Int            @id @default(autoincrement())
-//   categoryBudget CategoryBudget @relation(fields: [categoryId], references: [id])
-//   categoryId     Int
-//   client         Client         @relation(fields: [clientId], references: [clientId])
-//   clientId       Int
-//   amount         Float
-//   date           DateTime
-// }
+model MonthlyIncome {
+  id             Int            @id @default(autoincrement())
+  categoryBudget CategoryBudget @relation(fields: [categoryId], references: [id])
+  categoryId     Int
+  client         Client         @relation(fields: [clientId], references: [clientId])
+  clientId       Int
+  year           Int
+  month          Int
+  amount         Float
+
+  @@unique([categoryId, clientId, year, month])
+}
+
+model Transaction {
+  id             Int            @id @default(autoincrement())
+  CategoryBudget CategoryBudget @relation(fields: [categoryId], references: [id])
+  categoryId     Int
+  client         Client         @relation(fields: [clientId], references: [clientId])
+  clientId       Int
+  amount         Float
+  date           DateTime
+}
