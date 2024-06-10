@@ -4,6 +4,8 @@ import { NextResponse } from "next/server";
 export async function GET(req) {
   const url = new URL(req.url);
   const clientId = url.searchParams.get("clientId");
+  const groupName = url.searchParams.get("groupName");
+  let categoryBudgets = "";
 
   if (!clientId) {
     return new Response(JSON.stringify({ error: "ClientId is required" }), {
@@ -12,15 +14,38 @@ export async function GET(req) {
     });
   }
 
-  const categoryBudgets = await prisma.categoryBudget.findMany({
-    where: { clientId: clientId },
-    select: {
-      name: true,
-      type: true,
-    },
-  });
+  if (groupName) {
+    categoryBudgets = await prisma.categoryBudget.findMany({
+      where: {
+        client: {
+          clientId: clientId,
+        },
+        memberships: {
+          some: {
+            group: {
+              name: groupName,
+            },
+          },
+        },
+      },
+      include: {
+        memberships: {
+          include: {
+            group: true,
+          },
+        },
+      },
+    });
+  } else {
+    categoryBudgets = await prisma.categoryBudget.findMany({
+      where: { clientId: clientId },
+      select: {
+        name: true,
+        type: true,
+      },
+    });
+  }
 
-  // return Response.json({ data: categoryBudgets });
   return NextResponse.json(categoryBudgets, { status: 200 });
 }
 
@@ -57,7 +82,6 @@ export async function POST(req, res) {
     });
 
     return NextResponse.json(newCategoryBudget, { status: 201 });
-    // return Response.json({ data: newCategoryBudget });
   } catch (error) {
     console.error("Error adding category budget:", error);
     Response.json({ status: 500, message: "Error adding category budget" });

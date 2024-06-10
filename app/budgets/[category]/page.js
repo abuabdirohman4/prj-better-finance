@@ -138,6 +138,11 @@ export default async function Budgets({ params }) {
               )
             )}
           </ul>
+          <div className="mt-3 text-center underline">
+            <Link href={`/budgets/create/${category}`} className="hover:text-blue-500">
+              Add Category For {toCapitalCase(category)}
+            </Link>
+          </div>
         </div>
       </div>
     </main>

@@ -1,25 +1,28 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getData, postData } from "@/utils/fetch";
+import { toCapitalCase } from "@/utils/helper";
 
-export default function CreateCategoryBudgetGroup() {
+export default function CreateCategoryBudget({ params }) {
   const [categories, setCategories] = useState([]);
   const [categoryName, setCategoryName] = useState("");
+  const [categoryType, setCategoryType] = useState("spending");
+  const category = toCapitalCase(params.category);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await postData({
-        url: "/api/categories/budgets/group",
+        url: "/api/categories/budgets",
         payload: {
           clientId: "1717515",
           name: categoryName,
         },
       });
       if (res.status == 201) {
-        console.log("res post", res.data);
+        console.log("res", res.data);
       } else {
-        console.log("res post", res.response.data);
+        console.log("res", res.response.data);
       }
     } catch (error) {
       console.error("Error adding category budget:", error);
@@ -29,11 +32,11 @@ export default function CreateCategoryBudgetGroup() {
   useEffect(() => {
     async function fetchCategories() {
       const res = await getData({
-        url: "/api/categories/budgets/group",
-        params: { clientId: "1717515" },
+        url: "/api/categories/budgets",
+        params: { clientId: "1717515", groupName: category },
       });
       if (res.status == 200) {
-        console.log("res get", res);
+        console.log("res", res);
         setCategories(res.data);
       }
     }
@@ -64,7 +67,17 @@ export default function CreateCategoryBudgetGroup() {
               onChange={(e) => setCategoryName(e.target.value)}
             />
           </label>
-          <button type="submit">Add Category Budget Group</button>
+          <label>
+            Category Type:
+            <select
+              value={categoryType}
+              onChange={(e) => setCategoryType(e.target.value)}
+            >
+              <option value="earning">earning</option>
+              <option value="spending">spending</option>
+            </select>
+          </label>
+          <button type="submit">Add Category Budget</button>
         </form>
       </div>
     </main>
