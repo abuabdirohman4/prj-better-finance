@@ -108,6 +108,7 @@ export function getTotalCashGroupedByDate(groupedTransactions, type) {
 
   return total;
 }
+
 export function getTotalObjectValue(data) {
   return Object.values(data).reduce((total, value) => total + value, 0);
 }

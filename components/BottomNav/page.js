@@ -24,7 +24,7 @@ export default function BottomNav() {
         <div className="flex items-center justify-center">
           <Link
             data-tooltip-target="tooltip-new"
-            href=""
+            href="/budgets/create"
             className="inline-flex items-center justify-center w-10 h-10 font-medium bg-blue-600 rounded-full hover:bg-blue-700 group focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800"
           >
             <svg

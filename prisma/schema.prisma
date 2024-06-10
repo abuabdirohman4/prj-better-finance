@@ -42,26 +42,26 @@ model Client {
 }
 
 model CategoryBudget {
-  id                     Int                       @id @default(autoincrement())
-  client                 Client                    @relation(fields: [clientId], references: [clientId])
+  id                     Int                             @id @default(autoincrement())
+  client                 Client                          @relation(fields: [clientId], references: [clientId])
   clientId               Int
   name                   String
   type                   String // "earning" or "spending"
-  memberships            CategoryGroupMembership[]
+  memberships            CategoryBudgetGroupMembership[]
   monthlyCategoryBudgets MonthlyCategoryBudget[]
   transactions           Transaction[]
   monthlyIncomes         MonthlyIncome[]
 }
 
 model CategoryBudgetGroup {
-  id          Int                       @id @default(autoincrement())
-  client      Client                    @relation(fields: [clientId], references: [clientId])
+  id          Int                             @id @default(autoincrement())
+  client      Client                          @relation(fields: [clientId], references: [clientId])
   clientId    Int
   name        String
-  memberships CategoryGroupMembership[]
+  memberships CategoryBudgetGroupMembership[]
 }
 
-model CategoryGroupMembership {
+model CategoryBudgetGroupMembership {
   categoryBudget CategoryBudget      @relation(fields: [categoryId], references: [id])
   categoryId     Int
   group          CategoryBudgetGroup @relation(fields: [groupId], references: [id])
@@ -79,7 +79,7 @@ model MonthlyCategoryBudget {
   year           Int
   month          Int
   amount         Float
-  type           String // "income" or "expense"
+  type           String // "earning" or "spending"
 
   @@unique([categoryId, clientId, year, month])
 }

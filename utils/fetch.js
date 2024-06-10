@@ -1,6 +1,4 @@
-// import axios from "../configs";
 import axios from "axios";
-import { redirect } from "next/navigation";
 
 export async function getData({ url, params, token }) {
   try {
@@ -11,10 +9,6 @@ export async function getData({ url, params, token }) {
       },
     });
   } catch (error) {
-    const res = JSON.parse(JSON.stringify(error));
-    if (res.status === 401) {
-      redirect("/masuk");
-    }
     throw error;
   }
 }
@@ -36,7 +30,6 @@ export async function putData({ url, payload }) {
   try {
     return await axios.put(`${url}`, payload);
   } catch (error) {
-    console.log(error);
     return error;
   }
 }
