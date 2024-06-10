@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function BottomNav() {
   return (
-    <div className="fixed bottom-0 mx-auto z-50 w-full max-w-md h-16 bg-[#F1F3F4] border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+    <div className="sticky bottom-0 mx-auto z-50 w-full max-w-md h-16 bg-[#F1F3F4] border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
       <div className="mt-0.5 flex h-full justify-evenly font-medium">
         <Link
           href={"/transactions"}

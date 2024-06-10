@@ -47,7 +47,7 @@ export default function Transactions() {
   }, [selectedMonth]);
 
   return (
-    <main className="mb-8">
+    <main>
       <div className="p-4 bg-[#F1F3F4] rounded-t-lg border-gray-200 shadow sm:p-8">
         <div className="flex justify-center">
           <Image
