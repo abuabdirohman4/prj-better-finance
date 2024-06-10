@@ -1,7 +1,6 @@
 import prisma from "@/utils/prisma";
 
 export default async function getTotalAmountGroup(clientId) {
-  clientId = parseInt(clientId);
   try {
     // Dapatkan daftar grup kategori anggaran untuk pengguna tertentu
     const categoryBudgetGroups = await prisma.categoryBudgetGroup.findMany({

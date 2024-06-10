@@ -166,7 +166,7 @@ export default function Budgets() {
                 <div key={key}>
                   <Link
                     href={{
-                      pathname: `/budgets/${category}`,
+                      pathname: `/budgets/${category.toLowerCase()}`,
                       query: {},
                     }}
                   >

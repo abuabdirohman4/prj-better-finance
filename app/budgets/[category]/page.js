@@ -45,8 +45,9 @@ const budgetCategory = {
 
 export default async function Budgets({ params }) {
   const transaction = await fetchTransaction(getDefaultSheetName(months));
+  const category = toCapitalCase(params.category)
   const categorySpending = {};
-  categories[params.category].forEach((category) => {
+  categories[category].forEach((category) => {
     const transactionsInCategory = transaction.filter(
       (item) =>
         item["Category or Account"] === category &&
@@ -59,7 +60,7 @@ export default async function Budgets({ params }) {
     categorySpending[category] = totalAmount;
   });
   const totalSpending = getTotalObjectValue(categorySpending);
-  const totalBudget = Object.values(budgetCategory[params.category]).reduce(
+  const totalBudget = Object.values(budgetCategory[category]).reduce(
     (total, value) => total + value,
     0
   );
@@ -69,14 +70,14 @@ export default async function Budgets({ params }) {
   const balance = parseFloat(totalSpending) + parseFloat(totalBudget);
 
   return (
-    <main className={`${params.category == "living" ? "mb-8" : ""}`}>
+    <main className={`${category == "living" ? "mb-8" : ""}`}>
       <div className="w-full max-w-md min-h-screen p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
         <Link href={"/budgets"} className="underline">
           Back
         </Link>
         <div className="flex items-center justify-center mt-2 mb-3">
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
-            {toCapitalCase(params.category)}
+            {toCapitalCase(category)}
           </h5>
         </div>
         <div className="flex items-center justify-center mb-4">

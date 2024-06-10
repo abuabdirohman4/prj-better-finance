@@ -31,7 +31,7 @@ model Product {
 
 model Client {
   id                     Int                     @id @default(autoincrement())
-  clientId               Int                     @unique
+  clientId               String                  @unique
   name                   String
   email                  String                  @unique
   categories             CategoryBudget[]
@@ -44,7 +44,7 @@ model Client {
 model CategoryBudget {
   id                     Int                             @id @default(autoincrement())
   client                 Client                          @relation(fields: [clientId], references: [clientId])
-  clientId               Int
+  clientId               String
   name                   String
   type                   String // "earning" or "spending"
   memberships            CategoryBudgetGroupMembership[]
@@ -56,7 +56,7 @@ model CategoryBudget {
 model CategoryBudgetGroup {
   id          Int                             @id @default(autoincrement())
   client      Client                          @relation(fields: [clientId], references: [clientId])
-  clientId    Int
+  clientId    String
   name        String
   memberships CategoryBudgetGroupMembership[]
 }
@@ -75,8 +75,8 @@ model MonthlyCategoryBudget {
   categoryBudget CategoryBudget @relation(fields: [categoryId], references: [id])
   categoryId     Int
   client         Client         @relation(fields: [clientId], references: [clientId])
-  clientId       Int
-  year           Int
+  clientId       String
+  year           String
   month          Int
   amount         Float
   type           String // "earning" or "spending"
@@ -89,8 +89,8 @@ model MonthlyIncome {
   categoryBudget CategoryBudget @relation(fields: [categoryId], references: [id])
   categoryId     Int
   client         Client         @relation(fields: [clientId], references: [clientId])
-  clientId       Int
-  year           Int
+  clientId       String
+  year           String
   month          Int
   amount         Float
 
@@ -99,10 +99,10 @@ model MonthlyIncome {
 
 model Transaction {
   id             Int            @id @default(autoincrement())
-  CategoryBudget CategoryBudget @relation(fields: [categoryId], references: [id])
+  categoryBudget CategoryBudget @relation(fields: [categoryId], references: [id])
   categoryId     Int
   client         Client         @relation(fields: [clientId], references: [clientId])
-  clientId       Int
+  clientId       String
   amount         Float
   date           DateTime
 }
