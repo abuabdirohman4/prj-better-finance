@@ -29,6 +29,7 @@ export async function GET(req) {
 
   // Hitung total jumlah amount untuk setiap grup
   const totalAmountByGroup = categoryBudgetGroups.map((group) => ({
+    groupId: group.id,
     name: group.name,
     totalAmount: group.memberships.reduce((total, membership) => {
       // Jumlahkan jumlah amount dari semua kategori anggaran dalam grup

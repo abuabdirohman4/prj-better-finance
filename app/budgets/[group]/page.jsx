@@ -1,4 +1,4 @@
-import { GetTotalAmountCategoryBudgets } from "@/app/api/budgets/route";
+import { GetTotalAmountCategoryBudgets } from "@/app/api/budgets/categories/route";
 import Budget from "@/components/Card/Budget";
 import { months } from "@/utils/constants";
 import { fetchTransaction } from "@/utils/fetchTransaction";
@@ -15,6 +15,7 @@ export default async function Budgets({ params, searchParams }) {
   const clientId = "1717515";
   const type = "spending";
   const group = toCapitalCase(params.group);
+  const groupId = searchParams.groupId;
   const monthInNumber = getMonthInNumber(searchParams.month);
   const transaction = await fetchTransaction(getDefaultSheetName(months));
   const categoryBudget = await GetTotalAmountCategoryBudgets(
@@ -23,7 +24,7 @@ export default async function Budgets({ params, searchParams }) {
     type
   );
 
-  const categorySpending = [];
+  const categories = [];
   categoryBudget.forEach((category) => {
     // get spending of category
     const transactionsInCategory = transaction.filter(
@@ -37,15 +38,16 @@ export default async function Budgets({ params, searchParams }) {
     );
 
     // mapping data budget & spending of category
-    categorySpending.push({
+    categories.push({
       name: category.name,
       budget: category.totalAmount,
       spending: totalAmount,
     });
   });
+  console.log("categories", categories);
 
   // get total budget & spending
-  const totalAmount = categorySpending.reduce(
+  const totalAmount = categories.reduce(
     (acc, category) => {
       acc.totalBudget += category.budget;
       acc.totalSpending += category.spending;
@@ -119,7 +121,7 @@ export default async function Budgets({ params, searchParams }) {
             role="list"
             className="border-y-[1.5px] border-y-gray-200 divide-y divide-gray-200 dark:divide-gray-700"
           >
-            {categorySpending.map((category, key) => (
+            {categories.map((category, key) => (
               <div key={key}>
                 <Budget
                   category={category.name}
@@ -140,7 +142,10 @@ export default async function Budgets({ params, searchParams }) {
           </div>
           <div className="mt-3 text-center underline">
             <Link
-              href={`/budgets/create/${group}`}
+              href={{
+                pathname: `/budgets/${group}/add-budget`,
+                query: { groupId: groupId, monthInNumber: monthInNumber },
+              }}
               className="hover:text-blue-500"
             >
               Update Budget of Categories {toCapitalCase(group)}

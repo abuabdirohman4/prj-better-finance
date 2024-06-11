@@ -14,8 +14,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 export default function Budgets() {
-  const [isLoadingContent, setIsLoadingContent] = useState(false);
   const clientId = "1717515";
+  const [isLoadingContent, setIsLoadingContent] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(
     getDefaultSheetName(months)
   );
@@ -27,6 +27,7 @@ export default function Budgets() {
   const percentage =
     (parseFloat(totalSpending) / -parseFloat(totalBudget)) * 100;
   const stringPercent = percentage.toFixed(0);
+  const year = new Date().getFullYear().toString();
 
   const sumCategoryGroupSpending = useCallback(
     (transaction, categoryGroupBudget, nameCategoryGroups, typeTransaction) => {
@@ -71,12 +72,13 @@ export default function Budgets() {
     const fetchData = async () => {
       try {
         setIsLoadingContent(true);
-        const { status, data: categoryGroupBudget } = await getData({
+        const res = await getData({
           url: "/api/budgets/group",
           params: { clientId },
         });
 
-        if (status === 200) {
+        if (res.status === 200) {
+          const categoryGroupBudget = res.data;
           // Combine the fetched data directly for use
           const amountCategoryGroups = {};
           const nameCategoryGroups = [];
@@ -106,6 +108,7 @@ export default function Budgets() {
           // Combine data
           const mergedData = categoryGroupBudget.map((group) => {
             return {
+              groupId: group.groupId,
               name: group.name,
               budget: group.totalAmount,
               spending: categoryGroupSpending[group.name] || 0,
@@ -129,18 +132,53 @@ export default function Budgets() {
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
             Budgets
           </h5>
-          <select
-            id="month"
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
-            className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
-          >
-            {months.map((month) => (
-              <option key={month} value={month}>
-                {month}
+          <div>
+            <select
+              id="month"
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
+            >
+              {months.map((month) => (
+                <option key={month} value={month}>
+                  {month}
+                </option>
+              ))}
+            </select>
+            {/* <select
+              id="month"
+              value={selectedMonth}
+              onChange={() => false}
+              className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
+            >
+              <option key={year} value={year}>
+                {year}
               </option>
-            ))}
-          </select>
+            </select> */}
+          </div>
+          {/* <div className="max-w-sm mx-auto"> */}
+          {/* <div>
+            <div className="flex">
+              <select
+                className="bg-gray-50 border border-gray-300 border-r-8 border-transparent outline outline-gray-300 text-gray-900 text-sm rounded-s-lg border-s-gray-100 dark:border-s-gray-700 border-s-2 focus:ring-gray-100 block w-full ps-2.5 cursor-pointer hover:bg-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                onChange={(e) => setSelectedMonth(e.target.value)}
+              >
+                {months.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="appearance-none bg-gray-50 border border-gray-300 border-r- border-transparent outline outline-gray-300 text-gray-900 text-sm rounded-e-lg border-s-gray-100 dark:border-s-gray-700 border-s-2 focus:ring-gray-100 block w-full px-2.5 cursor-pointer hover:bg-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                onChange={() => false}
+              >
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              </select>
+            </div>
+          </div> */}
         </div>
         {isLoadingContent ? (
           <SkeletonList listNumber={12} />
@@ -199,7 +237,10 @@ export default function Budgets() {
                     <Link
                       href={{
                         pathname: `/budgets/${category.name.toLowerCase()}`,
-                        query: { month: selectedMonth },
+                        query: {
+                          month: selectedMonth,
+                          groupId: category.groupId,
+                        },
                       }}
                     >
                       <Budget
@@ -212,7 +253,10 @@ export default function Budgets() {
                 ))}
               </ul>
               <div className="mt-3 text-center underline">
-                <Link href="/budgets/create-category-group" className="hover:text-blue-500">
+                <Link
+                  href="/budgets/create-category-group"
+                  className="hover:text-blue-500"
+                >
                   Add Category Groups
                 </Link>
               </div>

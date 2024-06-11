@@ -1,7 +1,7 @@
 import { formatRupiah } from "@/utils/helper";
 
 export default function Budget({ category, budget, spending }) {
-  const percentage = (parseFloat(spending) / -parseFloat(budget)) * 100;
+  const percentage = budget ? (parseFloat(spending) / -parseFloat(budget)) * 100 : 0;
   const stringPercent = percentage.toFixed(0);
   const balance = parseFloat(spending) + parseFloat(budget);
   return (
@@ -44,7 +44,7 @@ export default function Budget({ category, budget, spending }) {
           <p className="text-sm text-gray-500 truncate"></p>
         </div>
         <p className="text-sm text-gray-500 truncate me-2">
-          {stringPercent == "NaN" ? "0" : stringPercent}%
+          {!stringPercent ? "0" : stringPercent}%
         </p>
         <div className="w-8/12 bg-gray-200 rounded-full">
           <div
