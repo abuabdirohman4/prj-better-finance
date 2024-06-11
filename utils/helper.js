@@ -20,6 +20,11 @@ export function getDefaultSheetName(months) {
   return months[currentMonth];
 }
 
+export function getMonthInNumber(monthString) {
+  const year = new Date().getFullYear();
+  return new Date(Date.parse(monthString + " 1, " + year)).getMonth() + 1;
+}
+
 export function toCapitalCase(string) {
   
   if (string) {

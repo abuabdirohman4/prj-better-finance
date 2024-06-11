@@ -1,5 +1,5 @@
+import prisma from "@/utils/prisma";
 import { NextResponse } from "next/server";
-import getTotalAmountGroup from "./getTotalAmountGroup";
 
 export async function GET(req) {
   const url = new URL(req.url);
@@ -12,9 +12,44 @@ export async function GET(req) {
     });
   }
 
-  const categoryBudgetGroups = await getTotalAmountGroup(clientId);
+  const categoryBudgetGroups = await prisma.categoryBudgetGroup.findMany({
+    where: { client: { clientId } },
+    include: {
+      memberships: {
+        include: {
+          categoryBudget: {
+            include: {
+              monthlyCategoryBudgets: true,
+            },
+          },
+        },
+      },
+    },
+  });
 
-  return NextResponse.json(categoryBudgetGroups, { status: 200 });
+  // Hitung total jumlah amount untuk setiap grup
+  const totalAmountByGroup = categoryBudgetGroups.map((group) => ({
+    name: group.name,
+    totalAmount: group.memberships.reduce((total, membership) => {
+      // Jumlahkan jumlah amount dari semua kategori anggaran dalam grup
+      return (
+        total +
+        membership.categoryBudget.monthlyCategoryBudgets.reduce(
+          (subtotal, budget) => subtotal + budget.amount,
+          0
+        )
+      );
+    }, 0),
+    categories: group.memberships.map((membership) => ({
+      name: membership.categoryBudget.name,
+      totalAmount: membership.categoryBudget.monthlyCategoryBudgets.reduce(
+        (subtotal, budget) => subtotal + budget.amount,
+        0
+      ),
+    })),
+  }));
+
+  return NextResponse.json(totalAmountByGroup, { status: 200 });
 }
 
 export async function POST(req) {

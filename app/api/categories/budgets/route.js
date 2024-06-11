@@ -5,7 +5,7 @@ export async function GET(req) {
   const url = new URL(req.url);
   const clientId = url.searchParams.get("clientId");
   const groupName = url.searchParams.get("groupName");
-  let categoryBudgets = "";
+  const type = url.searchParams.get("type");
 
   if (!clientId) {
     return new Response(JSON.stringify({ error: "ClientId is required" }), {
@@ -14,38 +14,7 @@ export async function GET(req) {
     });
   }
 
-  if (groupName) {
-    categoryBudgets = await prisma.categoryBudget.findMany({
-      where: {
-        client: {
-          clientId: clientId,
-        },
-        memberships: {
-          some: {
-            group: {
-              name: groupName,
-            },
-          },
-        },
-      },
-      include: {
-        memberships: {
-          include: {
-            group: true,
-          },
-        },
-      },
-    });
-  } else {
-    categoryBudgets = await prisma.categoryBudget.findMany({
-      where: { clientId: clientId },
-      select: {
-        name: true,
-        type: true,
-      },
-    });
-  }
-
+  const categoryBudgets = await GetCategoryBudgets(clientId, groupName, type);
   return NextResponse.json(categoryBudgets, { status: 200 });
 }
 
@@ -139,7 +108,7 @@ export async function GetTotalAmountCategoryBudgets(clientId, groupName, type) {
     },
   });
 
-  const totalAmountCaegories = categoryBudgets.map((category) => ({
+  const totalAmountCaegoryBudget = categoryBudgets.map((category) => ({
     name: category.name,
     totalAmount: category.monthlyCategoryBudgets.reduce(
       (total, monthlyCategoryBudgets) => {
@@ -149,5 +118,5 @@ export async function GetTotalAmountCategoryBudgets(clientId, groupName, type) {
     ),
   }));
 
-  return totalAmountCaegories;
+  return totalAmountCaegoryBudget;
 }

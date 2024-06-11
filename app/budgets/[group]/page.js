@@ -6,20 +6,23 @@ import {
   formatRupiah,
   getCashValue,
   getDefaultSheetName,
+  getMonthInNumber,
   toCapitalCase,
 } from "@/utils/helper";
 import Link from "next/link";
 
-export default async function Budgets({ params }) {
+export default async function Budgets({ params, searchParams }) {
   const clientId = "1717515";
   const type = "spending";
   const group = toCapitalCase(params.group);
+  const monthInNumber = getMonthInNumber(searchParams.month);
   const transaction = await fetchTransaction(getDefaultSheetName(months));
   const categoryBudget = await GetTotalAmountCategoryBudgets(
     clientId,
     group,
     type
   );
+  console.log("categoryBudget", categoryBudget);
 
   const categorySpending = [];
   categoryBudget.forEach((category) => {
@@ -68,7 +71,6 @@ export default async function Budgets({ params }) {
         </Link>
         <div className="flex items-center justify-center mt-2 mb-3">
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
-            {console.log("judul")}
             {toCapitalCase(group)}
           </h5>
         </div>
@@ -133,7 +135,6 @@ export default async function Budgets({ params }) {
               href={`/budgets/create/${group}`}
               className="hover:text-blue-500"
             >
-              {console.log("add category")}
               Add Category For {toCapitalCase(group)}
             </Link>
           </div>

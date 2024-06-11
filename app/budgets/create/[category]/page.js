@@ -4,6 +4,8 @@ import { getData, postData } from "@/utils/fetch";
 import { toCapitalCase } from "@/utils/helper";
 
 export default function CreateCategoryBudget({ params }) {
+  const clientId = "1717515";
+  const type = "spending";
   const [categories, setCategories] = useState([]);
   const [categoryName, setCategoryName] = useState("");
   const [categoryType, setCategoryType] = useState("spending");
@@ -15,8 +17,9 @@ export default function CreateCategoryBudget({ params }) {
       const res = await postData({
         url: "/api/categories/budgets",
         payload: {
-          clientId: "1717515",
+          clientId: clientId,
           name: categoryName,
+          type: type,
         },
       });
       if (res.status == 201) {
@@ -33,7 +36,7 @@ export default function CreateCategoryBudget({ params }) {
     async function fetchCategories() {
       const res = await getData({
         url: "/api/categories/budgets",
-        params: { clientId: "1717515", groupName: category },
+        params: { clientId: clientId, groupName: category, type: type },
       });
       if (res.status == 200) {
         console.log("res", res);
@@ -51,7 +54,6 @@ export default function CreateCategoryBudget({ params }) {
           {categories.map((category, index) => (
             <li key={index}>
               {category.name}
-              {/* <button onClick={() => deleteCategory(category.id)}>Delete</button> */}
             </li>
           ))}
         </ul>
