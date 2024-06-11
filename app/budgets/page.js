@@ -1,6 +1,7 @@
 "use client";
 import Budget from "@/components/Card/Budget";
 import { categories, months } from "@/utils/constants";
+import { getData } from "@/utils/fetch";
 import { fetchTransaction } from "@/utils/fetchTransaction";
 import {
   formatRupiah,
@@ -11,15 +12,16 @@ import {
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
-const budgetCategory = {
-  Living: 4000000,
-  Saving: 2000000,
-  Investing: 3000000,
-  Giving: 3579642,
-};
+// const budgetCategory = {
+//   Living: 4000000,
+//   Saving: 2000000,
+//   Investing: 3000000,
+//   Giving: 3579642,
+// };
 
 export default function Budgets() {
   const [categorySpending, setCategorySpending] = useState([]);
+  const [budgetCategory, setBudgetCategory] = useState({});
   const [selectedMonth, setSelectedMonth] = useState(
     getDefaultSheetName(months)
   );
@@ -76,9 +78,23 @@ export default function Budgets() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetchTransaction(selectedMonth);
+      const categoriesRes = await getData({
+        url: "/api/categories/budgets/group",
+        params: { clientId: "1717515" },
+      });
+
+      if (categoriesRes.status === 200) {
+        const newBudgetCategory = {};
+        categoriesRes.data.forEach((item) => {
+          newBudgetCategory[item.name] = item.totalAmount;
+        });
+        setBudgetCategory(newBudgetCategory);
+        setTotalBudget(getTotalObjectValue(newBudgetCategory));
+      }
+
+      const transactions = await fetchTransaction(selectedMonth);
       const totalSpendingCategory = sumCategory(
-        data,
+        transactions,
         [
           ...categories.Living,
           ...categories.Saving,
@@ -88,7 +104,6 @@ export default function Budgets() {
         "Spending"
       );
       setTotalSpending(getTotalObjectValue(totalSpendingCategory));
-      setTotalBudget(getTotalObjectValue(budgetCategory));
     };
     fetchData();
   }, [selectedMonth, sumCategory]);
@@ -181,7 +196,7 @@ export default function Budgets() {
             })}
           </ul>
           <div className="mt-3 text-center underline">
-            <Link href='/budgets/create' className="hover:text-blue-500">
+            <Link href="/budgets/create" className="hover:text-blue-500">
               Add Category Group
             </Link>
           </div>

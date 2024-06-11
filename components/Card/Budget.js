@@ -1,4 +1,4 @@
-import { formatRupiah, toCapitalCase } from "@/utils/helper";
+import { formatRupiah } from "@/utils/helper";
 
 export default function Budget({ category, budget, spending }) {
   const percentage = (parseFloat(spending) / -parseFloat(budget)) * 100;
@@ -8,7 +8,7 @@ export default function Budget({ category, budget, spending }) {
     <li className="py-3 sm:py-4">
       <div className="flex-1 min-w-0 mb-2">
         <p className="text-sm font-medium text-gray-900 truncate">
-          {toCapitalCase(category)}
+          {category}
         </p>
       </div>
       <div className="flex items-center">

@@ -21,7 +21,12 @@ export function getDefaultSheetName(months) {
 }
 
 export function toCapitalCase(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+  
+  if (string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  } else {
+    console.log(string, "string toCapitalCase");
+  }
 }
 
 export function getCashValue(data) {

@@ -87,3 +87,67 @@ export async function POST(req, res) {
     Response.json({ status: 500, message: "Error adding category budget" });
   }
 }
+
+export async function GetCategoryBudgets(clientId, groupName, type) {
+  let categoryBudgets = "";
+  if (groupName) {
+    categoryBudgets = await prisma.categoryBudget.findMany({
+      where: {
+        clientId: clientId,
+        type: type,
+        memberships: {
+          some: {
+            group: {
+              name: groupName,
+            },
+          },
+        },
+      },
+      select: {
+        name: true,
+        type: true,
+      },
+    });
+  } else {
+    categoryBudgets = await prisma.categoryBudget.findMany({
+      where: { clientId: clientId },
+      select: {
+        name: true,
+        type: true,
+      },
+    });
+  }
+
+  return categoryBudgets;
+}
+
+export async function GetTotalAmountCategoryBudgets(clientId, groupName, type) {
+  const categoryBudgets = await prisma.categoryBudget.findMany({
+    where: {
+      clientId: clientId,
+      type: type,
+      memberships: {
+        some: {
+          group: {
+            name: groupName,
+          },
+        },
+      },
+    },
+    include: {
+      monthlyCategoryBudgets: true,
+    },
+  });
+
+  const totalAmountCaegories = categoryBudgets.map((category) => ({
+    name: category.name,
+    totalAmount: category.monthlyCategoryBudgets.reduce(
+      (total, monthlyCategoryBudgets) => {
+        return total + monthlyCategoryBudgets.amount;
+      },
+      0
+    ),
+  }));
+
+  return totalAmountCaegories;
+}
