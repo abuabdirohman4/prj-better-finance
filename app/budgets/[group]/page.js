@@ -1,4 +1,4 @@
-import { GetTotalAmountCategoryBudgets } from "@/app/api/categories/budgets/route";
+import { GetTotalAmountCategoryBudgets } from "@/app/api/budgets/route";
 import Budget from "@/components/Card/Budget";
 import { months } from "@/utils/constants";
 import { fetchTransaction } from "@/utils/fetchTransaction";
@@ -131,10 +131,19 @@ export default async function Budgets({ params, searchParams }) {
           </ul>
           <div className="mt-3 text-center underline">
             <Link
-              href={`/budgets/create/${group}`}
+              // href={`/budgets/create/${group}`}
+              href={`/budgets/${group}/create-category`}
               className="hover:text-blue-500"
             >
               Add Category For {toCapitalCase(group)}
+            </Link>
+          </div>
+          <div className="mt-3 text-center underline">
+            <Link
+              href={`/budgets/create/${group}`}
+              className="hover:text-blue-500"
+            >
+              Update Budget of Categories {toCapitalCase(group)}
             </Link>
           </div>
         </div>

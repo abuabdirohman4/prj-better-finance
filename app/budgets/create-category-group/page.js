@@ -10,7 +10,7 @@ export default function CreateCategoryBudgetGroup() {
     e.preventDefault();
     try {
       const res = await postData({
-        url: "/api/categories/budgets/group",
+        url: "/api/budgets/group",
         payload: {
           clientId: "1717515",
           name: categoryName,
@@ -29,7 +29,7 @@ export default function CreateCategoryBudgetGroup() {
   useEffect(() => {
     async function fetchCategories() {
       const res = await getData({
-        url: "/api/categories/budgets/group",
+        url: "/api/budgets/group",
         params: { clientId: "1717515" },
       });
       if (res.status == 200) {

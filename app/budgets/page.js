@@ -72,7 +72,7 @@ export default function Budgets() {
       try {
         setIsLoadingContent(true);
         const { status, data: categoryGroupBudget } = await getData({
-          url: "/api/categories/budgets/group",
+          url: "/api/budgets/group",
           params: { clientId },
         });
 
@@ -212,7 +212,7 @@ export default function Budgets() {
                 ))}
               </ul>
               <div className="mt-3 text-center underline">
-                <Link href="/budgets/create" className="hover:text-blue-500">
+                <Link href="/budgets/create-category-group" className="hover:text-blue-500">
                   Add Category Groups
                 </Link>
               </div>

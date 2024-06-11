@@ -15,7 +15,7 @@ export default function CreateCategoryBudget({ params }) {
     e.preventDefault();
     try {
       const res = await postData({
-        url: "/api/categories/budgets",
+        url: "/api/budgets",
         payload: {
           clientId: clientId,
           name: categoryName,
@@ -35,7 +35,7 @@ export default function CreateCategoryBudget({ params }) {
   useEffect(() => {
     async function fetchCategories() {
       const res = await getData({
-        url: "/api/categories/budgets",
+        url: "/api/budgets",
         params: { clientId: clientId, groupName: category, type: type },
       });
       if (res.status == 200) {
