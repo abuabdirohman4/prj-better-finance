@@ -21,7 +21,7 @@ export default function BottomNav() {
             Transactions
           </span>
         </Link>
-        <div className="flex items-center justify-center">
+        {/* <div className="flex items-center justify-center">
           <Link
             data-tooltip-target="tooltip-new"
             href="/budgets/create"
@@ -52,7 +52,7 @@ export default function BottomNav() {
         >
           Create new item
           <div className="tooltip-arrow" data-popper-arrow></div>
-        </div>
+        </div> */}
         <Link
           href={"/budgets"}
           className="inline-flex flex-col items-center justify-center w-32 px-5 border-e border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 group dark:border-gray-600"

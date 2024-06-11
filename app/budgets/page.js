@@ -1,5 +1,6 @@
 "use client";
 import Budget from "@/components/Card/Budget";
+import SkeletonList from "@/components/Skeleton/List";
 import { months } from "@/utils/constants";
 import { getData } from "@/utils/fetch";
 import { fetchTransaction } from "@/utils/fetchTransaction";
@@ -13,6 +14,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 export default function Budgets() {
+  const [isLoadingContent, setIsLoadingContent] = useState(false);
   const clientId = "1717515";
   const [selectedMonth, setSelectedMonth] = useState(
     getDefaultSheetName(months)
@@ -68,6 +70,7 @@ export default function Budgets() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoadingContent(true);
         const { status, data: categoryGroupBudget } = await getData({
           url: "/api/categories/budgets/group",
           params: { clientId },
@@ -109,6 +112,7 @@ export default function Budgets() {
             };
           });
           setCategoryGroup(mergedData);
+          setIsLoadingContent(false);
         }
       } catch (error) {
         console.error("Failed to fetch data", error);
@@ -138,75 +142,83 @@ export default function Budgets() {
             ))}
           </select>
         </div>
-        <div className="flex items-center justify-between ">
-          <h5 className="text-center">
-            <p className="text-base font-medium text-gray-900 truncate dark:text-white">
-              Budget
-            </p>
-            <div className="text-base font-semibold text-gray-900 dark:text-white">
-              {formatRupiah(totalBudget)}
-            </div>
-          </h5>
-          <h5 className="text-center">
-            <p className="text-base font-medium text-gray-900 truncate dark:text-white">
-              Balance
-            </p>
-            <div
-              className={`text-base font-semibold text-gray-900 dark:text-white ${
-                balance < 0 && "text-red-500"
-              }`}
-            >
-              {formatRupiah(balance)}
-            </div>
-          </h5>
-          <h5 className="text-center">
-            <p className="text-base font-medium text-gray-900 truncate dark:text-white">
-              Spending
-            </p>
-            <div className="text-base font-semibold text-red-600 dark:text-white">
-              {formatRupiah(totalSpending)}
-            </div>
-          </h5>
-        </div>
-        <div className="flex items-center justify-center mt-4 mb-3">
-          <p className="text-sm text-gray-500 truncate me-2">
-            {stringPercent}%
-          </p>
-          <div className="w-8/12 bg-gray-200 rounded-full">
-            <div
-              className={`bg-blue-600 text-xs h-2 font-medium text-center p-0.5 leading-none rounded-full`}
-              style={{ width: `${percentage > 100 ? "100" : stringPercent}%` }}
-            ></div>
-          </div>
-        </div>
-        <div className="flow-root">
-          <ul
-            role="list"
-            className="border-y-[1.5px] border-y-gray-200 divide-y divide-gray-200 dark:divide-gray-700"
-          >
-            {categoryGroup.map((category, key) => (
-              <div key={key}>
-                <Link
-                  href={{
-                    pathname: `/budgets/${category.name.toLowerCase()}`,
-                    query: { month: selectedMonth },
-                  }}
+        {isLoadingContent ? (
+          <SkeletonList listNumber={12} />
+        ) : (
+          <>
+            <div className="flex items-center justify-between ">
+              <h5 className="text-center">
+                <p className="text-base font-medium text-gray-900 truncate dark:text-white">
+                  Budget
+                </p>
+                <div className="text-base font-semibold text-gray-900 dark:text-white">
+                  {formatRupiah(totalBudget)}
+                </div>
+              </h5>
+              <h5 className="text-center">
+                <p className="text-base font-medium text-gray-900 truncate dark:text-white">
+                  Balance
+                </p>
+                <div
+                  className={`text-base font-semibold text-gray-900 dark:text-white ${
+                    balance < 0 && "text-red-500"
+                  }`}
                 >
-                  <Budget
-                    category={category.name}
-                    budget={category.budget}
-                    spending={category.spending}
-                  />
+                  {formatRupiah(balance)}
+                </div>
+              </h5>
+              <h5 className="text-center">
+                <p className="text-base font-medium text-gray-900 truncate dark:text-white">
+                  Spending
+                </p>
+                <div className="text-base font-semibold text-red-600 dark:text-white">
+                  {formatRupiah(totalSpending)}
+                </div>
+              </h5>
+            </div>
+            <div className="flex items-center justify-center mt-4 mb-3">
+              <p className="text-sm text-gray-500 truncate me-2">
+                {stringPercent}%
+              </p>
+              <div className="w-8/12 bg-gray-200 rounded-full">
+                <div
+                  className={`bg-blue-600 text-xs h-2 font-medium text-center p-0.5 leading-none rounded-full`}
+                  style={{
+                    width: `${percentage > 100 ? "100" : stringPercent}%`,
+                  }}
+                ></div>
+              </div>
+            </div>
+            <div className="flow-root">
+              <ul
+                role="list"
+                className="border-y-[1.5px] border-y-gray-200 divide-y divide-gray-200 dark:divide-gray-700"
+              >
+                {categoryGroup.map((category, key) => (
+                  <div key={key}>
+                    <Link
+                      href={{
+                        pathname: `/budgets/${category.name.toLowerCase()}`,
+                        query: { month: selectedMonth },
+                      }}
+                    >
+                      <Budget
+                        category={category.name}
+                        budget={category.budget}
+                        spending={category.spending}
+                      />
+                    </Link>
+                  </div>
+                ))}
+              </ul>
+              <div className="mt-3 text-center underline">
+                <Link href="/budgets/create" className="hover:text-blue-500">
+                  Add Category Groups
                 </Link>
               </div>
-            ))}
-          </ul>
-          <div className="mt-3 text-center underline">
-            <Link href="/budgets/create" className="hover:text-blue-500">
-              Add Category Groups
-            </Link>
-          </div>
-        </div>
+            </div>
+          </>
+        )}
       </div>
     </main>
   );
