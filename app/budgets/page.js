@@ -203,7 +203,7 @@ export default function Budgets() {
           </ul>
           <div className="mt-3 text-center underline">
             <Link href="/budgets/create" className="hover:text-blue-500">
-              Add Category Group
+              Add Category Groups
             </Link>
           </div>
         </div>
