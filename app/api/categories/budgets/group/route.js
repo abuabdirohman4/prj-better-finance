@@ -86,7 +86,6 @@ export async function POST(req) {
         name,
       },
     });
-    console.log("newCategoryBudgetGroup", newCategoryBudgetGroup);
 
     return NextResponse.json(newCategoryBudgetGroup, { status: 201 });
   } catch (error) {

@@ -22,7 +22,6 @@ export default async function Budgets({ params, searchParams }) {
     group,
     type
   );
-  console.log("categoryBudget", categoryBudget);
 
   const categorySpending = [];
   categoryBudget.forEach((category) => {
