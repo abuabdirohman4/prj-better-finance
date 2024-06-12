@@ -36,7 +36,6 @@ export async function GET(req) {
       year
     );
   } else if (reqFunc === "GetCategoryBudgets") {
-    console.log("groupId", groupId);
     categoryBudgets = await GetCategoryBudgets(clientId, groupId, type);
   }
   return NextResponse.json(categoryBudgets, { status: 200 });

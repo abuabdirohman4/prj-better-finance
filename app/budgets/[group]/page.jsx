@@ -45,7 +45,6 @@ export default async function Budgets({ params, searchParams }) {
       spending: totalAmount,
     });
   });
-  console.log("categories", categories);
 
   // get total budget & spending
   const totalAmount = categories.reduce(

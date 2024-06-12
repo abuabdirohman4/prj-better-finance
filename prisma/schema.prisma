@@ -82,7 +82,6 @@ model MonthlyCategoryBudget {
   year           String
   month          Int
   amount         Float
-  type           String // "earning" or "spending"
 
   @@unique([categoryId, clientId, year, month])
 }

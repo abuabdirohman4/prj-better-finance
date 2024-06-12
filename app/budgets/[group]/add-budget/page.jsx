@@ -23,7 +23,6 @@ export default function AddBudgetCategory({ params, searchParams }) {
   const [categoryBudget, setCategoryBudget] = useState(0);
   const [categoryInputs, setCategoryInputs] = useState({});
   const [monthlyCategories, setMonthlyCategories] = useState([]);
-  console.log("categoryInputs", categoryInputs);
 
   const handleInputChange = (e, categoryId, field, type) => {
     let value = "";
@@ -76,13 +75,11 @@ export default function AddBudgetCategory({ params, searchParams }) {
   };
 
   const handleSubmitInputMass = async (e) => {
-    // console.log("handleSubmitInputMass");
     e.preventDefault();
 
     const createPayload = [];
     const updatePayload = [];
     Object.keys(categoryInputs).forEach((categoryId) => {
-      // console.log("categoryInputs", categoryInputs);
       const category = categoryInputs[categoryId];
       const existingCategory = monthlyCategories.find(
         (monthlyCategory) =>
@@ -113,8 +110,6 @@ export default function AddBudgetCategory({ params, searchParams }) {
         });
       }
     });
-    // console.log("createPayload", createPayload);
-    // console.log("updatePayload", updatePayload);
 
     try {
       if (createPayload.length > 0) {
