@@ -67,8 +67,10 @@ export default function Budgets() {
     },
     []
   );
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     const fetchData = async () => {
       try {
         setIsLoadingContent(true);
@@ -125,6 +127,9 @@ export default function Budgets() {
     fetchData();
   }, [selectedMonth, sumCategoryGroupSpending]);
 
+  if (!isMounted) {
+    return null;
+  }
   return (
     <main>
       <div className="w-full max-w-md min-h-screen p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
@@ -133,34 +138,10 @@ export default function Budgets() {
             Budgets
           </h5>
           <div>
-            <select
-              id="month"
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-              className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
-            >
-              {months.map((month) => (
-                <option key={month} value={month}>
-                  {month}
-                </option>
-              ))}
-            </select>
-            {/* <select
-              id="month"
-              value={selectedMonth}
-              onChange={() => false}
-              className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
-            >
-              <option key={year} value={year}>
-                {year}
-              </option>
-            </select> */}
-          </div>
-          {/* <div className="max-w-sm mx-auto"> */}
-          {/* <div>
             <div className="flex">
               <select
-                className="bg-gray-50 border border-gray-300 border-r-8 border-transparent outline outline-gray-300 text-gray-900 text-sm rounded-s-lg border-s-gray-100 dark:border-s-gray-700 border-s-2 focus:ring-gray-100 block w-full ps-2.5 cursor-pointer hover:bg-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="appearance-none bg-gray-50 border border-gray-300 border-r-4 border-transparent outline outline-gray-300 text-gray-900 text-sm rounded-s-lg border-s-gray-100 dark:border-s-gray-700 border-s-2 focus:ring-gray-100 block w-12 text-center cursor-pointer hover:bg-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
               >
                 {months.map((month) => (
@@ -170,7 +151,7 @@ export default function Budgets() {
                 ))}
               </select>
               <select
-                className="appearance-none bg-gray-50 border border-gray-300 border-r- border-transparent outline outline-gray-300 text-gray-900 text-sm rounded-e-lg border-s-gray-100 dark:border-s-gray-700 border-s-2 focus:ring-gray-100 block w-full px-2.5 cursor-pointer hover:bg-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="appearance-none bg-gray-50 border border-gray-300 border-r-4 border-transparent outline outline-gray-300 text-gray-900 text-sm rounded-e-lg border-s-gray-100 dark:border-s-gray-700 border-s-2 focus:ring-gray-100 block w-12 text-center cursor-pointer hover:bg-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 onChange={() => false}
               >
                 <option key={year} value={year}>
@@ -178,7 +159,7 @@ export default function Budgets() {
                 </option>
               </select>
             </div>
-          </div> */}
+          </div>
         </div>
         {isLoadingContent ? (
           <SkeletonList listNumber={12} />
