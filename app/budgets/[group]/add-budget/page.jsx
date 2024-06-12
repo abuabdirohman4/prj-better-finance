@@ -8,6 +8,8 @@ export default function AddBudgetCategory({ params, searchParams }) {
   const type = "spending";
   const group = toCapitalCase(params.group);
   const groupId = searchParams.groupId;
+  const month = searchParams.monthInNumber;
+  const year = searchParams.year;
 
   const [categories, setCategories] = useState([]);
   const [categoryName, setCategoryName] = useState("");
@@ -68,8 +70,8 @@ export default function AddBudgetCategory({ params, searchParams }) {
           id: existingCategory.id,
           categoryId: parseInt(categoryId),
           clientId: clientId,
-          year: "2024",
-          month: 6,
+          year: year,
+          month: month,
           amount: parseFloat(category.budget) || 0,
           type: categoryType,
         });
@@ -78,8 +80,8 @@ export default function AddBudgetCategory({ params, searchParams }) {
         createPayload.push({
           categoryId: parseInt(categoryId),
           clientId: clientId,
-          year: "2024",
-          month: 6,
+          year: year,
+          month: month,
           amount: parseFloat(category.budget) || 0,
           type: categoryType,
         });

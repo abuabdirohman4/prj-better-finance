@@ -17,6 +17,7 @@ export default async function Budgets({ params, searchParams }) {
   const group = toCapitalCase(params.group);
   const groupId = searchParams.groupId;
   const monthInNumber = getMonthInNumber(searchParams.month);
+  const year = getMonthInNumber(searchParams.year);
   const transaction = await fetchTransaction(getDefaultSheetName(months));
   const categoryBudget = await GetTotalAmountCategoryBudgets(
     clientId,
@@ -144,7 +145,11 @@ export default async function Budgets({ params, searchParams }) {
             <Link
               href={{
                 pathname: `/budgets/${group}/add-budget`,
-                query: { groupId: groupId, monthInNumber: monthInNumber },
+                query: {
+                  groupId: groupId,
+                  monthInNumber: monthInNumber,
+                  year: year,
+                },
               }}
               className="hover:text-blue-500"
             >

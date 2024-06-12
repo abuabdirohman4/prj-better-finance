@@ -220,6 +220,7 @@ export default function Budgets() {
                         pathname: `/budgets/${category.name.toLowerCase()}`,
                         query: {
                           month: selectedMonth,
+                          year: year,
                           groupId: category.groupId,
                         },
                       }}

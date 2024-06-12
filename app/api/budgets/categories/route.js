@@ -1,5 +1,6 @@
 import prisma from "@/utils/prisma";
 import { NextResponse } from "next/server";
+import { validateField, validateFields } from "../../helper";
 
 export async function GET(req) {
   const url = new URL(req.url);
@@ -136,7 +137,12 @@ export async function GetTotalAmountCategoryBudgets(clientId, groupName, type) {
   return totalAmountCaegoryBudget;
 }
 
-export async function GetMonthlyCategoryBudgets(clientId, groupId, month, year) {
+export async function GetMonthlyCategoryBudgets(
+  clientId,
+  groupId,
+  month,
+  year
+) {
   const monthlyCategoryBudgets = await prisma.monthlyCategoryBudget.findMany({
     where: {
       clientId: clientId,
@@ -160,36 +166,14 @@ export async function GetMonthlyCategoryBudgets(clientId, groupId, month, year) 
 
 export async function POST(req) {
   try {
-    console.log("POST");
     const body = await req.json();
-    // const { reqFunc } = body;
-    console.log("body", body);
-    const { clientId, name, type, groupId, reqFunc } = body;
-
-    // if (!clientId || !name || !type) {
-    //   return NextResponse.json(
-    //     { error: "Missing required fields" },
-    //     { status: 400 }
-    //   );
-    // }
-
-    // // Periksa apakah nama kategori sudah ada
-    // const existingCategory = await prisma.categoryBudget.findFirst({
-    //   where: {
-    //     clientId: clientId,
-    //     name: name,
-    //   },
-    // });
-
-    // if (existingCategory) {
-    //   return NextResponse.json(
-    //     { error: "Category name already exists" },
-    //     { status: 400 }
-    //   );
-    // }
+    const { reqFunc } = body;
 
     let newCategoryBudget = null;
     if (reqFunc === "PostCategoryBudgetWithGroup") {
+      const { clientId, name, type, groupId } = body;
+      validateField([clientId]);
+
       newCategoryBudget = await PostCategoryBudgetWithGroup(
         clientId,
         name,
@@ -199,6 +183,24 @@ export async function POST(req) {
     } else if (reqFunc === "PostCategoryBudgetBulk") {
       newCategoryBudget = await PostCategoryBudgetBulk(body);
     } else {
+      const { clientId, name, type } = body;
+      validateFields([clientId, name, type]);
+
+      // Periksa apakah nama kategori sudah ada
+      const existingCategory = await prisma.categoryBudget.findFirst({
+        where: {
+          clientId: clientId,
+          name: name,
+        },
+      });
+
+      if (existingCategory) {
+        return NextResponse.json(
+          { error: "Category name already exists" },
+          { status: 400 }
+        );
+      }
+
       newCategoryBudget = await prisma.categoryBudget.create({
         data: {
           clientId,
@@ -239,20 +241,17 @@ export async function PostCategoryBudgetWithGroup(
 }
 
 export async function PostCategoryBudgetBulk(body) {
-  console.log("masuk PostCategoryBudgetBulk");
   const { categories } = body;
-  console.log("categories", categories);
   const createdCategories = await prisma.monthlyCategoryBudget.createMany({
     data: categories.map((category) => ({
       categoryId: category.categoryId,
       clientId: category.clientId,
       year: category.year,
-      month: category.month,
+      month: parseInt(category.month),
       amount: category.amount,
       type: category.type,
     })),
   });
-  console.log("createdCategories", createdCategories);
   return createdCategories;
 }
 
@@ -260,8 +259,6 @@ export async function PUT(req) {
   try {
     const body = await req.json();
     const { reqFunc } = body;
-    console.log("body", body);
-    console.log("reqFunc", reqFunc);
 
     let updateCategoryBudget = null;
     if (reqFunc === "PutCategoryBudgetBulk") {
@@ -277,22 +274,6 @@ export async function PUT(req) {
 
 export async function PutCategoryBudgetBulk(body) {
   const { categories } = body;
-  // const updatedCategories = await Promise.all(
-  //   categories.map((category) =>
-  //     prisma.monthlyCategoryBudget.update({
-  //       where: { id: category.id },
-  //       data: {
-  //         clientId: category.clientId,
-  //         categoryId: category.categoryId,
-  //         year: category.year,
-  //         month: category.month,
-  //         amount: category.budget,
-  //         type: category.type,
-  //       },
-  //     })
-  //   )
-  // );
-
   const updatePromises = categories.map((category) =>
     prisma.monthlyCategoryBudget.update({
       where: { id: category.id },
@@ -300,7 +281,7 @@ export async function PutCategoryBudgetBulk(body) {
         categoryId: category.categoryId,
         clientId: category.clientId,
         year: category.year,
-        month: category.month,
+        month: parseInt(category.month),
         amount: category.amount,
         type: category.type,
       },
@@ -308,6 +289,5 @@ export async function PutCategoryBudgetBulk(body) {
   );
 
   const updatedCategories = await Promise.all(updatePromises);
-  console.log("hasil updatedCategories", updatedCategories);
   return updatedCategories;
 }
