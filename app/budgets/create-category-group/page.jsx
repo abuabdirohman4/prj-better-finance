@@ -18,6 +18,7 @@ export default function CreateCategoryBudgetGroup() {
       });
       if (res.status == 201) {
         console.log("res post", res.data);
+        setCategoryName("");
       } else {
         console.log("res post", res.response.data);
       }

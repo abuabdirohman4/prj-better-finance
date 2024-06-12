@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getData, postData } from "@/utils/fetch";
 import { toCapitalCase } from "@/utils/helper";
 
@@ -8,7 +8,7 @@ export default function CreateCategoryBudget({ params, searchParams }) {
   const type = "spending";
   const [categories, setCategories] = useState([]);
   const [categoryName, setCategoryName] = useState("");
-  const [categoryType, setCategoryType] = useState("spending");
+  const [categoryType, setCategoryType] = useState(type);
   const groupName = toCapitalCase(params.group);
   const groupId = searchParams.groupId;
 
@@ -20,37 +20,43 @@ export default function CreateCategoryBudget({ params, searchParams }) {
         payload: {
           clientId: clientId,
           name: categoryName,
-          type: type,
+          type: categoryType,
+          groupId: groupId,
+          reqFunc: "PostCategoryBudgetWithGroup",
         },
       });
       if (res.status == 201) {
-        console.log("res", res.data);
+        console.log("res post", res.data);
+        setCategoryName("");
+        setCategoryType(type);
+        fetchCategories();
       } else {
-        console.log("res", res.response.data);
+        console.log("res post", res.response.data);
       }
     } catch (error) {
       console.error("Error adding category budget:", error);
     }
   };
 
-  useEffect(() => {
-    async function fetchCategories() {
-      const res = await getData({
-        url: "/api/budgets/categories",
-        params: {
-          clientId: clientId,
-          groupId: groupId,
-          type: type,
-          reqFunc: "GetCategoryBudgets",
-        },
-      });
-      if (res.status == 200) {
-        console.log("res", res);
-        setCategories(res.data);
-      }
+  const fetchCategories = useCallback(async () => {
+    const res = await getData({
+      url: "/api/budgets/categories",
+      params: {
+        clientId: clientId,
+        groupId: groupId,
+        type: type,
+        reqFunc: "GetCategoryBudgets",
+      },
+    });
+    if (res.status == 200) {
+      console.log("res", res);
+      setCategories(res.data);
     }
-    fetchCategories();
   }, [groupId]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   return (
     <main className="h-screen p-5">

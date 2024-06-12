@@ -67,10 +67,8 @@ export default function Budgets() {
     },
     []
   );
-  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
     const fetchData = async () => {
       try {
         setIsLoadingContent(true);
@@ -127,9 +125,6 @@ export default function Budgets() {
     fetchData();
   }, [selectedMonth, sumCategoryGroupSpending]);
 
-  if (!isMounted) {
-    return null;
-  }
   return (
     <main>
       <div className="w-full max-w-md min-h-screen p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">

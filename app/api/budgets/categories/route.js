@@ -168,12 +168,12 @@ export async function POST(req) {
     const { reqFunc } = body;
 
     let newCategoryBudget = null;
-    if (reqFunc === "PostCategoryBudgetWithGroup") {
+    if (reqFunc === 'PostCategoryBudgets') {
+      newCategoryBudget = await PostCategoryBudgets(body);
+    } else if (reqFunc === "PostCategoryBudgetWithGroup") {
       newCategoryBudget = await PostCategoryBudgetWithGroup(body);
     } else if (reqFunc === "PostCategoryBudgetBulk") {
       newCategoryBudget = await PostCategoryBudgetBulk(body);
-    } else {
-      newCategoryBudget = await PostCategoryBudgetWithGroup(body);
     }
 
     return NextResponse.json(newCategoryBudget, { status: 201 });
@@ -211,17 +211,17 @@ export async function PostCategoryBudgets(body) {
 }
 
 export async function PostCategoryBudgetWithGroup(body) {
-  const { clientId, groupId } = body;
+  const { clientId, name, type, groupId } = body;
   validateField(clientId);
 
   return await prisma.categoryBudget.create({
     data: {
       clientId: clientId,
-      name: categoryName,
-      type: categoryType,
+      name: name,
+      type: type,
       memberships: {
         create: {
-          groupId: groupId,
+          groupId: parseInt(groupId),
         },
       },
     },
