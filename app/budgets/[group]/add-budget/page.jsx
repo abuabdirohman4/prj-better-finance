@@ -2,6 +2,12 @@
 import { useEffect, useState } from "react";
 import { getData, postData, putData } from "@/utils/fetch";
 import { toCapitalCase } from "@/utils/helper";
+import SelectInput from "@/components/SelectInput/page";
+
+const optionTypes = [
+  { value: "earning", label: "Earning" },
+  { value: "spending", label: "Spending" },
+];
 
 export default function AddBudgetCategory({ params, searchParams }) {
   const clientId = "1717515";
@@ -17,9 +23,16 @@ export default function AddBudgetCategory({ params, searchParams }) {
   const [categoryBudget, setCategoryBudget] = useState(0);
   const [categoryInputs, setCategoryInputs] = useState({});
   const [monthlyCategories, setMonthlyCategories] = useState([]);
+  console.log("categoryInputs", categoryInputs);
 
-  const handleInputChange = (e, categoryId, field) => {
-    const { value } = e.target;
+  const handleInputChange = (e, categoryId, field, type) => {
+    let value = "";
+    if (type == "reactSelect") {
+      value = e ? e.value : "";
+    } else {
+      // const {value} = e.target
+      value = e.target.value;
+    }
     setCategoryInputs((prev) => ({
       ...prev,
       [categoryId]: {
@@ -28,6 +41,16 @@ export default function AddBudgetCategory({ params, searchParams }) {
       },
     }));
   };
+  // const handleInputChange = (selectedOption, categoryId, field) => {
+  //   const value = selectedOption ? selectedOption.value : "";
+  //   setCategoryInputs((prev) => ({
+  //     ...prev,
+  //     [categoryId]: {
+  //       ...prev[categoryId],
+  //       [field]: value,
+  //     },
+  //   }));
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,11 +76,13 @@ export default function AddBudgetCategory({ params, searchParams }) {
   };
 
   const handleSubmitInputMass = async (e) => {
+    // console.log("handleSubmitInputMass");
     e.preventDefault();
 
     const createPayload = [];
     const updatePayload = [];
     Object.keys(categoryInputs).forEach((categoryId) => {
+      // console.log("categoryInputs", categoryInputs);
       const category = categoryInputs[categoryId];
       const existingCategory = monthlyCategories.find(
         (monthlyCategory) =>
@@ -72,8 +97,8 @@ export default function AddBudgetCategory({ params, searchParams }) {
           clientId: clientId,
           year: year,
           month: month,
+          // type: category.type,
           amount: parseFloat(category.budget) || 0,
-          type: categoryType,
         });
       } else {
         // Data baru
@@ -82,11 +107,14 @@ export default function AddBudgetCategory({ params, searchParams }) {
           clientId: clientId,
           year: year,
           month: month,
+          // name: category.name,
+          // type: category.type,
           amount: parseFloat(category.budget) || 0,
-          type: categoryType,
         });
       }
     });
+    // console.log("createPayload", createPayload);
+    // console.log("updatePayload", updatePayload);
 
     try {
       if (createPayload.length > 0) {
@@ -98,7 +126,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
           },
         });
 
-        console.log('res post', res)
+        console.log("res post", res);
       }
 
       if (updatePayload.length > 0) {
@@ -226,7 +254,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
 
       <div className="mt-8">
         <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-          List Category:
+          Update Budget:
         </h2>
         <form className="space-y-3" onSubmit={handleSubmitInputMass}>
           {categories.map((category, index) => (
@@ -254,29 +282,43 @@ export default function AddBudgetCategory({ params, searchParams }) {
                   required
                 />
               </div>
-              <div>
-                <label
-                  htmlFor={`type-${index}`}
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Type
-                </label>
-                <input
-                  type="text"
-                  id={`type-${index}`}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Type"
-                  value={
-                    categoryInputs[category.id || `new-${index}`]?.type ||
-                    category.type ||
-                    ""
-                  }
-                  onChange={(e) =>
-                    handleInputChange(e, category.id || `new-${index}`, "type")
-                  }
-                  required
-                />
-              </div>
+              <SelectInput
+                label="Type"
+                placeholder="Type"
+                options={optionTypes}
+                value={optionTypes.find(
+                  (option) =>
+                    option.value ===
+                    (categoryInputs[category.id || `new-${index}`]?.type ||
+                      category.type)
+                )}
+                onChange={(e) =>
+                  handleInputChange(
+                    e,
+                    category.id || `new-${index}`,
+                    "type",
+                    "reactSelect"
+                  )
+                }
+                styles={{
+                  control: (base, state) => ({
+                    ...base,
+                    backgroundColor: "#f9fafb", // bg-gray-50
+                    borderColor: state.isFocused ? "#3b82f6" : "#d1d5db", // focus:border-blue-500 or border-gray-300
+                    color: state.isFocused ? "#ffffff" : "#111827", // dark:text-white or text-gray-900
+                    fontSize: "14px", // text-sm
+                    borderRadius: "0.5rem", // rounded-lg
+                    boxShadow: state.isFocused ? "0 0 0 1px #3b82f6" : null, // focus:ring-blue-500
+                    width: "100%", // w-full
+                    padding: "0.125rem 0", // py-5 px-0
+                  }),
+                  option: (base) => ({
+                    ...base,
+                    fontSize: "14px", // text-sm
+                  }),
+                }}
+                isSearchable={false}
+              />
               {category.monthlyCategoryBudgets.length > 0 ? (
                 category.monthlyCategoryBudgets.map(
                   (monthlyCategory, index) => (

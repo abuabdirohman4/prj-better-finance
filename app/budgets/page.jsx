@@ -140,7 +140,7 @@ export default function Budgets() {
           <div>
             <div className="flex">
               <select
-                className="appearance-none bg-gray-50 border border-gray-300 border-r-4 border-transparent outline outline-gray-300 text-gray-900 text-sm rounded-s-lg border-s-gray-100 dark:border-s-gray-700 border-s-2 focus:ring-gray-100 block w-12 text-center cursor-pointer hover:bg-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="appearance-none bg-gray-50 border border-gray-300 border-r-4 border-transparent outline outline-gray-300 text-gray-900 text-sm rounded-s-lg border-s-gray-100 dark:border-s-gray-700 border-s-2 focus:ring-gray-100 block w-12 text-center cursor-pointer hover:bg-gray-200 hover:border-s-gray-200  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
               >
@@ -151,7 +151,7 @@ export default function Budgets() {
                 ))}
               </select>
               <select
-                className="appearance-none bg-gray-50 border border-gray-300 border-r-4 border-transparent outline outline-gray-300 text-gray-900 text-sm rounded-e-lg border-s-gray-100 dark:border-s-gray-700 border-s-2 focus:ring-gray-100 block w-12 text-center cursor-pointer hover:bg-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="appearance-none bg-gray-50 border border-gray-300 border-r-4 border-transparent outline outline-gray-300 text-gray-900 text-sm rounded-e-lg border-s-gray-100 dark:border-s-gray-700 border-s-2 focus:ring-gray-100 block w-12 text-center cursor-pointer hover:bg-gray-200 hover:border-s-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 onChange={() => false}
               >
                 <option key={year} value={year}>

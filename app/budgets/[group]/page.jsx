@@ -17,7 +17,7 @@ export default async function Budgets({ params, searchParams }) {
   const group = toCapitalCase(params.group);
   const groupId = searchParams.groupId;
   const monthInNumber = getMonthInNumber(searchParams.month);
-  const year = getMonthInNumber(searchParams.year);
+  const year = searchParams.year;
   const transaction = await fetchTransaction(getDefaultSheetName(months));
   const categoryBudget = await GetTotalAmountCategoryBudgets(
     clientId,
