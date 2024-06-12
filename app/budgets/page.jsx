@@ -1,7 +1,7 @@
 "use client";
 import Budget from "@/components/Card/Budget";
 import SkeletonList from "@/components/Skeleton/List";
-import { months } from "@/utils/constants";
+import { SESSIONKEY, months } from "@/utils/constants";
 import { getData } from "@/utils/fetch";
 import { fetchTransaction } from "@/utils/fetchTransaction";
 import {
@@ -10,6 +10,7 @@ import {
   getDefaultSheetName,
   getTotalObjectValue,
 } from "@/utils/helper";
+import { getSession } from "@/utils/session";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -96,7 +97,11 @@ export default function Budgets() {
           setTotalBudget(getTotalObjectValue(amountCategoryGroups));
 
           // Get data & total category group spending
-          const transactions = await fetchTransaction(selectedMonth);
+
+          let transactions = getSession(SESSIONKEY.transactions);
+          if (!transactions) {
+            transactions = await fetchTransaction(selectedMonth);
+          }
           const categoryGroupSpending = sumCategoryGroupSpending(
             transactions,
             categoryGroupBudget,

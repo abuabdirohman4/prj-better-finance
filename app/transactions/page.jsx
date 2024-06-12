@@ -1,6 +1,6 @@
 "use client";
 import { fetchTransaction } from "@/utils/fetchTransaction";
-import { months } from "@/utils/constants";
+import { SESSIONKEY, months } from "@/utils/constants";
 import { useEffect, useState } from "react";
 import Transaction from "@/components/Card/Transaction";
 import {
@@ -13,6 +13,7 @@ import {
 import Image from "next/image";
 import SkeletonList from "@/components/Skeleton/List";
 import SkeletonText from "@/components/Skeleton/Text";
+import { getSession } from "@/utils/session";
 
 export default function Transactions() {
   const [isLoadingPage, setisLoadingPage] = useState(true);
@@ -44,7 +45,11 @@ export default function Transactions() {
   useEffect(() => {
     const fetchData = async () => {
       setIsLoadingContent(true);
-      const data = await fetchTransaction(selectedMonth);
+
+      let data = getSession(SESSIONKEY.transactions);
+      if (!data) {
+        data = await fetchTransaction(selectedMonth);
+      }
       const group = groupTransactionsByDate(data);
       setTransaction(group);
 

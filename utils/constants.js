@@ -49,3 +49,7 @@ const Earning = [
   "AP",
   "AR",
 ];
+
+export const SESSIONKEY = {
+  transactions: "transactions",
+};
