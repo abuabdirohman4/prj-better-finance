@@ -134,8 +134,12 @@ export default async function Budgets({ params, searchParams }) {
           </ul>
           <div className="mt-3 text-center underline">
             <Link
-              // href={`/budgets/create/${group}`}
-              href={`/budgets/${group}/create-category`}
+              href={{
+                pathname: `/budgets/${group}/create-category`,
+                query: {
+                  groupId: groupId,
+                },
+              }}
               className="hover:text-blue-500"
             >
               Add Category For {toCapitalCase(group)}

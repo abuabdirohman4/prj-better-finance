@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 import { getData, postData } from "@/utils/fetch";
 import { toCapitalCase } from "@/utils/helper";
 
-export default function CreateCategoryBudget({ params }) {
+export default function CreateCategoryBudget({ params, searchParams }) {
   const clientId = "1717515";
   const type = "spending";
   const [categories, setCategories] = useState([]);
   const [categoryName, setCategoryName] = useState("");
   const [categoryType, setCategoryType] = useState("spending");
-  const category = toCapitalCase(params.category);
+  const groupName = toCapitalCase(params.group);
+  const groupId = searchParams.groupId;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,7 +37,12 @@ export default function CreateCategoryBudget({ params }) {
     async function fetchCategories() {
       const res = await getData({
         url: "/api/budgets/categories",
-        params: { clientId: clientId, groupName: category, type: type },
+        params: {
+          clientId: clientId,
+          groupId: groupId,
+          type: type,
+          reqFunc: "GetCategoryBudgets",
+        },
       });
       if (res.status == 200) {
         console.log("res", res);
@@ -44,26 +50,16 @@ export default function CreateCategoryBudget({ params }) {
       }
     }
     fetchCategories();
-  }, [category]);
+  }, [groupId]);
 
   return (
     <main className="h-screen p-5">
       <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900 dark:text-white">
-        Add Category
+        Add Category {groupName}
       </h5>
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          {/* <label>
-            Category Type:
-            <select
-              value={categoryType}
-              onChange={(e) => setCategoryType(e.target.value)}
-            >
-              <option value="earning">earning</option>
-              <option value="spending">spending</option>
-            </select>
-          </label> */}
           <div>
             <label
               htmlFor="type"
@@ -95,7 +91,7 @@ export default function CreateCategoryBudget({ params }) {
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Category Name"
               value={categoryName}
-              onChange={(e) => categoryName(e.target.value)}
+              onChange={(e) => setCategoryName(e.target.value)}
               required
             />
           </div>
@@ -107,8 +103,6 @@ export default function CreateCategoryBudget({ params }) {
           Submit
         </button>
       </form>
-
-      {/* <form className="max-w-sm mx-auto"></form> */}
 
       <div className="mt-8">
         <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">

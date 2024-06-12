@@ -157,7 +157,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
           type: type,
           year: "2024",
           month: 6,
-          function: "GetCategoryBudgetsAmount",
+          reqFunc: "GetCategoryBudgetsAmount",
         },
       });
       if (res.status == 200) {
@@ -174,7 +174,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
           type: type,
           year: "2024",
           month: 6,
-          function: "GetMonthlyCategoryBudgets",
+          reqFunc: "GetMonthlyCategoryBudgets",
         },
       });
       if (resMonthly.status == 200) {

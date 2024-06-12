@@ -10,7 +10,7 @@ export async function GET(req) {
   const type = url.searchParams.get("type");
   const year = url.searchParams.get("year");
   const month = parseInt(url.searchParams.get("month"));
-  const reqFunc = url.searchParams.get("function");
+  const reqFunc = url.searchParams.get("reqFunc");
 
   if (!clientId) {
     return new Response(JSON.stringify({ error: "ClientId is required" }), {
@@ -35,24 +35,23 @@ export async function GET(req) {
       month,
       year
     );
-  } else {
-    categoryBudgets = await GetCategoryBudgets(clientId, groupName, type);
+  } else if (reqFunc === "GetCategoryBudgets") {
+    console.log("groupId", groupId);
+    categoryBudgets = await GetCategoryBudgets(clientId, groupId, type);
   }
   return NextResponse.json(categoryBudgets, { status: 200 });
 }
 
-export async function GetCategoryBudgets(clientId, groupName, type) {
+export async function GetCategoryBudgets(clientId, groupId, type) {
   let categoryBudgets = "";
-  if (groupName) {
+  if (groupId) {
     categoryBudgets = await prisma.categoryBudget.findMany({
       where: {
         clientId: clientId,
         type: type,
         memberships: {
           some: {
-            group: {
-              name: groupName,
-            },
+            groupId: parseInt(groupId),
           },
         },
       },
@@ -171,43 +170,11 @@ export async function POST(req) {
 
     let newCategoryBudget = null;
     if (reqFunc === "PostCategoryBudgetWithGroup") {
-      const { clientId, name, type, groupId } = body;
-      validateField([clientId]);
-
-      newCategoryBudget = await PostCategoryBudgetWithGroup(
-        clientId,
-        name,
-        type,
-        parseInt(groupId)
-      );
+      newCategoryBudget = await PostCategoryBudgetWithGroup(body);
     } else if (reqFunc === "PostCategoryBudgetBulk") {
       newCategoryBudget = await PostCategoryBudgetBulk(body);
     } else {
-      const { clientId, name, type } = body;
-      validateFields([clientId, name, type]);
-
-      // Periksa apakah nama kategori sudah ada
-      const existingCategory = await prisma.categoryBudget.findFirst({
-        where: {
-          clientId: clientId,
-          name: name,
-        },
-      });
-
-      if (existingCategory) {
-        return NextResponse.json(
-          { error: "Category name already exists" },
-          { status: 400 }
-        );
-      }
-
-      newCategoryBudget = await prisma.categoryBudget.create({
-        data: {
-          clientId,
-          name,
-          type,
-        },
-      });
+      newCategoryBudget = await PostCategoryBudgetWithGroup(body);
     }
 
     return NextResponse.json(newCategoryBudget, { status: 201 });
@@ -217,12 +184,37 @@ export async function POST(req) {
   }
 }
 
-export async function PostCategoryBudgetWithGroup(
-  clientId,
-  categoryName,
-  categoryType,
-  groupId
-) {
+export async function PostCategoryBudgets(body) {
+  const { clientId, name, type } = body;
+  validateFields([clientId, name, type]);
+
+  // Periksa apakah nama kategori sudah ada
+  const existingCategory = await prisma.categoryBudget.findFirst({
+    where: {
+      clientId: clientId,
+      name: name,
+    },
+  });
+  if (existingCategory) {
+    return NextResponse.json(
+      { error: "Category name already exists" },
+      { status: 400 }
+    );
+  }
+
+  return await prisma.categoryBudget.create({
+    data: {
+      clientId,
+      name,
+      type,
+    },
+  });
+}
+
+export async function PostCategoryBudgetWithGroup(body) {
+  const { clientId, groupId } = body;
+  validateField(clientId);
+
   return await prisma.categoryBudget.create({
     data: {
       clientId: clientId,
