@@ -13,7 +13,7 @@ import {
 import Image from "next/image";
 import SkeletonList from "@/components/Skeleton/List";
 import SkeletonText from "@/components/Skeleton/Text";
-import { getSession } from "@/utils/session";
+import { getLocal, getSession } from "@/utils/session";
 
 export default function Transactions() {
   const [isLoadingPage, setisLoadingPage] = useState(true);
@@ -46,11 +46,13 @@ export default function Transactions() {
     const fetchData = async () => {
       setIsLoadingContent(true);
 
-      let data = getSession(SESSIONKEY.transactions);
-      if (!data) {
-        data = await fetchTransaction(selectedMonth);
+      let transactions = getLocal(SESSIONKEY.transactions);
+      if (!transactions) {
+        transactions = await fetchTransaction(selectedMonth);
+      }else {
+        console.log("storage", transactions);
       }
-      const group = groupTransactionsByDate(data);
+      const group = groupTransactionsByDate(transactions);
       setTransaction(group);
 
       setisLoadingPage(false);

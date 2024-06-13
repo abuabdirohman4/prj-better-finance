@@ -46,3 +46,33 @@ export function clearSession() {
     return sessionStorage.clear();
   }
 }
+
+//SAVE LOCAL BROWSER DATA
+export function setLocal(key, value) {
+    if (isStorageExist()) {
+        localStorage.setItem(key, JSON.stringify(value));
+        return true;
+    }
+};
+
+//GET LOCAL BROWSER DATA
+export function getLocal(key) {
+    if (isStorageExist()) {
+        const dataLocal = localStorage.getItem(key);
+        return isJson(dataLocal) ? JSON.parse(dataLocal) : dataLocal;
+    }
+};
+
+//REMOVE SESSION DATA
+export function removeLocal(key) {
+    if (isStorageExist()) {
+        return localStorage.removeItem(key);
+    }
+}
+
+//CLEAR SESSION
+export function clearLocal() {
+    if (isStorageExist()) {
+        return localStorage.clear();
+    }
+}

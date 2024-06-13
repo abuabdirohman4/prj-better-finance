@@ -10,13 +10,13 @@ import {
   getDefaultSheetName,
   getTotalObjectValue,
 } from "@/utils/helper";
-import { getSession } from "@/utils/session";
+import { getLocal, getSession } from "@/utils/session";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 export default function Budgets() {
   const clientId = "1717515";
-  const [isLoadingContent, setIsLoadingContent] = useState(false);
+  const [isLoadingContent, setIsLoadingContent] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(
     getDefaultSheetName(months)
   );
@@ -73,13 +73,19 @@ export default function Budgets() {
     const fetchData = async () => {
       try {
         setIsLoadingContent(true);
-        const res = await getData({
-          url: "/api/budgets/group",
-          params: { clientId },
-        });
 
-        if (res.status === 200) {
-          const categoryGroupBudget = res.data;
+        let categoryBudgetGroup = getLocal(SESSIONKEY.categoryBudgetGroup);
+        if (!categoryBudgetGroup) {
+          categoryBudgetGroup = await getData({
+            url: "/api/budgets/group",
+            params: { clientId },
+          });
+        } else {
+          console.log("storage", categoryBudgetGroup);
+        }
+
+        if (categoryBudgetGroup.status === 200) {
+          const categoryGroupBudget = categoryBudgetGroup.data;
           // Combine the fetched data directly for use
           const amountCategoryGroups = {};
           const nameCategoryGroups = [];

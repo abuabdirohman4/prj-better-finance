@@ -52,4 +52,5 @@ const Earning = [
 
 export const SESSIONKEY = {
   transactions: "transactions",
+  categoryBudgetGroup: "category_budget_group"
 };
