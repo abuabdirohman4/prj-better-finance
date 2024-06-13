@@ -76,12 +76,11 @@ export default function Budgets() {
 
         let categoryBudgetGroup = getLocal(SESSIONKEY.categoryBudgetGroup);
         if (!categoryBudgetGroup) {
+          console.log("storage categoryBudgetGroup", categoryBudgetGroup);
           categoryBudgetGroup = await getData({
             url: "/api/budgets/group",
             params: { clientId },
           });
-        } else {
-          console.log("storage", categoryBudgetGroup);
         }
 
         if (categoryBudgetGroup.status === 200) {
@@ -106,6 +105,7 @@ export default function Budgets() {
 
           let transactions = getSession(SESSIONKEY.transactions);
           if (!transactions) {
+            console.log("storage transactions", categoryBudgetGroup);
             transactions = await fetchTransaction(selectedMonth);
           }
           const categoryGroupSpending = sumCategoryGroupSpending(

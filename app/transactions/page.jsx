@@ -46,11 +46,10 @@ export default function Transactions() {
     const fetchData = async () => {
       setIsLoadingContent(true);
 
-      let transactions = getLocal(SESSIONKEY.transactions);
+      let transactions = await getLocal(SESSIONKEY.transactions);
       if (!transactions) {
+        console.log("storage transactions", transactions);
         transactions = await fetchTransaction(selectedMonth);
-      }else {
-        console.log("storage", transactions);
       }
       const group = groupTransactionsByDate(transactions);
       setTransaction(group);
