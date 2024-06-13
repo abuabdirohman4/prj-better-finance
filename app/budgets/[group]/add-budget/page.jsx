@@ -181,7 +181,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
 
   return (
     <main className="h-screen p-5">
-      <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900 dark:text-white">
+      <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900">
         Update Budget
       </h5>
 
@@ -190,13 +190,13 @@ export default function AddBudgetCategory({ params, searchParams }) {
           <div>
             <label
               htmlFor="type"
-              className="block mb-y text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-y text-sm font-medium text-gray-900"
             >
               Select Type
             </label>
             <select
               id="type"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               value={categoryType}
               onChange={(e) => setCategoryType(e.target.value)}
             >
@@ -207,14 +207,14 @@ export default function AddBudgetCategory({ params, searchParams }) {
           <div className="mt-3">
             <label
               htmlFor="group-category-name"
-              className="block mb-y text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-y text-sm font-medium text-gray-900"
             >
               Category Name
             </label>
             <input
               type="text"
               id="group-category-name"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="Category Name"
               value={categoryName}
               onChange={(e) => setCategoryName(e.target.value)}
@@ -224,14 +224,14 @@ export default function AddBudgetCategory({ params, searchParams }) {
           <div className="mt-3">
             <label
               htmlFor="budget"
-              className="block mb-y text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-y text-sm font-medium text-gray-900"
             >
               Budget
             </label>
             <input
               type="text"
               id="budget"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="Budget"
               value={categoryBudget}
               onChange={(e) => setCategoryBudget(e.target.value)}
@@ -241,17 +241,17 @@ export default function AddBudgetCategory({ params, searchParams }) {
         </div>
         <button
           type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
         >
           Submit
         </button>
       </form> */}
 
       <div className="grid gap-6 mb-1 md:grid-cols-2 text-center">
-        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        <label className="block mb-2 text-sm font-medium text-gray-900">
           Name
         </label>
-        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        <label className="block mb-2 text-sm font-medium text-gray-900">
           Amount
         </label>
       </div>
@@ -261,14 +261,14 @@ export default function AddBudgetCategory({ params, searchParams }) {
             <div>
               {/* <label
                   htmlFor={`name-${index}`}
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   Name
                 </label> */}
               <input
                 type="text"
                 id={`name-${index}`}
-                className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 placeholder="Name"
                 value={
                   categoryInputs[category.id || `new-${index}`]?.name ||
@@ -305,7 +305,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
                     ...base,
                     backgroundColor: "#f9fafb", // bg-gray-50
                     borderColor: state.isFocused ? "#3b82f6" : "#d1d5db", // focus:border-blue-500 or border-gray-300
-                    color: state.isFocused ? "#ffffff" : "#111827", // dark:text-white or text-gray-900
+                    color: state.isFocused ? "#ffffff" : "#111827", // or text-gray-900
                     fontSize: "14px", // text-sm
                     borderRadius: "0.5rem", // rounded-lg
                     boxShadow: state.isFocused ? "0 0 0 1px #3b82f6" : null, // focus:ring-blue-500
@@ -324,14 +324,14 @@ export default function AddBudgetCategory({ params, searchParams }) {
                 <div key={index}>
                   {/* <label
                         htmlFor={`budget-${index}`}
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        className="block mb-2 text-sm font-medium text-gray-900"
                       >
                         Amount
                       </label> */}
                   <input
                     type="text"
                     id={`budget-${index}`}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     placeholder="Amount"
                     value={
                       categoryInputs[category.id || `new-${index}`]?.budget ||
@@ -353,14 +353,14 @@ export default function AddBudgetCategory({ params, searchParams }) {
               <div>
                 {/* <label
                   htmlFor={`budget-${index}`}
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   Amount
                 </label> */}
                 <input
                   type="text"
                   id={`budget-${index}`}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Amount"
                   value={
                     categoryInputs[category.id || `new-${index}`]?.budget ||
@@ -382,7 +382,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
         ))}
         <button
           type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
         >
           Submit
         </button>

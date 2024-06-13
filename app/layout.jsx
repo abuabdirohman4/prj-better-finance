@@ -13,7 +13,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="mx-auto max-w-md dark:bg-white">
+    <html lang="en" className="mx-auto max-w-md">
       <body className={`${inter.className} shadow-2xl`}>
         <Suspense fallback={<SkeletonList listNumber={15} />}>
           {children}

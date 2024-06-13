@@ -133,19 +133,19 @@ export default function Budgets() {
     };
 
     fetchData();
-  }, [selectedMonth, sumCategoryGroupSpending]);
+  }, [selectedMonth, currentMonth, sumCategoryGroupSpending]);
 
   return (
     <main>
-      <div className="w-full max-w-md min-h-screen p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+      <div className="w-full max-w-md min-h-screen p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8">
         <div className="flex items-center justify-between mb-8">
-          <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
+          <h5 className="text-xl font-bold leading-none text-gray-900">
             Budgets
           </h5>
           <div>
             <div className="flex">
               <select
-                className="appearance-none bg-gray-50 border border-gray-300 border-r-4 border-transparent outline outline-gray-300 text-gray-900 text-sm rounded-s-lg border-s-gray-100 dark:border-s-gray-700 border-s-2 focus:ring-gray-100 block w-12 text-center cursor-pointer hover:bg-gray-200 hover:border-s-gray-200  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="appearance-none bg-gray-50 border border-gray-300 border-r-4 border-transparent outline outline-gray-300 text-gray-900 text-sm rounded-s-lg border-s-gray-100 border-s-2 focus:ring-gray-100 block w-12 text-center cursor-pointer hover:bg-gray-200 hover:border-s-gray-200"
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
               >
@@ -156,7 +156,7 @@ export default function Budgets() {
                 ))}
               </select>
               <select
-                className="appearance-none bg-gray-50 border border-gray-300 border-r-4 border-transparent outline outline-gray-300 text-gray-900 text-sm rounded-e-lg border-s-gray-100 dark:border-s-gray-700 border-s-2 focus:ring-gray-100 block w-12 text-center cursor-pointer hover:bg-gray-200 hover:border-s-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="appearance-none bg-gray-50 border border-gray-300 border-r-4 border-transparent outline outline-gray-300 text-gray-900 text-sm rounded-e-lg border-s-gray-100 border-s-2 focus:ring-gray-100 block w-12 text-center cursor-pointer hover:bg-gray-200 hover:border-s-gray-200"
                 onChange={() => false}
               >
                 <option key={year} value={year}>
@@ -172,19 +172,19 @@ export default function Budgets() {
           <>
             <div className="flex items-center justify-between ">
               <h5 className="text-center">
-                <p className="text-base font-medium text-gray-900 truncate dark:text-white">
+                <p className="text-base font-medium text-gray-900 truncate">
                   Budget
                 </p>
-                <div className="text-base font-semibold text-gray-900 dark:text-white">
+                <div className="text-base font-semibold text-gray-900">
                   {formatRupiah(totalBudget)}
                 </div>
               </h5>
               <h5 className="text-center">
-                <p className="text-base font-medium text-gray-900 truncate dark:text-white">
+                <p className="text-base font-medium text-gray-900 truncate">
                   Balance
                 </p>
                 <div
-                  className={`text-base font-semibold text-gray-900 dark:text-white ${
+                  className={`text-base font-semibold text-gray-900 ${
                     balance < 0 && "text-red-500"
                   }`}
                 >
@@ -192,10 +192,10 @@ export default function Budgets() {
                 </div>
               </h5>
               <h5 className="text-center">
-                <p className="text-base font-medium text-gray-900 truncate dark:text-white">
+                <p className="text-base font-medium text-gray-900 truncate">
                   Spending
                 </p>
-                <div className="text-base font-semibold text-red-600 dark:text-white">
+                <div className="text-base font-semibold text-red-600">
                   {formatRupiah(totalSpending)}
                 </div>
               </h5>
@@ -216,7 +216,7 @@ export default function Budgets() {
             <div className="flow-root">
               <ul
                 role="list"
-                className="border-y-[1.5px] border-y-gray-200 divide-y divide-gray-200 dark:divide-gray-700"
+                className="border-y-[1.5px] border-y-gray-200 divide-y divide-gray-200"
               >
                 {categoryGroup.map((category, key) => (
                   <div key={key}>

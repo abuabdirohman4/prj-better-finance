@@ -14,10 +14,8 @@ export default function Transaction({
         {type.includes("Earning") ? "E" : type.includes("Spending") ? "S" : "T"}
       </div>
       <div className="flex-1 min-w-0 ms-4">
-        <p className="text-base font-medium text-gray-900 truncate dark:text-white">
-          {note}
-        </p>
-        <p className="text-sm text-gray-500 truncate dark:text-gray-400">
+        <p className="text-base font-medium text-gray-900 truncate">{note}</p>
+        <p className="text-sm text-gray-500 truncate">
           {category === "-"
             ? account
             : type.includes("Transfer")
@@ -26,7 +24,7 @@ export default function Transaction({
         </p>
       </div>
       <div
-        className={`inline-flex items-center text-base font-semibold text-gray-900 dark:text-white ${
+        className={`inline-flex items-center text-base font-semibold text-gray-900 ${
           cash > 0 && "text-green-600"
         }`}
       >

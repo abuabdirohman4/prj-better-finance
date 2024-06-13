@@ -71,12 +71,12 @@ export default async function Budgets({ params, searchParams }) {
 
   return (
     <main>
-      <div className="w-full max-w-md min-h-screen p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+      <div className="w-full max-w-md min-h-screen p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8">
         <Link href={"/budgets"} className="underline">
           Back
         </Link>
         <div className="flex items-center justify-center mt-2 mb-3">
-          <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
+          <h5 className="text-xl font-bold leading-none text-gray-900">
             {toCapitalCase(group)}
           </h5>
         </div>
@@ -93,19 +93,19 @@ export default async function Budgets({ params, searchParams }) {
         </div>
         <div className="flex items-center justify-between ">
           <h5 className="text-center">
-            <p className="text-base font-medium text-gray-900 truncate dark:text-white">
+            <p className="text-base font-medium text-gray-900 truncate">
               Budget
             </p>
-            <div className="text-base font-semibold text-gray-900 dark:text-white">
+            <div className="text-base font-semibold text-gray-900">
               {formatRupiah(totalBudget)}
             </div>
           </h5>
           <h5 className="text-center">
-            <p className="text-base font-medium text-gray-900 truncate dark:text-white">
+            <p className="text-base font-medium text-gray-900 truncate">
               Balance
             </p>
             <div
-              className={`text-base font-semibold text-gray-900 dark:text-white ${
+              className={`text-base font-semibold text-gray-900 ${
                 balance < 0 && "text-red-500"
               }`}
             >
@@ -113,10 +113,10 @@ export default async function Budgets({ params, searchParams }) {
             </div>
           </h5>
           <h5 className="text-center">
-            <p className="text-base font-medium text-gray-900 truncate dark:text-white">
+            <p className="text-base font-medium text-gray-900 truncate">
               Spending
             </p>
-            <div className="text-base font-semibold text-red-600 dark:text-white">
+            <div className="text-base font-semibold text-red-600">
               {formatRupiah(totalSpending)}
             </div>
           </h5>
@@ -124,7 +124,7 @@ export default async function Budgets({ params, searchParams }) {
         <div className="flow-root mt-5">
           <ul
             role="list"
-            className="border-y-[1.5px] border-y-gray-200 divide-y divide-gray-200 dark:divide-gray-700"
+            className="border-y-[1.5px] border-y-gray-200 divide-y divide-gray-200"
           >
             {categories.map((category, key) => (
               <div key={key}>

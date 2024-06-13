@@ -31,42 +31,42 @@ export default function BottomNav() {
     }, 3000);
   };
   return (
-    <div className="sticky bottom-0 mx-auto z-50 w-full max-w-md h-16 bg-[#F1F3F4] border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+    <div className="sticky bottom-0 mx-auto z-50 w-full max-w-md h-16 bg-[#F1F3F4] border-t border-gray-200">
       <div className="mt-0.5 flex h-full justify-evenly font-medium">
         <Link
           href={"/transactions"}
-          className="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x hover:bg-gray-50 dark:hover:bg-gray-800 group dark:border-gray-600"
+          className="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x hover:bg-gray-50 group"
         >
           <GrTransaction
-            className="mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
+            className="mb-2 text-gray-500 group-hover:text-blue-600"
             size={20}
           />
-          <span className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">
+          <span className="text-sm text-gray-500 group-hover:text-blue-600">
             Transactions
           </span>
         </Link>
         {/* <Link
           href={"/transactions"}
-          className="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x hover:bg-gray-50 dark:hover:bg-gray-800 group dark:border-gray-600"
+          className="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x hover:bg-gray-50 group"
         >
           <FaWallet
-            className="mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
+            className="mb-2 text-gray-500 group-hover:text-blue-600"
             size={20}
           />
-          <span className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">
+          <span className="text-sm text-gray-500 group-hover:text-blue-600">
             Pocket
           </span>
         </Link> */}
         <div className="flex items-center justify-center mb-2">
           <button
-            className={`inline-flex items-center justify-center w-10 h-10 font-medium bg-blue-500 rounded-full hover:bg-blue-800 group focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800`}
+            className={`inline-flex items-center justify-center w-10 h-10 font-medium bg-blue-500 rounded-full hover:bg-blue-800 group focus:ring-4 focus:ring-blue-300 focus:outline-none`}
             onClick={fetchData}
           >
             {isLoading ? (
               <div role="status">
                 <svg
                   aria-hidden="true"
-                  className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                  className="w-8 h-8 text-gray-200 animate-spin fill-blue-600"
                   viewBox="0 0 100 101"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -89,25 +89,25 @@ export default function BottomNav() {
         </div>
         {/* <Link
           href={"/budgets"}
-          className="group inline-flex flex-col items-center justify-center px-5 border-e border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 group dark:border-gray-600"
+          className="group inline-flex flex-col items-center justify-center px-5 border-e border-gray-200 hover:bg-gray-50 group"
         >
           <BiMoneyWithdraw
-            className="mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
+            className="mb-2 text-gray-500 group-hover:text-blue-600"
             size={20}
           />
-          <span className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">
+          <span className="text-sm text-gray-500 group-hover:text-blue-600">
             Income
           </span>
         </Link> */}
         <Link
           href={"/budgets"}
-          className="group inline-flex flex-col items-center justify-center px-5 border-e border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 group dark:border-gray-600"
+          className="group inline-flex flex-col items-center justify-center px-5 border-e border-gray-200 hover:bg-gray-50 group"
         >
           <GrMoney
-            className="mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
+            className="mb-2 text-gray-500 group-hover:text-blue-600"
             size={20}
           />
-          <span className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">
+          <span className="text-sm text-gray-500 group-hover:text-blue-600">
             Budgets
           </span>
         </Link>

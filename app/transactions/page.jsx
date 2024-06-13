@@ -82,10 +82,10 @@ export default function Transactions() {
                 </div>
               ) : (
                 <h5 className="text-center">
-                  <p className="text-base font-medium text-gray-900 truncate dark:text-white">
+                  <p className="text-base font-medium text-gray-900 truncate">
                     Earning
                   </p>
-                  <div className="text-base font-semibold text-green-600 dark:text-white">
+                  <div className="text-base font-semibold text-green-600">
                     +{formatRupiah(earning)}
                   </div>
                 </h5>
@@ -96,26 +96,26 @@ export default function Transactions() {
                 </div>
               ) : (
                 <h5 className="text-center">
-                  <p className="text-base font-medium text-gray-900 truncate dark:text-white">
+                  <p className="text-base font-medium text-gray-900 truncate">
                     Spending
                   </p>
-                  <div className="text-base font-semibold text-gray-900 dark:text-white">
+                  <div className="text-base font-semibold text-gray-900">
                     {formatRupiah(spending)}
                   </div>
                 </h5>
               )}
             </div>
           </div>
-          <div className="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg rounded-t-none shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+          <div className="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg rounded-t-none shadow sm:p-8">
             <div className="flex items-center justify-between mb-4">
-              <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
+              <h5 className="text-xl font-bold leading-none text-gray-900">
                 Transactions
               </h5>
               <select
                 id="month"
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
-                className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
+                className="text-sm font-medium text-blue-600 hover:underline"
               >
                 {months.map((month) => (
                   <option key={month} value={month}>
@@ -131,7 +131,7 @@ export default function Transactions() {
                 <ul role="list">
                   {Object.keys(transaction).map((date) => (
                     <li key={date} className="py-2 sm:py-3">
-                      <p className="text-sm text-gray-500 mb-2 truncate dark:text-gray-400">
+                      <p className="text-sm text-gray-500 mb-2 truncate">
                         {formatDate(date)}
                       </p>
                       {transaction[date].map(
