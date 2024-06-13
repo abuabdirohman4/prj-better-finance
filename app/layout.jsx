@@ -1,6 +1,8 @@
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
 import BottomNav from "@/components/BottomNav/page";
+import { Suspense } from "react";
+import SkeletonList from "@/components/Skeleton/List";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,7 +15,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="mx-auto max-w-md dark:bg-white">
       <body className={`${inter.className} shadow-2xl`}>
-        {children}
+        <Suspense fallback={<SkeletonList listNumber={15} />}>
+          {children}
+        </Suspense>
         <BottomNav />
       </body>
     </html>

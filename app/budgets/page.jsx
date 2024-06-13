@@ -103,9 +103,9 @@ export default function Budgets() {
 
           // Get data & total category group spending
 
-          let transactions = getSession(SESSIONKEY.transactions);
+          let transactions = getLocal(SESSIONKEY.transactions);
           if (!transactions) {
-            console.log("storage transactions", categoryBudgetGroup);
+            console.log("storage transactions", transactions);
             transactions = await fetchTransaction(selectedMonth);
           }
           const categoryGroupSpending = sumCategoryGroupSpending(
