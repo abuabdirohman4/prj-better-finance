@@ -17,9 +17,8 @@ import { useCallback, useEffect, useState } from "react";
 export default function Budgets() {
   const clientId = "1717515";
   const [isLoadingContent, setIsLoadingContent] = useState(true);
-  const [selectedMonth, setSelectedMonth] = useState(
-    getDefaultSheetName(months)
-  );
+  const currentMonth = getDefaultSheetName(months);
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [categoryGroup, setCategoryGroup] = useState([]);
   const [totalSpending, setTotalSpending] = useState(0);
   const [totalBudget, setTotalBudget] = useState(0);
@@ -104,7 +103,7 @@ export default function Budgets() {
           // Get data & total category group spending
 
           let transactions = getLocal(SESSIONKEY.transactions);
-          if (!transactions) {
+          if (!transactions || currentMonth != selectedMonth) {
             console.log("storage transactions", transactions);
             transactions = await fetchTransaction(selectedMonth);
           }

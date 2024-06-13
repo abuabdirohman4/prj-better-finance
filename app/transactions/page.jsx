@@ -19,9 +19,8 @@ export default function Transactions() {
   const [isLoadingPage, setisLoadingPage] = useState(true);
   const [isLoadingContent, setIsLoadingContent] = useState(false);
   const [transaction, setTransaction] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState(
-    getDefaultSheetName(months)
-  );
+  const currentMonth = getDefaultSheetName(months);
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
 
   const spending = getTotalCashGroupedByDate(transaction, "Spending");
   const earning = getTotalCashGroupedByDate(transaction, "Earning");
@@ -47,7 +46,7 @@ export default function Transactions() {
       setIsLoadingContent(true);
 
       let transactions = await getLocal(SESSIONKEY.transactions);
-      if (!transactions) {
+      if (!transactions || selectedMonth != currentMonth) {
         console.log("storage transactions", transactions);
         transactions = await fetchTransaction(selectedMonth);
       }
