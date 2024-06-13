@@ -45,7 +45,7 @@ export default function Transactions() {
     const fetchData = async () => {
       setIsLoadingContent(true);
 
-      let transactions = await getLocal(SESSIONKEY.transactions);
+      let transactions = getLocal(SESSIONKEY.transactions);
       if (!transactions || selectedMonth != currentMonth) {
         console.log("storage transactions", transactions);
         transactions = await fetchTransaction(selectedMonth);
@@ -57,7 +57,7 @@ export default function Transactions() {
       setIsLoadingContent(false);
     };
     fetchData();
-  }, [selectedMonth]);
+  }, [currentMonth, selectedMonth]);
 
   return (
     <main>

@@ -1,6 +1,6 @@
 import { GetTotalAmountCategoryBudgets } from "@/app/api/budgets/categories/route";
 import Budget from "@/components/Card/Budget";
-import { months } from "@/utils/constants";
+import { SESSIONKEY, months } from "@/utils/constants";
 import { fetchTransaction } from "@/utils/fetchTransaction";
 import {
   formatRupiah,
@@ -9,6 +9,7 @@ import {
   getMonthInNumber,
   toCapitalCase,
 } from "@/utils/helper";
+import { getLocal } from "@/utils/session";
 import Link from "next/link";
 
 export default async function Budgets({ params, searchParams }) {
@@ -18,17 +19,21 @@ export default async function Budgets({ params, searchParams }) {
   const groupId = searchParams.groupId;
   const monthInNumber = getMonthInNumber(searchParams.month);
   const year = searchParams.year;
-  const transaction = await fetchTransaction(getDefaultSheetName(months));
   const categoryBudget = await GetTotalAmountCategoryBudgets(
     clientId,
     group,
     type
   );
+  let transactions = getLocal(SESSIONKEY.transactions);
+  if (!transactions) {
+    console.log("storage transactions", transactions);
+    transactions = await fetchTransaction(getDefaultSheetName(months));
+  }
 
   const categories = [];
   categoryBudget.forEach((category) => {
     // get spending of category
-    const transactionsInCategory = transaction.filter(
+    const transactionsInCategory = transactions.filter(
       (item) =>
         item["Category or Account"] === category.name &&
         item.Transaction === "Spending"
