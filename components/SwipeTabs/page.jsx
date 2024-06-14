@@ -79,11 +79,12 @@ export default function SwipeTabs({ tabs, defaultTabs }) {
           {tabs.map((tab, index) => (
             <button
               key={index}
-              className={`py-2 px-4 w-1/${tabs.length} ${
+              className={`py-2 px-4 ${
                 currentTab === index
                   ? "bg-blue-500 text-white"
                   : "bg-gray-200 text-gray-700"
               }`}
+              style={{ width: `${100 / tabs.length}%` }}
               onClick={() => handleTabClick(index)}
             >
               {tab.title}
