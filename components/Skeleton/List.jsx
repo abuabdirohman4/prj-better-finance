@@ -2,7 +2,7 @@ export default function SkeletonList({ listNumber }) {
   return (
     <div
       role="status"
-      className="max-w-md p-4 space-y-4 border bg-white border-gray-200 divide-y divide-gray-200 rounded shadow animate-pulse md:p-6"
+      className="max-w-md p-6 space-y-4 border bg-white border-gray-200 divide-y divide-gray-200 rounded shadow animate-pulse"
     >
       {Array.from({ length: listNumber }).map((_, index) => (
         <div className="flex items-center justify-between pt-4" key={index}>

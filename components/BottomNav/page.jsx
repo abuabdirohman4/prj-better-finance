@@ -35,19 +35,19 @@ export default function BottomNav() {
       <div className="mt-0.5 flex h-full justify-evenly font-medium">
         <Link
           href={"/transactions"}
-          className="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x hover:bg-gray-50 group"
+          className="inline-flex flex-col items-center w-20 justify-center px-5 border-gray-200 border-x hover:bg-gray-50 group"
         >
           <GrTransaction
             className="mb-2 text-gray-500 group-hover:text-blue-600"
             size={20}
           />
           <span className="text-sm text-gray-500 group-hover:text-blue-600">
-            Transactions
+            Trans
           </span>
         </Link>
-        {/* <Link
-          href={"/transactions"}
-          className="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x hover:bg-gray-50 group"
+        <Link
+          href={"/pockets"}
+          className="inline-flex flex-col items-center w-20 justify-center px-5 border-gray-200 border-x hover:bg-gray-50 group"
         >
           <FaWallet
             className="mb-2 text-gray-500 group-hover:text-blue-600"
@@ -56,7 +56,31 @@ export default function BottomNav() {
           <span className="text-sm text-gray-500 group-hover:text-blue-600">
             Pocket
           </span>
+        </Link>
+        {/* <Link
+          href={"/budgets"}
+          className="group inline-flex flex-col items-center w-20 justify-center px-5 border-e border-gray-200 hover:bg-gray-50 group"
+        >
+          <BiMoneyWithdraw
+            className="mb-2 text-gray-500 group-hover:text-blue-600"
+            size={20}
+          />
+          <span className="text-sm text-gray-500 group-hover:text-blue-600">
+            Income
+          </span>
         </Link> */}
+        <Link
+          href={"/budgets"}
+          className="group inline-flex flex-col items-center w-20 justify-center px-5 border-e border-gray-200 hover:bg-gray-50 group"
+        >
+          <GrMoney
+            className="mb-2 text-gray-500 group-hover:text-blue-600"
+            size={20}
+          />
+          <span className="text-sm text-gray-500 group-hover:text-blue-600">
+            Budgets
+          </span>
+        </Link>
         <div className="flex items-center justify-center mb-2">
           <button
             className={`inline-flex items-center justify-center w-10 h-10 font-medium bg-blue-500 rounded-full hover:bg-blue-800 group focus:ring-4 focus:ring-blue-300 focus:outline-none`}
@@ -87,30 +111,6 @@ export default function BottomNav() {
             )}
           </button>
         </div>
-        {/* <Link
-          href={"/budgets"}
-          className="group inline-flex flex-col items-center justify-center px-5 border-e border-gray-200 hover:bg-gray-50 group"
-        >
-          <BiMoneyWithdraw
-            className="mb-2 text-gray-500 group-hover:text-blue-600"
-            size={20}
-          />
-          <span className="text-sm text-gray-500 group-hover:text-blue-600">
-            Income
-          </span>
-        </Link> */}
-        <Link
-          href={"/budgets"}
-          className="group inline-flex flex-col items-center justify-center px-5 border-e border-gray-200 hover:bg-gray-50 group"
-        >
-          <GrMoney
-            className="mb-2 text-gray-500 group-hover:text-blue-600"
-            size={20}
-          />
-          <span className="text-sm text-gray-500 group-hover:text-blue-600">
-            Budgets
-          </span>
-        </Link>
       </div>
     </div>
   );

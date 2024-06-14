@@ -1,9 +1,30 @@
 "use client";
 import { SESSIONKEY, categories, months } from "@/utils/constants";
 import { fetchSummary, fetchTransaction } from "@/utils/fetchTransaction";
-import { getCashValue, getCashValuePocket } from "@/utils/helper";
+import { formatRupiah, getCashValue, getCashValuePocket } from "@/utils/helper";
 import { getLocal, setLocal } from "@/utils/session";
 import { useCallback, useEffect, useState } from "react";
+
+const colors = [
+  "bg-red-600",
+  "bg-yellow-500",
+  "bg-green-600",
+  "bg-blue-600",
+  // "bg-indigo-600",
+  "bg-purple-600",
+  "bg-pink-600",
+  // "bg-gray-600",
+  "bg-orange-600",
+  "bg-teal-600",
+  "bg-cyan-600",
+  "bg-lime-600",
+  "bg-emerald-600",
+  "bg-fuchsia-600",
+  "bg-rose-600",
+  "bg-violet-600",
+  "bg-amber-600",
+  "bg-sky-600",
+];
 
 const pockets = [
   { name: "Wallet" },
@@ -23,8 +44,17 @@ const pockets = [
   // { name: "BNI" },
 ];
 
+const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
+
 export default function PocketsPage() {
   const [summary, setSummary] = useState([]);
+  const [randomColors, setRandomColors] = useState([]);
 
   const getTotalAmountCategory = useCallback(
     (pockets, transactions, summary) => {
@@ -61,6 +91,14 @@ export default function PocketsPage() {
       });
       console.log("summaryPockets", summaryPockets);
       setSummary(summaryPockets);
+
+      // Generate a unique color for each pocket
+      if (summaryPockets.length <= colors.length) {
+        const shuffledColors = shuffleArray([...colors]);
+        setRandomColors(shuffledColors.slice(0, summaryPockets.length));
+      } else {
+        console.error("Not enough colors for the summary");
+      }
     },
     []
   );
@@ -103,12 +141,30 @@ export default function PocketsPage() {
   }, [getTotalAmountCategory]);
 
   return (
-    <div className="bg-white min-h-[94vh]">
-      <ul>
+    <div className="w-full p-8 min-h-[94vh] bg-white border border-gray-200 rounded-lg shadow">
+      <div className="flex items-center justify-between mb-8">
+        <h5 className="text-xl font-bold leading-none text-gray-900">
+          Pockets
+        </h5>
+      </div>
+      <div className="grid grid-cols-3 gap-6 mb-1 text-center">
         {summary.map((pocket, index) => (
-          <li key={index} className="text-black">{pocket.name}: {pocket.totalAmount}</li>
+          <div
+            key={index}
+            className="block max-w-sm bg-white border border-gray-200 rounded-sm shadow hover:bg-gray-100"
+          >
+            <h5 className="my-8 font-bold tracking-tight text-gray-900">
+              {pocket.name}
+            </h5>
+            {/* <div className={`${randomColors[index]} p-1.5`}> */}
+            <div className={`${colors[index % colors.length]} p-1.5`}>
+              <p className="font-bold text-sm text-white">
+                {formatRupiah(pocket.totalAmount)}
+              </p>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
