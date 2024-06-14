@@ -16,22 +16,6 @@ datasource db {
   // shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
 }
 
-model Brand {
-  id       Int       @id @default(autoincrement())
-  name     String
-  products Product[]
-}
-
-model Product {
-  id        Int      @id @default(autoincrement())
-  title     String
-  price     Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  brand     Brand    @relation(fields: [brandId], references: [id])
-  brandId   Int
-}
-
 model Client {
   id                     Int                     @id @default(autoincrement())
   clientId               String                  @unique
@@ -42,6 +26,7 @@ model Client {
   monthlyCategoryBudgets MonthlyCategoryBudget[]
   transactions           Transaction[]
   monthlyIncomes         MonthlyIncome[]
+  CategoryPocket         CategoryPocket[]
 }
 
 model CategoryBudget {
@@ -100,11 +85,21 @@ model MonthlyIncome {
 }
 
 model Transaction {
-  id             Int            @id @default(autoincrement())
-  categoryBudget CategoryBudget @relation(fields: [categoryId], references: [id])
-  categoryId     Int
-  client         Client         @relation(fields: [clientId], references: [clientId])
-  clientId       String
-  amount         Float
-  date           DateTime
+  id               Int             @id @default(autoincrement())
+  categoryBudget   CategoryBudget  @relation(fields: [categoryId], references: [id])
+  categoryId       Int
+  client           Client          @relation(fields: [clientId], references: [clientId])
+  clientId         String
+  amount           Float
+  date             DateTime
+  CategoryPocket   CategoryPocket? @relation(fields: [categoryPocketId], references: [id])
+  categoryPocketId Int?
+}
+
+model CategoryPocket {
+  id           Int           @id @default(autoincrement())
+  client       Client        @relation(fields: [clientId], references: [clientId])
+  clientId     String
+  name         String
+  transactions Transaction[]
 }

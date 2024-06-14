@@ -37,3 +37,16 @@ export async function fetchTransaction(sheetName) {
     return parseCSV(res.data).sort().reverse();
   }
 }
+
+export async function fetchSummary() {
+  const sheetId = "1mVgdePlteuewjY6DvdUmNyHf0CPoAoHY3Sh3lDymV5A";
+  const encodedSheetName = encodeURIComponent('Summary');
+  const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodedSheetName}`;
+
+  const res = await getData({
+    url: sheetURL,
+  });
+  if (res.status == 200) {
+    return parseCSV(res.data);
+  }
+}

@@ -40,7 +40,7 @@ export function getCashValue(data) {
     "Ponch",
     "Dana",
     "Flip",
-    "Gopay",
+    "GoPay",
     "Grab",
     "Jenius",
     "MyTelkomsel",
@@ -67,6 +67,45 @@ export function getCashValue(data) {
     amount = "0";
   }
 
+  return parseInt(amount);
+}
+
+export function getCashValuePocket(data, pocket) {
+  let amount = "";
+  const ATM = ["Mandiri", "BCA"];
+  const Platform = [
+    "Ponch",
+    "Dana",
+    "Flip",
+    "GoPay",
+    "Grab",
+    "Jenius",
+    "MyTelkomsel",
+    "E-Toll",
+    "Ovo",
+  ];
+
+  if (pocket === "Wallet") {
+    amount = data.Wallet;
+  } else if (ATM.includes(pocket)) {
+    amount = data.ATM;
+  } else if (Platform.includes(pocket)) {
+    amount = data.Platform;
+  } else if (pocket === "BNI") {
+    amount = data.INVESTMENT;
+  } else if (pocket === "AR") {
+    amount = data.AR;
+  } else if (pocket === "AP") {
+    amount = data.AP;
+  } else {
+    amount = data.NET;
+  }
+
+  if (!amount) {
+    amount = "0";
+  }
+
+  // console.log(data.Date, data.Note, parseInt(amount));
   return parseInt(amount);
 }
 
