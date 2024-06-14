@@ -14,9 +14,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="mx-auto max-w-md bg-white">
-      <body className={`${inter.className} shadow-2xl bg-white`}>
+      <body className={`${inter.className} shadow-2xl bg-white min-h-screen`}>
         {/* <Suspense fallback={<SkeletonList listNumber={15} />}> */}
-        {children}
+        <div className="mb-10">{children}</div>
         {/* </Suspense> */}
         <BottomNav />
       </body>

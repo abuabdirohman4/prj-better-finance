@@ -42,7 +42,7 @@ export default function CreateCategoryBudgetGroup() {
   }, []);
 
   return (
-    <main className="h-screen p-5">
+    <div className="h-screen p-5">
       <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900">
         Add Category Groups
       </h5>
@@ -83,6 +83,6 @@ export default function CreateCategoryBudgetGroup() {
           ))}
         </ul>
       </div>
-    </main>
+    </div>
   );
 }

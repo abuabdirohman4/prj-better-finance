@@ -53,5 +53,5 @@ export default function Home() {
     fetchTransaction();
   }, []);
 
-  return <main className=""></main>;
+  return <duv className=""></duv>;
 }

@@ -72,102 +72,96 @@ export default async function Budgets({ params, searchParams }) {
   const balance = parseFloat(totalSpending) + parseFloat(totalBudget);
 
   return (
-    <main>
-      <div className="w-full max-w-md min-h-screen p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8">
-        <Link href={"/budgets"} className="underline">
-          Back
-        </Link>
-        <div className="flex items-center justify-center mt-2 mb-3">
-          <h5 className="text-xl font-bold leading-none text-gray-900">
-            {toCapitalCase(group)}
-          </h5>
-        </div>
-        <div className="flex items-center justify-center mb-4">
-          <p className="text-sm text-gray-500 truncate me-2">
-            {stringPercent}%
-          </p>
-          <div className="w-8/12 bg-gray-200 rounded-full">
-            <div
-              className={`bg-blue-600 text-xs h-2 font-medium text-center p-0.5 leading-none rounded-full`}
-              style={{ width: `${percentage > 100 ? "100" : stringPercent}%` }}
-            ></div>
-          </div>
-        </div>
-        <div className="flex items-center justify-between ">
-          <h5 className="text-center">
-            <p className="text-base font-medium text-gray-900 truncate">
-              Budget
-            </p>
-            <div className="text-base font-semibold text-gray-900">
-              {formatRupiah(totalBudget)}
-            </div>
-          </h5>
-          <h5 className="text-center">
-            <p className="text-base font-medium text-gray-900 truncate">
-              Balance
-            </p>
-            <div
-              className={`text-base font-semibold text-gray-900 ${
-                balance < 0 && "text-red-500"
-              }`}
-            >
-              {formatRupiah(balance)}
-            </div>
-          </h5>
-          <h5 className="text-center">
-            <p className="text-base font-medium text-gray-900 truncate">
-              Spending
-            </p>
-            <div className="text-base font-semibold text-red-600">
-              {formatRupiah(totalSpending)}
-            </div>
-          </h5>
-        </div>
-        <div className="flow-root mt-5">
-          <ul
-            role="list"
-            className="border-y-[1.5px] border-y-gray-200 divide-y divide-gray-200"
-          >
-            {categories.map((category, key) => (
-              <div key={key}>
-                <CardBudget
-                  category={category.name}
-                  budget={category.budget}
-                  spending={category.spending}
-                />
-              </div>
-            ))}
-          </ul>
-          <div className="mt-3 text-center underline">
-            <Link
-              href={{
-                pathname: `/budgets/${group}/create-category`,
-                query: {
-                  groupId: groupId,
-                },
-              }}
-              className="hover:text-blue-500"
-            >
-              Add Category For {toCapitalCase(group)}
-            </Link>
-          </div>
-          <div className="mt-3 text-center underline">
-            <Link
-              href={{
-                pathname: `/budgets/${group}/add-budget`,
-                query: {
-                  groupId: groupId,
-                  monthInNumber: monthInNumber,
-                  year: year,
-                },
-              }}
-              className="hover:text-blue-500"
-            >
-              Update Budget of Categories {toCapitalCase(group)}
-            </Link>
-          </div>
+    <div className="w-full max-w-md p-8 pb-10 bg-white border border-gray-200 border-b-0 rounded-lg shadow">
+      <Link href={"/budgets"} className="underline">
+        Back
+      </Link>
+      <div className="flex items-center justify-center mt-2 mb-3">
+        <h5 className="text-xl font-bold leading-none text-gray-900">
+          {toCapitalCase(group)}
+        </h5>
+      </div>
+      <div className="flex items-center justify-center mb-4">
+        <p className="text-sm text-gray-500 truncate me-2">{stringPercent}%</p>
+        <div className="w-8/12 bg-gray-200 rounded-full">
+          <div
+            className={`bg-blue-600 text-xs h-2 font-medium text-center p-0.5 leading-none rounded-full`}
+            style={{ width: `${percentage > 100 ? "100" : stringPercent}%` }}
+          ></div>
         </div>
       </div>
-    </main>
+      <div className="flex items-center justify-between ">
+        <h5 className="text-center">
+          <p className="text-base font-medium text-gray-900 truncate">Budget</p>
+          <div className="text-base font-semibold text-gray-900">
+            {formatRupiah(totalBudget)}
+          </div>
+        </h5>
+        <h5 className="text-center">
+          <p className="text-base font-medium text-gray-900 truncate">
+            Balance
+          </p>
+          <div
+            className={`text-base font-semibold text-gray-900 ${
+              balance < 0 && "text-red-500"
+            }`}
+          >
+            {formatRupiah(balance)}
+          </div>
+        </h5>
+        <h5 className="text-center">
+          <p className="text-base font-medium text-gray-900 truncate">
+            Spending
+          </p>
+          <div className="text-base font-semibold text-red-600">
+            {formatRupiah(totalSpending)}
+          </div>
+        </h5>
+      </div>
+      <div className="flow-root mt-5">
+        <ul
+          role="list"
+          className="border-y-[1.5px] border-y-gray-200 divide-y divide-gray-200"
+        >
+          {categories.map((category, key) => (
+            <div key={key}>
+              <CardBudget
+                category={category.name}
+                budget={category.budget}
+                spending={category.spending}
+              />
+            </div>
+          ))}
+        </ul>
+        <div className="mt-3 text-center underline">
+          <Link
+            href={{
+              pathname: `/budgets/${group}/create-category`,
+              query: {
+                groupId: groupId,
+              },
+            }}
+            className="hover:text-blue-500"
+          >
+            Add Category For {toCapitalCase(group)}
+          </Link>
+        </div>
+        <div className="mt-3 text-center underline">
+          <Link
+            href={{
+              pathname: `/budgets/${group}/add-budget`,
+              query: {
+                groupId: groupId,
+                monthInNumber: monthInNumber,
+                year: year,
+              },
+            }}
+            className="hover:text-blue-500"
+          >
+            Update Budget of Categories {toCapitalCase(group)}
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }

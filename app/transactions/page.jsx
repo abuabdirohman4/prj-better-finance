@@ -60,7 +60,7 @@ export default function Transactions() {
   }, [currentMonth, selectedMonth]);
 
   return (
-    <main>
+    <div>
       {isLoadingPage ? (
         <SkeletonList listNumber={15} />
       ) : (
@@ -157,6 +157,6 @@ export default function Transactions() {
           </div>
         </>
       )}
-    </main>
+    </div>
   );
 }

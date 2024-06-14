@@ -64,49 +64,47 @@ export default function SwipeTabs({ tabs, defaultTabs }) {
   };
 
   return (
-    <main>
-      <div
-        className="flex flex-col w-full h-screen overflow-hidden"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-      >
-        {/* Tab headers */}
-        <div className="flex justify-center">
-          {tabs.map((tab, index) => (
-            <button
-              key={index}
-              className={`py-2 px-4 ${
-                currentTab === index
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700"
-              }`}
-              style={{ width: `${100 / tabs.length}%` }}
-              onClick={() => handleTabClick(index)}
-            >
-              {tab.title}
-            </button>
-          ))}
-        </div>
-
-        {/* Tab content */}
-        <div
-          className={`flex transform transition-transform duration-300`}
-          style={{ transform: `translateX(-${currentTab * 100}%)` }}
-        >
-          {tabs.map((tab, index) => (
-            <div
-              key={index}
-              className="flex-shrink-0 w-full p-8 pb-0 min-h-screen bg-white border border-gray-200 rounded-lg shadow"
-            >
-              {tab.content}
-            </div>
-          ))}
-        </div>
+    <div
+      className="flex flex-col w-full overflow-hidden"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+    >
+      {/* Tab headers */}
+      <div className="flex justify-center">
+        {tabs.map((tab, index) => (
+          <button
+            key={index}
+            className={`py-2 px-4 ${
+              currentTab === index
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
+            style={{ width: `${100 / tabs.length}%` }}
+            onClick={() => handleTabClick(index)}
+          >
+            {tab.title}
+          </button>
+        ))}
       </div>
-    </main>
+
+      {/* Tab content */}
+      <div
+        className={`flex transform transition-transform duration-300`}
+        style={{ transform: `translateX(-${currentTab * 100}%)` }}
+      >
+        {tabs.map((tab, index) => (
+          <div
+            key={index}
+            className="flex-shrink-0 w-full p-8 pb-10 bg-white border border-gray-200 border-b-0 rounded-lg shadow"
+          >
+            {tab.content}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

@@ -31,7 +31,7 @@ export default function BottomNav() {
     }, 3000);
   };
   return (
-    <div className="sticky bottom-0 mx-auto z-50 w-full max-w-md h-16 bg-[#F1F3F4] border-t border-gray-200">
+    <div className="fixed bottom-0 mx-auto z-50 w-full max-w-md h-16 bg-[#F1F3F4] border-t border-gray-200">
       <div className="mt-0.5 flex h-full justify-evenly font-medium">
         <Link
           href={"/transactions"}

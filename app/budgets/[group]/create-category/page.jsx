@@ -59,7 +59,7 @@ export default function CreateCategoryBudget({ params, searchParams }) {
   }, [fetchCategories]);
 
   return (
-    <main className="h-screen p-5">
+    <div className="h-screen p-5">
       <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900">
         Add Category {groupName}
       </h5>
@@ -120,6 +120,6 @@ export default function CreateCategoryBudget({ params, searchParams }) {
           ))}
         </ul>
       </div>
-    </main>
+    </div>
   );
 }

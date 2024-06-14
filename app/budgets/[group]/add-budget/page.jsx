@@ -180,7 +180,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
   }, [group, groupId]);
 
   return (
-    <main className="h-screen p-5">
+    <div className="h-screen p-5">
       <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900">
         Update Budget
       </h5>
@@ -387,6 +387,6 @@ export default function AddBudgetCategory({ params, searchParams }) {
           Submit
         </button>
       </form>
-    </main>
+    </div>
   );
 }

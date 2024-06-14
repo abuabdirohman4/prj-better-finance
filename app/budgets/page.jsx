@@ -11,7 +11,7 @@ export default function Budgets() {
   const year = new Date().getFullYear().toString();
 
   return (
-    <main>
+    <div>
       <div className="w-full max-w-md p-8 pb-0 bg-white border border-gray-200 rounded-lg shadow">
         <div className="flex items-center justify-between mb-8">
           <h5 className="text-xl font-bold leading-none text-gray-900">
@@ -50,10 +50,11 @@ export default function Budgets() {
           {
             title: "Spending",
             content: <SpendingTabs selectedMonth={selectedMonth} />,
+            // content: "",
           },
         ]}
         defaultTabs={1}
       />
-    </main>
+    </div>
   );
 }
