@@ -3,6 +3,7 @@ import { SESSIONKEY, categories, months } from "@/utils/constants";
 import { fetchSummary, fetchTransaction } from "@/utils/fetchTransaction";
 import { formatRupiah, getCashValue, getCashValuePocket } from "@/utils/helper";
 import { getLocal, setLocal } from "@/utils/session";
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 const colors = [
@@ -149,9 +150,16 @@ export default function PocketsPage() {
       </div>
       <div className="grid grid-cols-3 gap-6 mb-1 text-center">
         {summary.map((pocket, index) => (
-          <div
+          <Link
             key={index}
-            className="block max-w-sm bg-white border border-gray-200 rounded-sm shadow hover:bg-gray-100"
+            href={{
+              pathname: `/pockets/${pocket.name}`,
+              query: {
+                pocketAmount: pocket.totalAmount,
+                color: colors[index % colors.length],
+              },
+            }}
+            className="block max-w-sm bg-white border border-gray-200 rounded-sm shadow cursor-pointer hover:bg-gray-100"
           >
             <h5 className="my-8 font-bold tracking-tight text-gray-900">
               {pocket.name}
@@ -162,8 +170,16 @@ export default function PocketsPage() {
                 {formatRupiah(pocket.totalAmount)}
               </p>
             </div>
-          </div>
+          </Link>
         ))}
+      </div>
+      <div className="mt-8 text-center underline">
+        <Link
+          href="/pockets/create/pocket"
+          className="text-black hover:text-blue-500"
+        >
+          Add Pocket
+        </Link>
       </div>
     </div>
   );

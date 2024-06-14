@@ -26,7 +26,8 @@ model Client {
   monthlyCategoryBudgets MonthlyCategoryBudget[]
   transactions           Transaction[]
   monthlyIncomes         MonthlyIncome[]
-  CategoryPocket         CategoryPocket[]
+  categoryPocket         CategoryPocket[]
+  categoryPocketGroups   CategoryPocketGroup[]
 }
 
 model CategoryBudget {
@@ -86,20 +87,40 @@ model MonthlyIncome {
 
 model Transaction {
   id               Int             @id @default(autoincrement())
-  categoryBudget   CategoryBudget  @relation(fields: [categoryId], references: [id])
-  categoryId       Int
+  date             DateTime
   client           Client          @relation(fields: [clientId], references: [clientId])
   clientId         String
-  amount           Float
-  date             DateTime
-  CategoryPocket   CategoryPocket? @relation(fields: [categoryPocketId], references: [id])
+  categoryPocket   CategoryPocket? @relation(fields: [categoryPocketId], references: [id])
   categoryPocketId Int?
+  categoryBudget   CategoryBudget  @relation(fields: [categoryId], references: [id])
+  categoryId       Int
+  note             String
+  amount           Float
 }
 
 model CategoryPocket {
-  id           Int           @id @default(autoincrement())
-  client       Client        @relation(fields: [clientId], references: [clientId])
+  id           Int                             @id @default(autoincrement())
+  client       Client                          @relation(fields: [clientId], references: [clientId])
   clientId     String
   name         String
+  actual       Float
+  memberships  CategoryPocketGroupMembership[]
   transactions Transaction[]
+}
+
+model CategoryPocketGroup {
+  id          Int                             @id @default(autoincrement())
+  client      Client                          @relation(fields: [clientId], references: [clientId])
+  clientId    String
+  name        String
+  memberships CategoryPocketGroupMembership[]
+}
+
+model CategoryPocketGroupMembership {
+  categoryPocket CategoryPocket      @relation(fields: [categoryId], references: [id])
+  categoryId     Int
+  group          CategoryPocketGroup @relation(fields: [groupId], references: [id])
+  groupId        Int
+
+  @@id([categoryId, groupId])
 }
