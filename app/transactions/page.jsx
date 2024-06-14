@@ -2,7 +2,6 @@
 import { fetchTransaction } from "@/utils/fetchTransaction";
 import { SESSIONKEY, months } from "@/utils/constants";
 import { useEffect, useState } from "react";
-import Transaction from "@/components/Card/Transaction";
 import {
   formatDate,
   formatRupiah,
@@ -14,6 +13,7 @@ import Image from "next/image";
 import SkeletonList from "@/components/Skeleton/List";
 import SkeletonText from "@/components/Skeleton/Text";
 import { getLocal, getSession } from "@/utils/session";
+import CardTransaction from "@/components/Card/Transaction";
 
 export default function Transactions() {
   const [isLoadingPage, setisLoadingPage] = useState(true);
@@ -138,7 +138,7 @@ export default function Transactions() {
                         (data, key) =>
                           data.Note !== "Moving Period" && (
                             <div key={key}>
-                              <Transaction
+                              <CardTransaction
                                 date={data.Date}
                                 type={data.Transaction}
                                 account={data.Account}

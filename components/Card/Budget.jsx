@@ -1,6 +1,6 @@
 import { formatRupiah } from "@/utils/helper";
 
-export default function Budget({ category, budget, spending }) {
+export default function CardBudget({ category, budget, spending }) {
   const percentage = budget ? (parseFloat(spending) / -parseFloat(budget)) * 100 : 0;
   const stringPercent = percentage.toFixed(0);
   const balance = parseFloat(spending) + parseFloat(budget);

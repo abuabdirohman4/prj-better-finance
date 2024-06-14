@@ -1,6 +1,6 @@
 import { formatRupiah } from "@/utils/helper";
 
-export default function Transaction({
+export default function CardTransaction({
   date,
   type,
   account,

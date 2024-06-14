@@ -26,7 +26,6 @@ export function getMonthInNumber(monthString) {
 }
 
 export function toCapitalCase(string) {
-  
   if (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   } else {
@@ -65,7 +64,7 @@ export function getCashValue(data) {
   }
 
   if (!amount) {
-    amount = '0'
+    amount = "0";
   }
 
   return parseInt(amount);
