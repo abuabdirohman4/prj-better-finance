@@ -180,7 +180,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
   }, [group, groupId]);
 
   return (
-    <div className="h-screen p-5">
+    <div className="p-5 min-h-[94vh]">
       <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900">
         Update Budget
       </h5>
@@ -247,7 +247,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
         </button>
       </form> */}
 
-      <div className="grid gap-6 mb-1 md:grid-cols-2 text-center">
+      <div className="grid gap-6 mb-1 sm:grid-cols-2 text-center">
         <label className="block mb-2 text-sm font-medium text-gray-900">
           Name
         </label>
@@ -257,7 +257,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
       </div>
       <form className="space-y-3" onSubmit={handleSubmitInputMass}>
         {categories.map((category, index) => (
-          <div key={index} className="grid gap-6 mb-6 md:grid-cols-2">
+          <div key={index} className="grid gap-6 sm:grid-cols-2">
             <div>
               {/* <label
                   htmlFor={`name-${index}`}

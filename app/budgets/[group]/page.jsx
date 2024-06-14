@@ -72,7 +72,7 @@ export default async function Budgets({ params, searchParams }) {
   const balance = parseFloat(totalSpending) + parseFloat(totalBudget);
 
   return (
-    <div className="w-full max-w-md p-8 pb-10 bg-white border border-gray-200 border-b-0 rounded-lg shadow">
+    <div className="w-full max-w-md p-8 pb-10 min-h-[94vh] border border-gray-200 border-b-0 rounded-lg shadow">
       <Link href={"/budgets"} className="underline">
         Back
       </Link>
@@ -141,7 +141,7 @@ export default async function Budgets({ params, searchParams }) {
                 groupId: groupId,
               },
             }}
-            className="hover:text-blue-500"
+            className="text-black hover:text-blue-500"
           >
             Add Category For {toCapitalCase(group)}
           </Link>
@@ -156,7 +156,7 @@ export default async function Budgets({ params, searchParams }) {
                 year: year,
               },
             }}
-            className="hover:text-blue-500"
+            className="text-black hover:text-blue-500"
           >
             Update Budget of Categories {toCapitalCase(group)}
           </Link>

@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className="mx-auto max-w-md bg-white">
       <body className={`${inter.className} shadow-2xl bg-white min-h-screen`}>
         {/* <Suspense fallback={<SkeletonList listNumber={15} />}> */}
-        <div className="mb-10">{children}</div>
+        <div className="mb-10 bg-white">{children}</div>
         {/* </Suspense> */}
         <BottomNav />
       </body>

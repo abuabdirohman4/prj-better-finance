@@ -50,7 +50,6 @@ export default function Budgets() {
           {
             title: "Spending",
             content: <SpendingTabs selectedMonth={selectedMonth} />,
-            // content: "",
           },
         ]}
         defaultTabs={1}

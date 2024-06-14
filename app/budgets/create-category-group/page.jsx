@@ -42,7 +42,7 @@ export default function CreateCategoryBudgetGroup() {
   }, []);
 
   return (
-    <div className="h-screen p-5">
+    <div className="p-5 min-h-[94vh]">
       <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900">
         Add Category Groups
       </h5>
