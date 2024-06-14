@@ -99,7 +99,7 @@ export default function SwipeTabs({ tabs, defaultTabs }) {
         {tabs.map((tab, index) => (
           <div
             key={index}
-            className="flex-shrink-0 w-full p-8 pb-10 bg-white border border-gray-200 border-b-0 rounded-lg shadow"
+            className="flex-shrink-0 w-full p-8 pb-10 min-h-[81vh] bg-white border border-gray-200 border-b-0 rounded-lg shadow"
           >
             {tab.content}
           </div>
