@@ -26,7 +26,8 @@ export default function Transactions() {
   const earning = getTotalCashGroupedByDate(transaction, "Earning");
 
   const groupTransactionsByDate = (transactions) => {
-    return transactions.reduce((groups, transaction) => {
+    // Mengelompokkan data berdasarkan tanggal
+    const grouped = transactions.reduce((groups, transaction) => {
       const date = transaction.Date;
       if (date) {
         if (!groups[date]) {
@@ -39,6 +40,25 @@ export default function Transactions() {
       }
       return groups;
     }, {});
+
+    // Mengurutkan tanggal dari yang paling baru ke yang paling lama
+    const sortedDates = Object.keys(grouped).sort((a, b) => {
+      const [dayA, monthA, yearA] = a.split("/").map(Number);
+      const [dayB, monthB, yearB] = b.split("/").map(Number);
+
+      const dateA = new Date(yearA, monthA - 1, dayA);
+      const dateB = new Date(yearB, monthB - 1, dayB);
+
+      return dateB - dateA;
+    });
+
+    // Membuat objek baru berdasarkan tanggal yang sudah diurutkan
+    const sortedGrouped = {};
+    sortedDates.forEach((date) => {
+      sortedGrouped[date] = grouped[date];
+    });
+
+    return sortedGrouped;
   };
 
   useEffect(() => {
