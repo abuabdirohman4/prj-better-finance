@@ -12,7 +12,7 @@ export default function PocketPage({ params, searchParams }) {
 
   return (
     <div className="w-full p-8 min-h-[94vh] bg-white border border-gray-200 rounded-lg shadow">
-      <ButtonBack href="/pockets" />
+      <ButtonBack />
       <div className="flex items-center justify-between mb-8">
         {/* <h5 className="text-xl font-bold leading-none text-gray-900">
           {pocketName}

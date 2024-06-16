@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getData, postData, putData } from "@/utils/fetch";
 import { toCapitalCase } from "@/utils/helper";
 import SelectInput from "@/components/SelectInput/page";
+import ButtonBack from "@/components/Button/BackButton/page";
 
 const optionTypes = [
   { value: "earning", label: "Earning" },
@@ -61,7 +62,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
           name: categoryName,
           type: type,
           groupId: groupId,
-          reqFunc: "PostCategoryBudgetWithGroup",
+          reqFunc: "PostCategoryWithGroup",
         },
       });
       if (res.status == 201) {
@@ -117,7 +118,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
           url: "/api/budgets/categories",
           payload: {
             categories: createPayload,
-            reqFunc: "PostCategoryBudgetBulk",
+            reqFunc: "PostCategoryBulk",
           },
         });
 
@@ -129,7 +130,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
           url: "/api/budgets/categories",
           payload: {
             categories: updatePayload,
-            reqFunc: "PutCategoryBudgetBulk",
+            reqFunc: "PutCategoryBulk",
           },
         });
         console.log("res put", res);
@@ -143,7 +144,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
 
   useEffect(() => {
     async function fetchData() {
-      // GetCategoryBudgetsAmount
+      // GetCategoryAmount
       const res = await getData({
         url: "/api/budgets/categories",
         params: {
@@ -152,7 +153,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
           type: type,
           year: "2024",
           month: 6,
-          reqFunc: "GetCategoryBudgetsAmount",
+          reqFunc: "GetCategoryAmount",
         },
       });
       if (res.status == 200) {
@@ -160,7 +161,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
         setCategories(res.data);
       }
 
-      // GetMonthlyCategoryBudgets
+      // GetMonthlyCategories
       const resMonthly = await getData({
         url: "/api/budgets/categories",
         params: {
@@ -169,7 +170,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
           type: type,
           year: "2024",
           month: 6,
-          reqFunc: "GetMonthlyCategoryBudgets",
+          reqFunc: "GetMonthlyCategories",
         },
       });
       if (resMonthly.status == 200) {
@@ -181,6 +182,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
 
   return (
     <div className="p-5 min-h-[94vh]">
+      <ButtonBack />
       <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900">
         Update Budget
       </h5>
@@ -319,8 +321,8 @@ export default function AddBudgetCategory({ params, searchParams }) {
                 }}
                 isSearchable={false}
               /> */}
-            {category.monthlyCategoryBudgets.length > 0 ? (
-              category.monthlyCategoryBudgets.map((monthlyCategory, index) => (
+            {category.monthlyCategories.length > 0 ? (
+              category.monthlyCategories.map((monthlyCategory, index) => (
                 <div key={index}>
                   {/* <label
                         htmlFor={`budget-${index}`}

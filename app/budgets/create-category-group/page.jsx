@@ -1,6 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getData, postData } from "@/utils/fetch";
+import { setLocal } from "@/utils/session";
+import { SESSIONKEY } from "@/utils/constants";
+import ButtonBack from "@/components/Button/BackButton/page";
 
 export default function CreateCategoryBudgetGroup() {
   const [categoryGroup, setCategoryGroup] = useState([]);
@@ -19,6 +22,7 @@ export default function CreateCategoryBudgetGroup() {
       if (res.status == 201) {
         console.log("res post", res.data);
         setCategoryName("");
+        fetchCategories();
       } else {
         console.log("res post", res.response.data);
       }
@@ -27,22 +31,25 @@ export default function CreateCategoryBudgetGroup() {
     }
   };
 
-  useEffect(() => {
-    async function fetchCategories() {
-      const res = await getData({
-        url: "/api/budgets/group",
-        params: { clientId: "1717515" },
-      });
-      if (res.status == 200) {
-        console.log("res get", res);
-        setCategoryGroup(res.data);
-      }
+  const fetchCategories = useCallback(async () => {
+    const res = await getData({
+      url: "/api/budgets/group",
+      params: { clientId: "1717515" },
+    });
+    if (res.status == 200) {
+      console.log("res get", res);
+      setCategoryGroup(res.data);
+      setLocal(SESSIONKEY.categoryGroup, res)
     }
-    fetchCategories();
   }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   return (
     <div className="p-5 min-h-[94vh]">
+      <ButtonBack/>
       <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900">
         Add Category Groups
       </h5>

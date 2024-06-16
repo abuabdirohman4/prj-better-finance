@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 export default function SpendingTabs({ selectedMonth }) {
+  console.log("SpendingTabs");
   const clientId = "1717515";
   const currentMonth = getDefaultSheetName(months);
   const [isLoadingContent, setIsLoadingContent] = useState(true);
@@ -72,18 +73,18 @@ export default function SpendingTabs({ selectedMonth }) {
       try {
         setIsLoadingContent(true);
 
-        let categoryBudgetGroup = getLocal(SESSIONKEY.categoryBudgetGroup);
-        if (!categoryBudgetGroup) {
-          console.log("storage categoryBudgetGroup", categoryBudgetGroup);
-          categoryBudgetGroup = await getData({
+        let categoryGroup = getLocal(SESSIONKEY.categoryGroup);
+        if (!categoryGroup) {
+          console.log("storage categoryGroup", categoryGroup);
+          categoryGroup = await getData({
             url: "/api/budgets/group",
             params: { clientId },
           });
-          setLocal(SESSIONKEY.categoryBudgetGroup, categoryBudgetGroup);
+          setLocal(SESSIONKEY.categoryGroup, categoryGroup);
         }
 
-        if (categoryBudgetGroup.status === 200) {
-          const categoryGroupBudget = categoryBudgetGroup.data;
+        if (categoryGroup.status === 200) {
+          const categoryGroupBudget = categoryGroup.data;
           // Combine the fetched data directly for use
           const amountCategoryGroups = {};
           const nameCategoryGroups = [];

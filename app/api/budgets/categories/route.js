@@ -19,32 +19,27 @@ export async function GET(req) {
     });
   }
 
-  let categoryBudgets = null;
-  if (reqFunc === "GetCategoryBudgetsAmount") {
-    categoryBudgets = await GetCategoryBudgetsAmount(
+  let categories = null;
+  if (reqFunc === "GetCategoryAmount") {
+    categories = await GetCategoryAmount(
       clientId,
       groupName,
       type,
       year,
       month
     );
-  } else if (reqFunc === "GetMonthlyCategoryBudgets") {
-    categoryBudgets = await GetMonthlyCategoryBudgets(
-      clientId,
-      groupId,
-      month,
-      year
-    );
-  } else if (reqFunc === "GetCategoryBudgets") {
-    categoryBudgets = await GetCategoryBudgets(clientId, groupId, type);
+  } else if (reqFunc === "GetMonthlyCategories") {
+    categories = await GetMonthlyCategories(clientId, groupId, month, year);
+  } else if (reqFunc === "GetCategories") {
+    categories = await GetCategories(clientId, groupId, type);
   }
-  return NextResponse.json(categoryBudgets, { status: 200 });
+  return NextResponse.json(categories, { status: 200 });
 }
 
-export async function GetCategoryBudgets(clientId, groupId, type) {
-  let categoryBudgets = "";
+export async function GetCategories(clientId, groupId, type) {
+  let categories = "";
   if (groupId) {
-    categoryBudgets = await prisma.categoryBudget.findMany({
+    categories = await prisma.category.findMany({
       where: {
         clientId: clientId,
         type: type,
@@ -60,7 +55,7 @@ export async function GetCategoryBudgets(clientId, groupId, type) {
       },
     });
   } else {
-    categoryBudgets = await prisma.categoryBudget.findMany({
+    categories = await prisma.category.findMany({
       where: { clientId: clientId },
       select: {
         name: true,
@@ -69,17 +64,17 @@ export async function GetCategoryBudgets(clientId, groupId, type) {
     });
   }
 
-  return categoryBudgets;
+  return categories;
 }
 
-export async function GetCategoryBudgetsAmount(
+export async function GetCategoryAmount(
   clientId,
   groupName,
   type,
   year,
   month
 ) {
-  const categoryBudgets = await prisma.categoryBudget.findMany({
+  const categories = await prisma.category.findMany({
     where: {
       clientId: clientId,
       type: type,
@@ -92,7 +87,7 @@ export async function GetCategoryBudgetsAmount(
       },
     },
     include: {
-      monthlyCategoryBudgets: {
+      monthlyCategories: {
         where: {
           year: year,
           month: month,
@@ -101,11 +96,11 @@ export async function GetCategoryBudgetsAmount(
     },
   });
 
-  return categoryBudgets;
+  return categories;
 }
 
-export async function GetTotalAmountCategoryBudgets(clientId, groupName, type) {
-  const categoryBudgets = await prisma.categoryBudget.findMany({
+export async function GetTotalAmountCategory(clientId, groupName, type) {
+  const categories = await prisma.category.findMany({
     where: {
       clientId: clientId,
       type: type,
@@ -118,15 +113,15 @@ export async function GetTotalAmountCategoryBudgets(clientId, groupName, type) {
       },
     },
     include: {
-      monthlyCategoryBudgets: true,
+      monthlyCategories: true,
     },
   });
 
-  const totalAmountCaegoryBudget = categoryBudgets.map((category) => ({
+  const totalAmountCaegoryBudget = categories.map((category) => ({
     name: category.name,
-    totalAmount: category.monthlyCategoryBudgets.reduce(
-      (total, monthlyCategoryBudgets) => {
-        return total + monthlyCategoryBudgets.amount;
+    totalAmount: category.monthlyCategories.reduce(
+      (total, monthlyCategories) => {
+        return total + monthlyCategories.amount;
       },
       0
     ),
@@ -135,16 +130,11 @@ export async function GetTotalAmountCategoryBudgets(clientId, groupName, type) {
   return totalAmountCaegoryBudget;
 }
 
-export async function GetMonthlyCategoryBudgets(
-  clientId,
-  groupId,
-  month,
-  year
-) {
-  const monthlyCategoryBudgets = await prisma.monthlyCategoryBudget.findMany({
+export async function GetMonthlyCategories(clientId, groupId, month, year) {
+  const monthlyCategories = await prisma.monthlyCategory.findMany({
     where: {
       clientId: clientId,
-      categoryBudget: {
+      category: {
         memberships: {
           some: {
             groupId: parseInt(groupId),
@@ -155,11 +145,11 @@ export async function GetMonthlyCategoryBudgets(
       month: parseInt(month),
     },
     include: {
-      categoryBudget: true,
+      category: true,
     },
   });
 
-  return monthlyCategoryBudgets;
+  return monthlyCategories;
 }
 
 export async function POST(req) {
@@ -167,28 +157,28 @@ export async function POST(req) {
     const body = await req.json();
     const { reqFunc } = body;
 
-    let newCategoryBudget = null;
-    if (reqFunc === 'PostCategoryBudgets') {
-      newCategoryBudget = await PostCategoryBudgets(body);
-    } else if (reqFunc === "PostCategoryBudgetWithGroup") {
-      newCategoryBudget = await PostCategoryBudgetWithGroup(body);
-    } else if (reqFunc === "PostCategoryBudgetBulk") {
-      newCategoryBudget = await PostCategoryBudgetBulk(body);
+    let newCategory = null;
+    if (reqFunc === "PostCategory") {
+      newCategory = await PostCategory(body);
+    } else if (reqFunc === "PostCategoryWithGroup") {
+      newCategory = await PostCategoryWithGroup(body);
+    } else if (reqFunc === "PostCategoryBulk") {
+      newCategory = await PostCategoryBulk(body);
     }
 
-    return NextResponse.json(newCategoryBudget, { status: 201 });
+    return NextResponse.json(newCategory, { status: 201 });
   } catch (error) {
     console.error("Error adding category budget:", error);
     Response.json({ status: 500, message: "Error adding category budget" });
   }
 }
 
-export async function PostCategoryBudgets(body) {
+export async function PostCategory(body) {
   const { clientId, name, type } = body;
   validateFields([clientId, name, type]);
 
   // Periksa apakah nama kategori sudah ada
-  const existingCategory = await prisma.categoryBudget.findFirst({
+  const existingCategory = await prisma.category.findFirst({
     where: {
       clientId: clientId,
       name: name,
@@ -201,7 +191,7 @@ export async function PostCategoryBudgets(body) {
     );
   }
 
-  return await prisma.categoryBudget.create({
+  return await prisma.category.create({
     data: {
       clientId,
       name,
@@ -210,11 +200,11 @@ export async function PostCategoryBudgets(body) {
   });
 }
 
-export async function PostCategoryBudgetWithGroup(body) {
+export async function PostCategoryWithGroup(body) {
   const { clientId, name, type, groupId } = body;
   validateField(clientId);
 
-  return await prisma.categoryBudget.create({
+  return await prisma.category.create({
     data: {
       clientId: clientId,
       name: name,
@@ -231,9 +221,9 @@ export async function PostCategoryBudgetWithGroup(body) {
   });
 }
 
-export async function PostCategoryBudgetBulk(body) {
+export async function PostCategoryBulk(body) {
   const { categories } = body;
-  const createdCategories = await prisma.monthlyCategoryBudget.createMany({
+  const createdCategories = await prisma.monthlyCategory.createMany({
     data: categories.map((category) => ({
       categoryId: category.categoryId,
       clientId: category.clientId,
@@ -251,22 +241,22 @@ export async function PUT(req) {
     const body = await req.json();
     const { reqFunc } = body;
 
-    let updateCategoryBudget = null;
-    if (reqFunc === "PutCategoryBudgetBulk") {
-      updateCategoryBudget = await PutCategoryBudgetBulk(body);
+    let updateCategory = null;
+    if (reqFunc === "PutCategoryBulk") {
+      updateCategory = await PutCategoryBulk(body);
     }
 
-    return NextResponse.json(updateCategoryBudget, { status: 201 });
+    return NextResponse.json(updateCategory, { status: 201 });
   } catch (error) {
     console.error("Error adding category budget:", error);
     Response.json({ status: 500, message: "Error adding category budget" });
   }
 }
 
-export async function PutCategoryBudgetBulk(body) {
+export async function PutCategoryBulk(body) {
   const { categories } = body;
   const updatePromises = categories.map((category) =>
-    prisma.monthlyCategoryBudget.update({
+    prisma.monthlyCategory.update({
       where: { id: category.id },
       data: {
         categoryId: category.categoryId,

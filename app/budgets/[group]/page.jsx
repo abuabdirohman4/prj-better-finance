@@ -1,4 +1,4 @@
-import { GetTotalAmountCategoryBudgets } from "@/app/api/budgets/categories/route";
+import { GetTotalAmountCategory } from "@/app/api/budgets/categories/route";
 import CardBudget from "@/components/Card/Budget";
 import { SESSIONKEY, months } from "@/utils/constants";
 import { fetchTransaction } from "@/utils/fetchTransaction";
@@ -21,7 +21,7 @@ export default async function Budgets({ params, searchParams }) {
   const month = searchParams.month;
   const monthInNumber = getMonthInNumber(month);
   const year = searchParams.year;
-  const categoryBudget = await GetTotalAmountCategoryBudgets(
+  const categoryBudget = await GetTotalAmountCategory(
     clientId,
     group,
     type

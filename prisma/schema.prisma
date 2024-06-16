@@ -17,110 +17,85 @@ datasource db {
 }
 
 model Client {
-  id                     Int                     @id @default(autoincrement())
-  clientId               String                  @unique
-  name                   String
-  email                  String                  @unique
-  categories             CategoryBudget[]
-  categoryGroups         CategoryBudgetGroup[]
-  monthlyCategoryBudgets MonthlyCategoryBudget[]
-  transactions           Transaction[]
-  monthlyIncomes         MonthlyIncome[]
-  categoryPocket         CategoryPocket[]
-  categoryPocketGroups   CategoryPocketGroup[]
+  id                Int               @id @default(autoincrement())
+  clientId          String            @unique
+  name              String
+  email             String            @unique
+  categories        Category[]
+  categoryGroups    CategoryGroup[]
+  monthlyCategories MonthlyCategory[]
+  transactions      Transaction[]
+  pockets           Pocket[]
 }
 
-model CategoryBudget {
-  id                     Int                             @id @default(autoincrement())
-  client                 Client                          @relation(fields: [clientId], references: [clientId])
-  clientId               String
-  name                   String
-  type                   String // "earning" or "spending"
-  memberships            CategoryBudgetGroupMembership[]
-  monthlyCategoryBudgets MonthlyCategoryBudget[]
-  transactions           Transaction[]
-  monthlyIncomes         MonthlyIncome[]
+model Category {
+  id                Int                       @id @default(autoincrement())
+  client            Client                    @relation(fields: [clientId], references: [clientId])
+  clientId          String
+  name              String
+  type              String // "earning" or "spending"
+  memberships       CategoryGroupMembership[]
+  monthlyCategories MonthlyCategory[]
+  transactions      Transaction[]
+  pockets           Pocket[]
+  parentId          Int? // Kolom untuk menyimpan referensi ke kategori induk
+  parent            Category?                 @relation("SubCategories", fields: [parentId], references: [id]) // Relasi ke kategori induk
+  children          Category[]                @relation("SubCategories") // Relasi ke kategori anak
 }
 
-model CategoryBudgetGroup {
-  id          Int                             @id @default(autoincrement())
-  client      Client                          @relation(fields: [clientId], references: [clientId])
+model CategoryGroup {
+  id          Int                       @id @default(autoincrement())
+  client      Client                    @relation(fields: [clientId], references: [clientId])
   clientId    String
   name        String
-  memberships CategoryBudgetGroupMembership[]
+  memberships CategoryGroupMembership[]
 }
 
-model CategoryBudgetGroupMembership {
-  categoryBudget CategoryBudget      @relation(fields: [categoryId], references: [id])
-  categoryId     Int
-  group          CategoryBudgetGroup @relation(fields: [groupId], references: [id])
-  groupId        Int
+model CategoryGroupMembership {
+  category   Category      @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  group      CategoryGroup @relation(fields: [groupId], references: [id])
+  groupId    Int
 
   @@id([categoryId, groupId])
 }
 
-model MonthlyCategoryBudget {
-  id             Int            @id @default(autoincrement())
-  categoryBudget CategoryBudget @relation(fields: [categoryId], references: [id])
-  categoryId     Int
-  client         Client         @relation(fields: [clientId], references: [clientId])
-  clientId       String
-  year           String
-  month          Int
-  amount         Float
-
-  @@unique([categoryId, clientId, year, month])
-}
-
-model MonthlyIncome {
-  id             Int            @id @default(autoincrement())
-  categoryBudget CategoryBudget @relation(fields: [categoryId], references: [id])
-  categoryId     Int
-  client         Client         @relation(fields: [clientId], references: [clientId])
-  clientId       String
-  year           String
-  month          Int
-  amount         Float
+model MonthlyCategory {
+  id         Int      @id @default(autoincrement())
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  client     Client   @relation(fields: [clientId], references: [clientId])
+  clientId   String
+  year       String
+  month      Int
+  amount     Float
 
   @@unique([categoryId, clientId, year, month])
 }
 
 model Transaction {
-  id               Int             @id @default(autoincrement())
-  date             DateTime
-  client           Client          @relation(fields: [clientId], references: [clientId])
-  clientId         String
-  categoryPocket   CategoryPocket? @relation(fields: [categoryPocketId], references: [id])
-  categoryPocketId Int?
-  categoryBudget   CategoryBudget  @relation(fields: [categoryId], references: [id])
-  categoryId       Int
-  note             String
-  amount           Float
+  id         Int      @id @default(autoincrement())
+  date       DateTime
+  client     Client   @relation(fields: [clientId], references: [clientId])
+  clientId   String
+  pockets    Pocket?  @relation("Pocket1", fields: [pocket1], references: [id])
+  pocket1    Int?
+  pockets2   Pocket?  @relation("Pocket2", fields: [pocket2], references: [id])
+  pocket2    Int?
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  desc       String
+  amount     Float
 }
 
-model CategoryPocket {
-  id           Int                             @id @default(autoincrement())
-  client       Client                          @relation(fields: [clientId], references: [clientId])
-  clientId     String
-  name         String
-  actual       Float
-  memberships  CategoryPocketGroupMembership[]
-  transactions Transaction[]
-}
-
-model CategoryPocketGroup {
-  id          Int                             @id @default(autoincrement())
-  client      Client                          @relation(fields: [clientId], references: [clientId])
-  clientId    String
-  name        String
-  memberships CategoryPocketGroupMembership[]
-}
-
-model CategoryPocketGroupMembership {
-  categoryPocket CategoryPocket      @relation(fields: [categoryId], references: [id])
-  categoryId     Int
-  group          CategoryPocketGroup @relation(fields: [groupId], references: [id])
-  groupId        Int
-
-  @@id([categoryId, groupId])
+model Pocket {
+  id            Int           @id @default(autoincrement())
+  client        Client        @relation(fields: [clientId], references: [clientId])
+  clientId      String
+  name          String
+  actual        Float
+  category      Category      @relation(fields: [categoryId], references: [id])
+  categoryId    Int
+  transactions  Transaction[] @relation("Pocket1")
+  transactions2 Transaction[] @relation("Pocket2")
 }

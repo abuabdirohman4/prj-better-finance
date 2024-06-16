@@ -7,7 +7,6 @@ import Link from "next/link";
 import { TbRefresh } from "react-icons/tb";
 import { FaWallet } from "react-icons/fa";
 import { GrTransaction, GrMoney } from "react-icons/gr";
-import { BiMoneyWithdraw } from "react-icons/bi";
 import { useState } from "react";
 import { getData } from "@/utils/fetch";
 
@@ -19,12 +18,12 @@ export default function BottomNav() {
     const transactions = await fetchTransaction(getDefaultSheetName(months));
     console.log("transactions", transactions);
     setLocal(SESSIONKEY.transactions, transactions);
-    const categoryBudgetGroup = await getData({
+    const categoryGroup = await getData({
       url: "/api/budgets/group",
       params: { clientId },
     });
-    console.log("categoryBudgetGroup", categoryBudgetGroup);
-    setLocal(SESSIONKEY.categoryBudgetGroup, categoryBudgetGroup);
+    console.log("categoryGroup", categoryGroup);
+    setLocal(SESSIONKEY.categoryGroup, categoryGroup);
 
     setTimeout(() => {
       setIsLoading(false);

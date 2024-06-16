@@ -53,7 +53,7 @@ const Earning = [
 export const SESSIONKEY = {
   transactionsInYear: "transactions_in_year",
   transactions: "transactions",
-  categoryBudgetGroup: "category_budget_group",
+  categoryGroup: "category_group",
   currentMonthBudgetPage: "current_mont_budget_page",
-  summary: "summary"
+  summary: "summary",
 };

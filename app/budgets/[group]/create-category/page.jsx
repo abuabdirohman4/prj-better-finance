@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { getData, postData } from "@/utils/fetch";
 import { toCapitalCase } from "@/utils/helper";
+import ButtonBack from "@/components/Button/BackButton/page";
 
 export default function CreateCategoryBudget({ params, searchParams }) {
   const clientId = "1717515";
@@ -22,7 +23,7 @@ export default function CreateCategoryBudget({ params, searchParams }) {
           name: categoryName,
           type: categoryType,
           groupId: groupId,
-          reqFunc: "PostCategoryBudgetWithGroup",
+          reqFunc: "PostCategoryWithGroup",
         },
       });
       if (res.status == 201) {
@@ -45,7 +46,7 @@ export default function CreateCategoryBudget({ params, searchParams }) {
         clientId: clientId,
         groupId: groupId,
         type: type,
-        reqFunc: "GetCategoryBudgets",
+        reqFunc: "GetCategories",
       },
     });
     if (res.status == 200) {
@@ -60,6 +61,7 @@ export default function CreateCategoryBudget({ params, searchParams }) {
 
   return (
     <div className="p-5 min-h-[94vh]">
+      <ButtonBack />
       <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900">
         Add Category {groupName}
       </h5>

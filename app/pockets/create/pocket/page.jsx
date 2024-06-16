@@ -30,7 +30,7 @@ export default function CreatePocket() {
 
   return (
     <div className="p-5 min-h-[94vh]">
-      <ButtonBack href="/pockets" />
+      <ButtonBack />
       <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900">
         Create Pocket Name
       </h5>
