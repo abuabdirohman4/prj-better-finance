@@ -7,6 +7,8 @@ import Link from "next/link";
 import { TbRefresh } from "react-icons/tb";
 import { FaWallet } from "react-icons/fa";
 import { GrTransaction, GrMoney } from "react-icons/gr";
+import { BiMoneyWithdraw } from "react-icons/bi";
+import { AiFillHome } from "react-icons/ai";
 import { useState } from "react";
 import { getData } from "@/utils/fetch";
 
@@ -32,54 +34,11 @@ export default function BottomNav() {
   return (
     <div className="fixed bottom-0 mx-auto z-50 w-full max-w-md h-16 bg-[#F1F3F4] border-t border-gray-200">
       <div className="mt-0.5 flex h-full justify-evenly font-medium">
-        <Link
-          href={"/transactions"}
-          className="inline-flex flex-col items-center w-20 justify-center px-5 border-gray-200 border-x hover:bg-gray-50 group"
-        >
-          <GrTransaction
-            className="mb-2 text-gray-500 group-hover:text-blue-600"
-            size={20}
-          />
-          <span className="text-sm text-gray-500 group-hover:text-blue-600">
-            Trans
-          </span>
-        </Link>
-        <Link
-          href={"/pockets"}
-          className="inline-flex flex-col items-center w-20 justify-center px-5 border-gray-200 border-x hover:bg-gray-50 group"
-        >
-          <FaWallet
-            className="mb-2 text-gray-500 group-hover:text-blue-600"
-            size={20}
-          />
-          <span className="text-sm text-gray-500 group-hover:text-blue-600">
-            Pocket
-          </span>
-        </Link>
-        {/* <Link
-          href={"/budgets"}
-          className="group inline-flex flex-col items-center w-20 justify-center px-5 border-e border-gray-200 hover:bg-gray-50 group"
-        >
-          <BiMoneyWithdraw
-            className="mb-2 text-gray-500 group-hover:text-blue-600"
-            size={20}
-          />
-          <span className="text-sm text-gray-500 group-hover:text-blue-600">
-            Income
-          </span>
-        </Link> */}
-        <Link
-          href={"/budgets"}
-          className="group inline-flex flex-col items-center w-20 justify-center px-5 border-e border-gray-200 hover:bg-gray-50 group"
-        >
-          <GrMoney
-            className="mb-2 text-gray-500 group-hover:text-blue-600"
-            size={20}
-          />
-          <span className="text-sm text-gray-500 group-hover:text-blue-600">
-            Budgets
-          </span>
-        </Link>
+        <Menu name="Home" href="/home" />
+        <Menu name="Trans" href="/transactions" />
+        <Menu name="Pockets" href="/pockets" />
+        {/* <Menu name="Income" href='/' /> */}
+        <Menu name="Budgets" href="/budgets" />
         <div className="flex items-center justify-center mb-2">
           <button
             className={`inline-flex items-center justify-center w-10 h-10 font-medium bg-blue-500 rounded-full hover:bg-blue-800 group focus:ring-4 focus:ring-blue-300 focus:outline-none`}
@@ -112,5 +71,48 @@ export default function BottomNav() {
         </div>
       </div>
     </div>
+  );
+}
+
+function Menu({ name, href }) {
+  return (
+    <Link
+      href={href}
+      className="inline-flex flex-col items-center w-20 justify-center px-5 border-gray-200 border-x hover:bg-gray-50 group"
+    >
+      {name == "Home" && (
+        <AiFillHome
+          className="mb-2 text-gray-500 group-hover:text-blue-600"
+          size={20}
+        />
+      )}
+      {name == "Trans" && (
+        <GrTransaction
+          className="mb-2 text-gray-500 group-hover:text-blue-600"
+          size={20}
+        />
+      )}
+      {name == "Pockets" && (
+        <FaWallet
+          className="mb-2 text-gray-500 group-hover:text-blue-600"
+          size={20}
+        />
+      )}
+      {name == "Income" && (
+        <BiMoneyWithdraw
+          className="mb-2 text-gray-500 group-hover:text-blue-600"
+          size={20}
+        />
+      )}
+      {name == "Budgets" && (
+        <GrMoney
+          className="mb-2 text-gray-500 group-hover:text-blue-600"
+          size={20}
+        />
+      )}
+      <span className="text-sm text-gray-500 group-hover:text-blue-600">
+        {name}
+      </span>
+    </Link>
   );
 }
