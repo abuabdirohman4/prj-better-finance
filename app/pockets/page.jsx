@@ -53,6 +53,18 @@ const shuffleArray = (array) => {
   return array;
 };
 
+async function fetchAllTransactions() {
+  const promises = months.map((month) => {
+    return fetchTransaction(month);
+  });
+
+  // Wait for all promises to resolve and combine the results
+  const allData = await Promise.all(promises);
+  // Flatten the array of arrays and sort & reverse the combined data
+  const combinedData = allData.flat().sort().reverse();
+  return combinedData;
+}
+
 export default function PocketsPage() {
   const [summary, setSummary] = useState([]);
   const [randomColors, setRandomColors] = useState([]);
@@ -105,18 +117,6 @@ export default function PocketsPage() {
   );
 
   useEffect(() => {
-    async function fetchAllTransactions() {
-      const promises = months.map((month) => {
-        return fetchTransaction(month);
-      });
-
-      // Wait for all promises to resolve and combine the results
-      const allData = await Promise.all(promises);
-      // Flatten the array of arrays and sort & reverse the combined data
-      const combinedData = allData.flat().sort().reverse();
-      return combinedData;
-    }
-
     async function fetchData() {
       console.log("fetchData");
       let resSummary = getLocal(SESSIONKEY.summary);

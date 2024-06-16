@@ -12,7 +12,7 @@ import {
 import Image from "next/image";
 import SkeletonList from "@/components/Skeleton/List";
 import SkeletonText from "@/components/Skeleton/Text";
-import { getLocal, getSession } from "@/utils/session";
+import { getLocal, setLocal } from "@/utils/session";
 import CardTransaction from "@/components/Card/Transaction";
 
 export default function Transactions() {
@@ -69,6 +69,7 @@ export default function Transactions() {
       if (!transactions || selectedMonth != currentMonth) {
         console.log("storage transactions", transactions);
         transactions = await fetchTransaction(selectedMonth);
+        setLocal(SESSIONKEY.transactions, transactions);
       }
       const group = groupTransactionsByDate(transactions);
       setTransaction(group);

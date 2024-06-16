@@ -9,7 +9,7 @@ import {
   getMonthInNumber,
   toCapitalCase,
 } from "@/utils/helper";
-import { getLocal } from "@/utils/session";
+import { getLocal, setLocal } from "@/utils/session";
 import Link from "next/link";
 
 export default async function Budgets({ params, searchParams }) {
@@ -30,6 +30,7 @@ export default async function Budgets({ params, searchParams }) {
   if (!transactions || currentMonth != month) {
     console.log("storage transactions", transactions);
     transactions = await fetchTransaction(month);
+    setLocal(SESSIONKEY.transactions, transactions);
   }
 
   const categories = [];

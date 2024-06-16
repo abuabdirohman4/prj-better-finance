@@ -10,7 +10,7 @@ import {
   getDefaultSheetName,
   getTotalObjectValue,
 } from "@/utils/helper";
-import { getLocal } from "@/utils/session";
+import { getLocal, setLocal } from "@/utils/session";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -79,6 +79,7 @@ export default function SpendingTabs({ selectedMonth }) {
             url: "/api/budgets/group",
             params: { clientId },
           });
+          setLocal(SESSIONKEY.categoryBudgetGroup, categoryBudgetGroup);
         }
 
         if (categoryBudgetGroup.status === 200) {
@@ -105,6 +106,7 @@ export default function SpendingTabs({ selectedMonth }) {
           if (!transactions || currentMonth != selectedMonth) {
             console.log("storage transactions", transactions);
             transactions = await fetchTransaction(selectedMonth);
+            setLocal(SESSIONKEY.transactions, transactions);
           }
           const categoryGroupSpending = sumCategoryGroupSpending(
             transactions,
