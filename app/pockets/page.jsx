@@ -1,7 +1,8 @@
 "use client";
-import { SESSIONKEY, categories, months } from "@/utils/constants";
+import { SESSIONKEY, months } from "@/utils/constants";
+import { getData } from "@/utils/fetch";
 import { fetchSummary, fetchTransaction } from "@/utils/fetchTransaction";
-import { formatRupiah, getCashValue, getCashValuePocket } from "@/utils/helper";
+import { formatRupiah, getCashValuePocket } from "@/utils/helper";
 import { getLocal, setLocal } from "@/utils/session";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -27,32 +28,6 @@ const colors = [
   "bg-sky-600",
 ];
 
-const pockets = [
-  { name: "Wallet" },
-  { name: "Mandiri" },
-  { name: "BCA" },
-  { name: "Ponch" },
-  { name: "Dana" },
-  { name: "Flip" },
-  { name: "GoPay" },
-  { name: "Grab" },
-  { name: "Jenius" },
-  { name: "MyTelkomsel" },
-  { name: "E-Toll" },
-  { name: "Ovo" },
-  { name: "AR" },
-  { name: "AP" },
-  // { name: "BNI" },
-];
-
-const shuffleArray = (array) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-};
-
 async function fetchAllTransactions() {
   const promises = months.map((month) => {
     return fetchTransaction(month);
@@ -66,8 +41,8 @@ async function fetchAllTransactions() {
 }
 
 export default function PocketsPage() {
+  const clientId = "1717515";
   const [summary, setSummary] = useState([]);
-  const [randomColors, setRandomColors] = useState([]);
 
   const getTotalAmountCategory = useCallback(
     (pockets, transactions, summary) => {
@@ -96,22 +71,16 @@ export default function PocketsPage() {
 
         // mapping data budget & spending of category pocket
         summaryPockets.push({
+          id: pocket.id,
           name: pocket.name,
           // totalAmount2023: totalAmount2023,
           // totalAmount2024: amount,
-          totalAmount: totalAmount,
+          actual: pocket.actual,
+          amount: totalAmount,
         });
       });
       console.log("summaryPockets", summaryPockets);
       setSummary(summaryPockets);
-
-      // Generate a unique color for each pocket
-      if (summaryPockets.length <= colors.length) {
-        const shuffledColors = shuffleArray([...colors]);
-        setRandomColors(shuffledColors.slice(0, summaryPockets.length));
-      } else {
-        console.error("Not enough colors for the summary");
-      }
     },
     []
   );
@@ -119,21 +88,40 @@ export default function PocketsPage() {
   useEffect(() => {
     async function fetchData() {
       console.log("fetchData");
-      let resSummary = getLocal(SESSIONKEY.summary);
-      if (!resSummary) {
-        resSummary = await fetchSummary();
-        setLocal(SESSIONKEY.summary, resSummary);
+      let pockets = getLocal(SESSIONKEY.pockets);
+      if (!pockets) {
+        console.log("storage pockets", pockets);
+        pockets = await getData({
+          url: "/api/pockets",
+          params: {
+            clientId: clientId,
+            reqFunc: "GetPocket",
+          },
+        });
+        if (pockets.status === 200) setLocal(SESSIONKEY.pockets, pockets);
       }
 
-      if (resSummary) {
-        let transactionsInYear = getLocal(SESSIONKEY.transactionsInYear);
-        if (!transactionsInYear) {
-          fetchAllTransactions().then((data) => {
-            setLocal(SESSIONKEY.transactionsInYear, data);
-            getTotalAmountCategory(pockets, data, resSummary[0]);
-          });
-        } else {
-          getTotalAmountCategory(pockets, transactionsInYear, resSummary[0]);
+      if (pockets.status === 200) {
+        let resSummary = getLocal(SESSIONKEY.summary);
+        if (!resSummary) {
+          resSummary = await fetchSummary();
+          setLocal(SESSIONKEY.summary, resSummary);
+        }
+
+        if (resSummary) {
+          let transactionsInYear = getLocal(SESSIONKEY.transactionsInYear);
+          if (!transactionsInYear) {
+            fetchAllTransactions().then((data) => {
+              setLocal(SESSIONKEY.transactionsInYear, data);
+              getTotalAmountCategory(pockets.data, data, resSummary[0]);
+            });
+          } else {
+            getTotalAmountCategory(
+              pockets.data,
+              transactionsInYear,
+              resSummary[0]
+            );
+          }
         }
       }
     }
@@ -155,7 +143,8 @@ export default function PocketsPage() {
             href={{
               pathname: `/pockets/${pocket.name}`,
               query: {
-                pocketAmount: pocket.totalAmount,
+                pocketId: pocket.id,
+                pocketAmount: pocket.amount,
                 color: colors[index % colors.length],
               },
             }}
@@ -164,20 +153,16 @@ export default function PocketsPage() {
             <h5 className="my-8 font-bold tracking-tight text-gray-900">
               {pocket.name}
             </h5>
-            {/* <div className={`${randomColors[index]} p-1.5`}> */}
             <div className={`${colors[index % colors.length]} p-1.5`}>
               <p className="font-bold text-sm text-white">
-                {formatRupiah(pocket.totalAmount)}
+                {formatRupiah(pocket.amount)}
               </p>
             </div>
           </Link>
         ))}
       </div>
       <div className="mt-8 text-center underline">
-        <Link
-          href="/pockets/create/pocket"
-          className="text-black hover:text-blue-500"
-        >
+        <Link href="/pockets/create" className="text-black hover:text-blue-500">
           Add Pocket
         </Link>
       </div>

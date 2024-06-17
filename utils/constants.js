@@ -56,4 +56,5 @@ export const SESSIONKEY = {
   categoryGroup: "category_group",
   currentMonthBudgetPage: "current_mont_budget_page",
   summary: "summary",
+  pockets: "pockets"
 };

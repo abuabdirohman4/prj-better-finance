@@ -1,30 +1,54 @@
 "use client";
 import ButtonBack from "@/components/Button/BackButton/page";
-import Link from "next/link";
+import { SESSIONKEY } from "@/utils/constants";
+import { getData, postData } from "@/utils/fetch";
+import { setLocal } from "@/utils/session";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function CreatePocket() {
+  const clientId = "1717515";
   const [pocketName, setPocketName] = useState("");
-  const [pocketAmount, setPocketAmount] = useState("");
+  const [pocketAmount, setPocketAmount] = useState(0);
+  const { push } = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      //   const res = await postData({
-      //     url: "/api/budgets/group",
-      //     payload: {
-      //       clientId: "1717515",
-      //       name: categoryName,
-      //     },
-      //   });
-      //   if (res.status == 201) {
-      //     console.log("res post", res.data);
-      //     setCategoryName("");
-      //   } else {
-      //     console.log("res post", res.response.data);
-      //   }
+      const res = await postData({
+        url: "/api/pockets",
+        payload: {
+          clientId: clientId,
+          name: pocketName,
+          actual: pocketAmount,
+          reqFunc: "PostPocket",
+        },
+      });
+      if (res.status == 201) {
+        console.log("res post", res.data);
+        await fetchPockets();
+        push("/pockets");
+      } else {
+        console.error("Error adding pocket:", res.response.data);
+      }
     } catch (error) {
       console.error("Error adding pocket:", error);
+    }
+  };
+
+  const fetchPockets = async () => {
+    const pockets = await getData({
+      url: "/api/pockets",
+      params: {
+        clientId: clientId,
+        reqFunc: "GetPocket",
+      },
+    });
+    if (pockets.status === 200) {
+      setLocal(SESSIONKEY.pockets, pockets);
+    } else {
+      console.error("failed get pockets");
+      return false;
     }
   };
 
@@ -62,6 +86,7 @@ export default function CreatePocket() {
           </label>
           <input
             type="number"
+            pattern="[0-9]+([\,+][0-9])?"
             id="group-category-name"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
             placeholder="Current Amount"
