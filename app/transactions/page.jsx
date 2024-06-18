@@ -3,7 +3,7 @@ import { fetchTransaction } from "@/utils/fetchTransaction";
 import { SESSIONKEY, months } from "@/utils/constants";
 import { useEffect, useState } from "react";
 import {
-  formatDate,
+  formatDateWithTodayYesterdayCheck,
   formatRupiah,
   getCashValue,
   getDefaultSheetName,
@@ -153,7 +153,7 @@ export default function Transactions() {
                   {Object.keys(transaction).map((date) => (
                     <li key={date} className="py-2 sm:py-3">
                       <p className="text-sm text-gray-500 mb-2 truncate">
-                        {formatDate(date)}
+                        {formatDateWithTodayYesterdayCheck(date)}
                       </p>
                       {transaction[date].map(
                         (data, key) =>

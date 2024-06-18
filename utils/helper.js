@@ -15,6 +15,32 @@ export function formatRupiah(amount) {
   }
 }
 
+export function formatDateWithTodayYesterdayCheck(dateString) {
+  const options = { day: "2-digit", month: "short", year: "numeric" };
+  const date = new Date(dateString.split("/").reverse().join("-"));
+
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  // Periksa apakah tanggal adalah hari ini
+  if (date.toDateString() === today.toDateString()) {
+    return "Today";
+  }
+
+  // Periksa apakah tanggal adalah kemarin
+  if (date.toDateString() === yesterday.toDateString()) {
+    return "Yesterday";
+  }
+
+  return date.toLocaleDateString("en-GB", options).replace(/ /g, " ");
+}
+
+export function formatDateToDDMMYYYY(dateString) {
+  const [year, month, day] = dateString.split("-");
+  return `${day}/${month}/${year}`;
+}
+
 export function getDefaultSheetName(months) {
   const currentMonth = new Date().getMonth();
   return months[currentMonth];
@@ -23,14 +49,6 @@ export function getDefaultSheetName(months) {
 export function getMonthInNumber(monthString) {
   const year = new Date().getFullYear();
   return new Date(Date.parse(monthString + " 1, " + year)).getMonth() + 1;
-}
-
-export function toCapitalCase(string) {
-  if (string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  } else {
-    console.log(string, "string toCapitalCase");
-  }
 }
 
 export function getCashValue(data) {
@@ -161,23 +179,10 @@ export function getTotalObjectValue(data) {
   return Object.values(data).reduce((total, value) => total + value, 0);
 }
 
-export const formatDate = (dateString) => {
-  const options = { day: "2-digit", month: "short", year: "numeric" };
-  const date = new Date(dateString.split("/").reverse().join("-"));
-
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
-
-  // Periksa apakah tanggal adalah hari ini
-  if (date.toDateString() === today.toDateString()) {
-    return "Today";
+export function toCapitalCase(string) {
+  if (string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  } else {
+    console.log(string, "string toCapitalCase");
   }
-
-  // Periksa apakah tanggal adalah kemarin
-  if (date.toDateString() === yesterday.toDateString()) {
-    return "Yesterday";
-  }
-
-  return date.toLocaleDateString("en-GB", options).replace(/ /g, " ");
-};
+}

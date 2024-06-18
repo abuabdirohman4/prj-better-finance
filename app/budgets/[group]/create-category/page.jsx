@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { getData, postData } from "@/utils/fetch";
+import { fetchAllCategories, getData, postData } from "@/utils/fetch";
 import { toCapitalCase } from "@/utils/helper";
 import ButtonBack from "@/components/Button/BackButton/page";
 
@@ -31,6 +31,7 @@ export default function CreateCategoryBudget({ params, searchParams }) {
         setCategoryName("");
         setCategoryType(type);
         fetchCategories();
+        fetchAllCategories({ state: "update" });
       } else {
         console.log("res post", res.response.data);
       }

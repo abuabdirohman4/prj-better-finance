@@ -1,5 +1,11 @@
-import React from "react";
-import Select from "react-select";
+import SkeletonText from "@/components/Skeleton/Text";
+import dynamic from "next/dynamic";
+// import Select from "react-select";
+
+const Select = dynamic(() => import("react-select"), {
+  ssr: false,
+  loading: () => <SkeletonText row={2}/>,
+});
 
 function SelectInput({
   name,
@@ -17,11 +23,15 @@ function SelectInput({
 }) {
   return (
     <div className={`${className}`}>
-      <label htmlFor={name} className="mb-2 block text-sm font-semibold">
+      <label
+        htmlFor={name}
+        className="mb-2 block text-sm text-black font-semibold"
+      >
         {label}
       </label>
       <Select
         name={name}
+        id={name}
         isClearable={isClearable}
         isSearchable={isSearchable}
         placeholder={placeholder}

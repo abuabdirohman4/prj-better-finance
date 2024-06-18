@@ -58,6 +58,7 @@ export async function GetCategories(clientId, groupId, type) {
     categories = await prisma.category.findMany({
       where: { clientId: clientId },
       select: {
+        id: true,
         name: true,
         type: true,
       },

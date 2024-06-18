@@ -51,10 +51,11 @@ const Earning = [
 ];
 
 export const SESSIONKEY = {
-  transactionsInYear: "transactions_in_year",
-  transactions: "transactions",
+  categories: "categories",
   categoryGroup: "category_group",
   currentMonthBudgetPage: "current_mont_budget_page",
+  pockets: "pockets",
   summary: "summary",
-  pockets: "pockets"
+  transactionsInYear: "transactions_in_year",
+  transactions: "transactions",
 };

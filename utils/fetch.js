@@ -1,4 +1,6 @@
 import axios from "axios";
+import { getLocal, setLocal } from "./session";
+import { SESSIONKEY } from "./constants";
 
 export async function getData({ url, params, token }) {
   try {
@@ -43,5 +45,27 @@ export async function deleteData({ url, token }) {
     });
   } catch (error) {
     return error;
+  }
+}
+
+const clientId = "1717515";
+export async function fetchAllCategories({ state }) {
+  let resAllCategories = {};
+  if (state !== "update") {
+    resAllCategories = getLocal(SESSIONKEY.categories);
+  }
+  if (!resAllCategories || Object.entries(resAllCategories).length === 0) {
+    resAllCategories = await getData({
+      url: "/api/budgets/categories",
+      params: {
+        clientId: clientId,
+        reqFunc: "GetCategories",
+      },
+    });
+  }
+  if (resAllCategories.status == 200) {
+    console.log("resAllCategories", resAllCategories);
+    setLocal(SESSIONKEY.categories, resAllCategories);
+    return resAllCategories;
   }
 }
