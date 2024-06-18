@@ -1,7 +1,10 @@
 "use client";
 import { SESSIONKEY, months } from "@/utils/constants";
 import { getData } from "@/utils/fetch";
-import { fetchSummary, fetchTransaction } from "@/utils/fetchTransaction";
+import {
+  fetchSheetSummary,
+  fetchSheetTransaction,
+} from "@/utils/fetchSheetData";
 import { formatRupiah, getCashValuePocket } from "@/utils/helper";
 import { getLocal, setLocal } from "@/utils/session";
 import Link from "next/link";
@@ -30,7 +33,7 @@ const colors = [
 
 async function fetchAllTransactions() {
   const promises = months.map((month) => {
-    return fetchTransaction(month);
+    return fetchSheetTransaction(month);
   });
 
   // Wait for all promises to resolve and combine the results
@@ -104,7 +107,7 @@ export default function PocketsPage() {
       if (pockets.status === 200) {
         let resSummary = getLocal(SESSIONKEY.summary);
         if (!resSummary) {
-          resSummary = await fetchSummary();
+          resSummary = await fetchSheetSummary();
           setLocal(SESSIONKEY.summary, resSummary);
         }
 

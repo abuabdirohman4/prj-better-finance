@@ -1,7 +1,7 @@
 import { GetTotalAmountCategory } from "@/app/api/budgets/categories/route";
 import CardBudget from "@/components/Card/Budget";
 import { SESSIONKEY, months } from "@/utils/constants";
-import { fetchTransaction } from "@/utils/fetchTransaction";
+import { fetchSheetTransaction } from "@/utils/fetchSheetData";
 import {
   formatRupiah,
   getCashValue,
@@ -21,15 +21,11 @@ export default async function Budgets({ params, searchParams }) {
   const month = searchParams.month;
   const monthInNumber = getMonthInNumber(month);
   const year = searchParams.year;
-  const categoryBudget = await GetTotalAmountCategory(
-    clientId,
-    group,
-    type
-  );
+  const categoryBudget = await GetTotalAmountCategory(clientId, group, type);
   let transactions = getLocal(SESSIONKEY.transactions);
   if (!transactions || currentMonth != month) {
     console.log("storage transactions", transactions);
-    transactions = await fetchTransaction(month);
+    transactions = await fetchSheetTransaction(month);
     setLocal(SESSIONKEY.transactions, transactions);
   }
 

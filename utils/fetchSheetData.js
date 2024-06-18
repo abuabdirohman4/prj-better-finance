@@ -25,7 +25,7 @@ function parseCSV(data) {
   });
 }
 
-export async function fetchTransaction(sheetName) {
+export async function fetchSheetTransaction(sheetName) {
   const sheetId = "1mVgdePlteuewjY6DvdUmNyHf0CPoAoHY3Sh3lDymV5A";
   const encodedSheetName = encodeURIComponent(sheetName);
   const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodedSheetName}`;
@@ -38,9 +38,9 @@ export async function fetchTransaction(sheetName) {
   }
 }
 
-export async function fetchSummary() {
+export async function fetchSheetSummary() {
   const sheetId = "1mVgdePlteuewjY6DvdUmNyHf0CPoAoHY3Sh3lDymV5A";
-  const encodedSheetName = encodeURIComponent('Summary');
+  const encodedSheetName = encodeURIComponent("Summary");
   const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodedSheetName}`;
 
   const res = await getData({

@@ -1,6 +1,6 @@
 "use client";
 import { SESSIONKEY, months } from "@/utils/constants";
-import { fetchTransaction } from "@/utils/fetchTransaction";
+import { fetchSheetTransaction } from "@/utils/fetchSheetData";
 import { getDefaultSheetName } from "@/utils/helper";
 import { setLocal } from "@/utils/session";
 import Link from "next/link";
@@ -17,7 +17,9 @@ export default function BottomNav() {
   const clientId = "1717515";
   const fetchData = async () => {
     setIsLoading(true);
-    const transactions = await fetchTransaction(getDefaultSheetName(months));
+    const transactions = await fetchSheetTransaction(
+      getDefaultSheetName(months)
+    );
     console.log("transactions", transactions);
     setLocal(SESSIONKEY.transactions, transactions);
     const categoryGroup = await getData({

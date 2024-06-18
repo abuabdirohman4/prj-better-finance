@@ -15,7 +15,7 @@ import SkeletonText from "@/components/Skeleton/Text";
 import { getLocal, setLocal } from "@/utils/session";
 import CardTransaction from "@/components/Card/Transaction";
 
-export default function Transactions() {
+export default function SheetTransactions() {
   const [isLoadingPage, setisLoadingPage] = useState(true);
   const [isLoadingContent, setIsLoadingContent] = useState(false);
   const [transaction, setTransaction] = useState([]);

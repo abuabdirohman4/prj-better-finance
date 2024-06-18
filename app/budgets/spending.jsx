@@ -3,7 +3,7 @@ import CardBudget from "@/components/Card/Budget";
 import SkeletonList from "@/components/Skeleton/List";
 import { SESSIONKEY, months } from "@/utils/constants";
 import { getData } from "@/utils/fetch";
-import { fetchTransaction } from "@/utils/fetchTransaction";
+import { fetchSheetTransaction } from "@/utils/fetchSheetData";
 import {
   formatRupiah,
   getCashValue,
@@ -106,7 +106,7 @@ export default function SpendingTabs({ selectedMonth }) {
           let transactions = getLocal(SESSIONKEY.transactions);
           if (!transactions || currentMonth != selectedMonth) {
             console.log("storage transactions", transactions);
-            transactions = await fetchTransaction(selectedMonth);
+            transactions = await fetchSheetTransaction(selectedMonth);
             setLocal(SESSIONKEY.transactions, transactions);
           }
           const categoryGroupSpending = sumCategoryGroupSpending(
