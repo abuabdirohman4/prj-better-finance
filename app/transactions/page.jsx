@@ -1,34 +1,36 @@
 "use client";
-import { fetchSheetTransaction } from "@/utils/fetchSheetData";
-import { SESSIONKEY, months } from "@/utils/constants";
+import { months } from "@/utils/constants";
 import { useEffect, useState } from "react";
 import {
   formatDateWithTodayYesterdayCheck,
   formatRupiah,
-  getCashValue,
-  getDefaultSheetName,
   getTotalCashGroupedByDate,
 } from "@/utils/helper";
 import Image from "next/image";
 import SkeletonList from "@/components/Skeleton/List";
 import SkeletonText from "@/components/Skeleton/Text";
-import { getLocal, setLocal } from "@/utils/session";
 import CardTransaction from "@/components/Card/Transaction";
+import { fetchTransactions } from "@/utils/fetch";
 
 export default function Transactions() {
   const [isLoadingPage, setisLoadingPage] = useState(true);
   const [isLoadingContent, setIsLoadingContent] = useState(false);
   const [transaction, setTransaction] = useState([]);
-  const currentMonth = getDefaultSheetName(months);
+  const currentMonth = new Date().getMonth() + 1;
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
 
-  const spending = getTotalCashGroupedByDate(transaction, "Spending");
-  const earning = getTotalCashGroupedByDate(transaction, "Earning");
+  const spending = getTotalCashGroupedByDate(transaction, "spending");
+  const earning = getTotalCashGroupedByDate(transaction, "earning");
 
   const groupTransactionsByDate = (transactions) => {
     // Mengelompokkan data berdasarkan tanggal
     const grouped = transactions.reduce((groups, transaction) => {
-      const date = transaction.Date;
+      const date = new Date(transaction.date)
+        .toLocaleString("en-GB", {
+          timeZone: "Asia/Jakarta",
+        })
+        .split(",")[0];
+
       if (date) {
         if (!groups[date]) {
           groups[date] = [];
@@ -64,15 +66,14 @@ export default function Transactions() {
   useEffect(() => {
     const fetchData = async () => {
       setIsLoadingContent(true);
-
-      let transactions = getLocal(SESSIONKEY.transactions);
-      if (!transactions || selectedMonth != currentMonth) {
-        console.log("storage transactions", transactions);
-        transactions = await fetchSheetTransaction(selectedMonth);
-        setLocal(SESSIONKEY.transactions, transactions);
-      }
+      const transactions = await fetchTransactions({
+        params: {
+          date: { month: selectedMonth },
+        },
+      });
       const group = groupTransactionsByDate(transactions);
       setTransaction(group);
+      console.log("group", group);
 
       setisLoadingPage(false);
       setIsLoadingContent(false);
@@ -127,7 +128,7 @@ export default function Transactions() {
               )}
             </div>
           </div>
-          <div className="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg rounded-t-none shadow sm:p-8">
+          <div className="w-full max-w-md p-8 bg-white border border-b-0 border-gray-200 rounded-lg rounded-t-none">
             <div className="flex items-center justify-between mb-4">
               <h5 className="text-xl font-bold leading-none text-gray-900">
                 Transactions
@@ -138,8 +139,8 @@ export default function Transactions() {
                 onChange={(e) => setSelectedMonth(e.target.value)}
                 className="text-sm font-medium text-blue-600 hover:underline"
               >
-                {months.map((month) => (
-                  <option key={month} value={month}>
+                {months.map((month, index) => (
+                  <option key={index} value={index + 1}>
                     {month}
                   </option>
                 ))}
@@ -155,21 +156,18 @@ export default function Transactions() {
                       <p className="text-sm text-gray-500 mb-2 truncate">
                         {formatDateWithTodayYesterdayCheck(date)}
                       </p>
-                      {transaction[date].map(
-                        (data, key) =>
-                          data.Note !== "Moving Period" && (
-                            <div key={key}>
-                              <CardTransaction
-                                date={data.Date}
-                                type={data.Transaction}
-                                account={data.Account}
-                                category={data["Category or Account"]}
-                                note={data.Note}
-                                cash={getCashValue(data)}
-                              />
-                            </div>
-                          )
-                      )}
+                      {transaction[date].map((data, key) => (
+                        <div key={key}>
+                          <CardTransaction
+                            date={data.date}
+                            type={data.type}
+                            account={data.pockets.name}
+                            category={data.category.name}
+                            note={data.desc}
+                            cash={data.amount}
+                          />
+                        </div>
+                      ))}
                     </li>
                   ))}
                 </ul>

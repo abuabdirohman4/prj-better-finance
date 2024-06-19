@@ -1,3 +1,18 @@
+export function excludeData(data, keys) {
+  // return Object.fromEntries(
+  //   Object.entries(data).filter(([key]) => !keys.includes(key))
+  // );
+  if (Array.isArray(data)) {
+    return data.map((item) => excludeData(item, keys));
+  } else if (typeof data === "object" && data !== null) {
+    return Object.fromEntries(
+      Object.entries(data).filter(([key]) => !keys.includes(key))
+      // .map(([key, value]) => [key, excludeData(value, keys)])
+    );
+  }
+  return data;
+}
+
 export function formatRupiah(amount) {
   if (amount || amount == 0) {
     // Lakukan parsing terlebih dahulu jika amount masih dalam format string
@@ -41,14 +56,14 @@ export function formatDateToDDMMYYYY(dateString) {
   return `${day}/${month}/${year}`;
 }
 
-export function getDefaultSheetName(months) {
-  const currentMonth = new Date().getMonth();
-  return months[currentMonth];
-}
-
 export function getMonthInNumber(monthString) {
   const year = new Date().getFullYear();
   return new Date(Date.parse(monthString + " 1, " + year)).getMonth() + 1;
+}
+
+export function getDefaultSheetName(months) {
+  const currentMonth = new Date().getMonth();
+  return months[currentMonth];
 }
 
 export function getCashValue(data) {
@@ -132,17 +147,22 @@ export function getTotalCashTransactions(transactions, type) {
   let total = 0;
 
   transactions.forEach((data) => {
-    if (data.Transaction === type) {
-      // Periksa apakah nilai cash dapat diubah menjadi angka
-      const cashValue = parseFloat(getCashValue(data));
-      if (!isNaN(cashValue)) {
-        // Jika valid, tambahkan ke total
-        total += cashValue;
-      } else {
-        // Jika tidak valid, log pesan kesalahan
-        console.error(
-          `Invalid cash value for transaction: ${JSON.stringify(data.Note)}`
-        );
+    // sheet or table
+    if (data.Transaction === type || data.type === type) {
+      if (data.Transaction) {
+        // Periksa apakah nilai cash dapat diubah menjadi angka
+        const cashValue = parseFloat(getCashValue(data));
+        if (!isNaN(cashValue)) {
+          // Jika valid, tambahkan ke total
+          total += cashValue;
+        } else {
+          // Jika tidak valid, log pesan kesalahan
+          console.error(
+            `Invalid cash value for transaction: ${JSON.stringify(data.Note)}`
+          );
+        }
+      } else if (data.type) {
+        total += data.amount;
       }
     }
   });
@@ -156,17 +176,22 @@ export function getTotalCashGroupedByDate(groupedTransactions, type) {
 
   Object.keys(groupedTransactions).forEach((date) => {
     groupedTransactions[date].forEach((data) => {
-      if (data.Transaction === type) {
+      // sheet or table
+      if (data.Transaction === type || data.type === type) {
         // Periksa apakah nilai cash dapat diubah menjadi angka
-        const cashValue = parseFloat(getCashValue(data));
-        if (!isNaN(cashValue)) {
-          // Jika valid, tambahkan ke total
-          total += cashValue;
-        } else {
-          // Jika tidak valid, log pesan kesalahan
-          console.error(
-            `Invalid cash value for transaction: ${JSON.stringify(data.Note)}`
-          );
+        if (data.Transaction) {
+          const cashValue = parseFloat(getCashValue(data));
+          if (!isNaN(cashValue)) {
+            // Jika valid, tambahkan ke total
+            total += cashValue;
+          } else {
+            // Jika tidak valid, log pesan kesalahan
+            console.error(
+              `Invalid cash value for transaction: ${JSON.stringify(data.Note)}`
+            );
+          }
+        } else if (data.type) {
+          total += data.amount;
         }
       }
     });

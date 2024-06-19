@@ -51,6 +51,7 @@ const Earning = [
 ];
 
 export const SESSIONKEY = {
+  clientId: "clientId",
   categories: "categories",
   categoryGroup: "category_group",
   currentMonthBudgetPage: "current_mont_budget_page",

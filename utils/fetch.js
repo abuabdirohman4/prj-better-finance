@@ -69,3 +69,40 @@ export async function fetchAllCategories({ state }) {
     return resAllCategories;
   }
 }
+
+export async function fetchTransactions({
+  state = "",
+  params: {
+    date: { day = "", month = "", year = "" } = {},
+    type = "",
+    pocket1 = "",
+    pocket2 = "",
+    category = "",
+    desc = "",
+    amount = "",
+  } = {},
+}) {
+  let resAllTransactions = {};
+  if (state == "") {
+    // resAllTransactions = getLocal(SESSIONKEY.transactions);
+  }
+  if (!resAllTransactions || Object.entries(resAllTransactions).length === 0) {
+    resAllTransactions = await getData({
+      url: "/api/transactions",
+      params: {
+        date: { day, month, year },
+        type,
+        pocket1,
+        pocket2,
+        category,
+        desc,
+        amount,
+      },
+    });
+  }
+  if (resAllTransactions.status == 200) {
+    console.log("resAllTransactions", resAllTransactions);
+    // setLocal(SESSIONKEY.transactions, resAllTransactions);
+    return resAllTransactions.data;
+  }
+}
