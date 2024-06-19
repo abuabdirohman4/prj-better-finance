@@ -56,6 +56,12 @@ export default function Budgets() {
       />
       <div className="mt-3 pb-12 flex flex-col text-center underline">
         <Link
+          href="/budgets/add-budget"
+          className="text-black hover:text-blue-500"
+        >
+          Update Budgets
+        </Link>
+        <Link
           href="/budgets/create-category"
           className="text-black hover:text-blue-500"
         >

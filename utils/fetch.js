@@ -71,6 +71,91 @@ export async function fetchAllCategories(updateStorage) {
   }
 }
 
+export async function fetchCategories(
+  updateStorage,
+  {
+    params: {
+      groupId = "",
+      groupName = "",
+      month = "",
+      type = "",
+      year = "",
+    } = {},
+  }
+) {
+  let categories = {};
+  if (!updateStorage) {
+    categories = getLocal(SESSIONKEY.categories);
+  }
+  if (!categories || Object.entries(categories).length === 0) {
+    console.log("storage categories", categories);
+    categories = await getData({
+      url: "/api/budgets/categories2",
+      params: {
+        clientId: clientId,
+        groupId,
+        groupName,
+        month,
+        type,
+        year,
+      },
+    });
+  }
+  if (categories.status == 200) {
+    console.log("categories", categories);
+    setLocal(SESSIONKEY.categories, categories);
+    return categories;
+  }
+}
+
+export async function fetchCategoryGroups(updateStorage) {
+  let categoryGroup = {};
+  if (!updateStorage) {
+    categoryGroup = getLocal(SESSIONKEY.categoryGroup);
+  }
+  if (!categoryGroup || Object.entries(categoryGroup).length === 0) {
+    console.log("storage categoryGroup", categoryGroup);
+    categoryGroup = await getData({
+      url: "/api/budgets/group",
+      params: {
+        clientId: clientId,
+      },
+    });
+  }
+
+  if (categoryGroup.status === 200) {
+    console.log("categoryGroup", categoryGroup);
+    setLocal(SESSIONKEY.categoryGroup, categoryGroup);
+    return categoryGroup;
+  }
+}
+
+export async function fetchMonthlyCategories(
+  updateStorage,
+  { params: { groupId = "", year = "", month = "" } = {} }
+) {
+  let monthlyCategories = {};
+  if (!updateStorage) {
+    monthlyCategories = getLocal(SESSIONKEY.monthlyCategories);
+  }
+  if (!monthlyCategories || Object.entries(monthlyCategories).length === 0) {
+    monthlyCategories = await getData({
+      url: "/api/budgets/monthlies",
+      params: {
+        clientId: clientId,
+        groupId,
+        year,
+        month,
+      },
+    });
+  }
+  if (monthlyCategories.status == 200) {
+    console.log("monthlyCategories", monthlyCategories);
+    setLocal(SESSIONKEY.monthlyCategories, monthlyCategories);
+    return monthlyCategories;
+  }
+}
+
 export async function fetchTransactions(
   updateStorage,
   {
@@ -108,27 +193,5 @@ export async function fetchTransactions(
     console.log("resAllTransactions", resAllTransactions);
     setLocal(SESSIONKEY.transactions, resAllTransactions);
     return resAllTransactions.data;
-  }
-}
-
-export async function fetchCategoryGroups(updateStorage) {
-  let categoryGroup = {};
-  if (!updateStorage) {
-    categoryGroup = getLocal(SESSIONKEY.categoryGroup);
-  }
-  if (!categoryGroup || Object.entries(categoryGroup).length === 0) {
-    console.log("storage categoryGroup", categoryGroup);
-    categoryGroup = await getData({
-      url: "/api/budgets/group",
-      params: {
-        clientId: clientId,
-      },
-    });
-  }
-
-  if (categoryGroup.status === 200) {
-    console.log("categoryGroup", categoryGroup);
-    setLocal(SESSIONKEY.categoryGroup, categoryGroup);
-    return categoryGroup;
   }
 }
