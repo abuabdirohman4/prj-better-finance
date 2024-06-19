@@ -163,8 +163,6 @@ export async function POST(req) {
       newCategory = await PostCategory(body);
     } else if (reqFunc === "PostCategoryWithGroup") {
       newCategory = await PostCategoryWithGroup(body);
-    } else if (reqFunc === "PostCategoryBulk") {
-      newCategory = await PostCategoryBulk(body);
     } else if (reqFunc === "PostCategoryLinkGroup") {
       newCategory = await PostCategoryLinkGroup(body);
     }
@@ -234,56 +232,4 @@ export async function PostCategoryLinkGroup(body) {
       groupId,
     },
   });
-}
-
-export async function PostCategoryBulk(body) {
-  const { categories } = body;
-  const createdCategories = await prisma.monthlyCategory.createMany({
-    data: categories.map((category) => ({
-      categoryId: category.categoryId,
-      clientId: category.clientId,
-      year: category.year,
-      month: parseInt(category.month),
-      amount: category.amount,
-      type: category.type,
-    })),
-  });
-  return createdCategories;
-}
-
-export async function PUT(req) {
-  try {
-    const body = await req.json();
-    const { reqFunc } = body;
-
-    let updateCategory = null;
-    if (reqFunc === "PutCategoryBulk") {
-      updateCategory = await PutCategoryBulk(body);
-    }
-
-    return NextResponse.json(updateCategory, { status: 201 });
-  } catch (error) {
-    console.error("Error adding category budget:", error);
-    Response.json({ status: 500, message: "Error adding category budget" });
-  }
-}
-
-export async function PutCategoryBulk(body) {
-  const { categories } = body;
-  const updatePromises = categories.map((category) =>
-    prisma.monthlyCategory.update({
-      where: { id: category.id },
-      data: {
-        categoryId: category.categoryId,
-        clientId: category.clientId,
-        year: category.year,
-        month: parseInt(category.month),
-        amount: category.amount,
-        type: category.type,
-      },
-    })
-  );
-
-  const updatedCategories = await Promise.all(updatePromises);
-  return updatedCategories;
 }

@@ -90,7 +90,7 @@ export async function fetchCategories(
   if (!categories || Object.entries(categories).length === 0) {
     console.log("storage categories", categories);
     categories = await getData({
-      url: "/api/budgets/categories2",
+      url: "/api/categories",
       params: {
         clientId: clientId,
         groupId,
@@ -116,7 +116,7 @@ export async function fetchCategoryGroups(updateStorage) {
   if (!categoryGroup || Object.entries(categoryGroup).length === 0) {
     console.log("storage categoryGroup", categoryGroup);
     categoryGroup = await getData({
-      url: "/api/budgets/group",
+      url: "/api/category-groups",
       params: {
         clientId: clientId,
       },
@@ -140,7 +140,7 @@ export async function fetchMonthlyCategories(
   }
   if (!monthlyCategories || Object.entries(monthlyCategories).length === 0) {
     monthlyCategories = await getData({
-      url: "/api/budgets/monthlies",
+      url: "/api/monthly-categories",
       params: {
         clientId: clientId,
         groupId,

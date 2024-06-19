@@ -23,7 +23,7 @@ export default function BottomNav() {
     console.log("transactions", transactions);
     setLocal(SESSIONKEY.transactions, transactions);
     const categoryGroup = await getData({
-      url: "/api/budgets/group",
+      url: "/api/category-groups",
       params: { clientId },
     });
     console.log("categoryGroup", categoryGroup);

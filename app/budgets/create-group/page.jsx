@@ -53,7 +53,7 @@ export default function CreateCategoryBudgetGroup() {
     e.preventDefault();
     try {
       const res = await postData({
-        url: "/api/budgets/group",
+        url: "/api/category-groups",
         payload: {
           clientId: clientId,
           name: categoryName,

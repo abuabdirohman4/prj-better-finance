@@ -76,7 +76,7 @@ export default function SpendingTabs({ selectedMonth }) {
         if (!categoryGroup) {
           console.log("storage categoryGroup", categoryGroup);
           categoryGroup = await getData({
-            url: "/api/budgets/group",
+            url: "/api/category-groups",
             params: { clientId },
           });
           setLocal(SESSIONKEY.categoryGroup, categoryGroup);

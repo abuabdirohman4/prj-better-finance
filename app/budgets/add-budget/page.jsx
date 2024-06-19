@@ -83,10 +83,9 @@ export default function AddBudgetCategory({ params, searchParams }) {
     try {
       if (createPayload.length > 0) {
         const res = await postData({
-          url: "/api/budgets/categories",
+          url: "/api/monthly-categories",
           payload: {
             categories: createPayload,
-            reqFunc: "PostCategoryBulk",
           },
         });
 
@@ -95,10 +94,9 @@ export default function AddBudgetCategory({ params, searchParams }) {
 
       if (updatePayload.length > 0) {
         const res = await putData({
-          url: "/api/budgets/categories",
+          url: "/api/monthly-categories",
           payload: {
             categories: updatePayload,
-            reqFunc: "PutCategoryBulk",
           },
         });
         console.log("res put", res);
