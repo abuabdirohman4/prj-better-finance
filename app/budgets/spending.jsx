@@ -82,7 +82,7 @@ export default function SpendingTabs({ selectedMonth }) {
       try {
         setIsLoadingContent(true);
 
-        const categoryGroup = await fetchCategoryGroups(true);
+        const categoryGroup = await fetchCategoryGroups(false);
         if (categoryGroup.status === 200) {
           const categoryGroupBudget = categoryGroup.data;
           const amountCategoryGroups = {};
