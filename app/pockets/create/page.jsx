@@ -54,22 +54,18 @@ export default function CreatePocket() {
 
   return (
     <div className="p-5 min-h-[94vh]">
-      <ButtonBack />
+      <ButtonBack href={'/pockets'}/>
       <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900">
         Create Pocket Name
       </h5>
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label
-            htmlFor="group-category-name"
-            className="block mb-2 text-sm font-medium text-gray-900"
-          >
+          <label className="block mb-2 text-sm font-medium text-gray-900">
             Pocket Name
           </label>
           <input
             type="text"
-            id="group-category-name"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
             placeholder="Pocket Name"
             value={pocketName}
@@ -78,10 +74,7 @@ export default function CreatePocket() {
           />
         </div>
         <div className="mb-3">
-          <label
-            htmlFor="group-category-name"
-            className="block mb-2 text-sm font-medium text-gray-900"
-          >
+          <label className="block mb-2 text-sm font-medium text-gray-900">
             Current Amount
           </label>
           <input

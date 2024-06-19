@@ -10,7 +10,7 @@
     "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "dependencies": {
-    "@prisma/client": "^5.15.0",
+    "@prisma/client": "^5.15.1",
     "@vercel/postgres": "^0.8.0",
     "axios": "^1.7.2",
     "next": "14.2.3",
@@ -24,7 +24,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "postcss": "^8",
-    "prisma": "^5.15.0",
+    "prisma": "^5.15.1",
     "tailwindcss": "^3.4.1"
   }
 }

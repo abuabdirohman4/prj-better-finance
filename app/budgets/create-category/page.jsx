@@ -1,16 +1,14 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import { fetchAllCategories, getData, postData } from "@/utils/fetch";
-import { toCapitalCase } from "@/utils/helper";
 import ButtonBack from "@/components/Button/BackButton/page";
 
-export default function CreateCategoryBudget({ params, searchParams }) {
+export default function CreateCategoryBudget() {
   const clientId = "1717515";
   const type = "spending";
   const [categories, setCategories] = useState([]);
   const [categoryName, setCategoryName] = useState("");
   const [categoryType, setCategoryType] = useState(type);
-  const groupName = toCapitalCase(params.group);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,7 +59,7 @@ export default function CreateCategoryBudget({ params, searchParams }) {
     <div className="p-5 min-h-[94vh]">
       <ButtonBack href='/budgets'/>
       <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900">
-        Add Category {groupName}
+        Add Category
       </h5>
 
       <form onSubmit={handleSubmit}>

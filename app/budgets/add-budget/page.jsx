@@ -1,14 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
+import ButtonBack from "@/components/Button/BackButton/page";
 import {
   fetchCategories,
   fetchMonthlyCategories,
-  getData,
   postData,
-  putData,
+  putData
 } from "@/utils/fetch";
-import { toCapitalCase } from "@/utils/helper";
-import ButtonBack from "@/components/Button/BackButton/page";
+import { useEffect, useState } from "react";
 
 export default function AddBudgetCategory({ params, searchParams }) {
   const clientId = "1717515";
