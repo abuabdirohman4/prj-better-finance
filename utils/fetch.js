@@ -2,6 +2,8 @@ import axios from "axios";
 import { getLocal, setLocal } from "./session";
 import { SESSIONKEY } from "./constants";
 
+const clientId = "1717515";
+
 export async function getData({ url, params, token }) {
   try {
     return await axios.get(`${url}`, {
@@ -48,7 +50,6 @@ export async function deleteData({ url, token }) {
   }
 }
 
-const clientId = "1717515";
 export async function fetchAllCategories({ state }) {
   let resAllCategories = {};
   if (state !== "update") {
@@ -70,26 +71,29 @@ export async function fetchAllCategories({ state }) {
   }
 }
 
-export async function fetchTransactions({
-  state = "",
-  params: {
-    date: { day = "", month = "", year = "" } = {},
-    type = "",
-    pocket1 = "",
-    pocket2 = "",
-    category = "",
-    desc = "",
-    amount = "",
-  } = {},
-}) {
+export async function fetchTransactions(
+  updateStorage,
+  {
+    params: {
+      date: { day = "", month = "", year = "" } = {},
+      type = "",
+      pocket1 = "",
+      pocket2 = "",
+      category = "",
+      desc = "",
+      amount = "",
+    } = {},
+  }
+) {
   let resAllTransactions = {};
-  if (state == "") {
-    // resAllTransactions = getLocal(SESSIONKEY.transactions);
+  if (!updateStorage) {
+    resAllTransactions = getLocal(SESSIONKEY.transactions);
   }
   if (!resAllTransactions || Object.entries(resAllTransactions).length === 0) {
     resAllTransactions = await getData({
       url: "/api/transactions",
       params: {
+        clientId: clientId,
         date: { day, month, year },
         type,
         pocket1,
@@ -102,7 +106,29 @@ export async function fetchTransactions({
   }
   if (resAllTransactions.status == 200) {
     console.log("resAllTransactions", resAllTransactions);
-    // setLocal(SESSIONKEY.transactions, resAllTransactions);
+    setLocal(SESSIONKEY.transactions, resAllTransactions);
     return resAllTransactions.data;
+  }
+}
+
+export async function fetchCategoryGroups(updateStorage) {
+  let categoryGroup = {};
+  if (!updateStorage) {
+    categoryGroup = getLocal(SESSIONKEY.categoryGroup);
+  }
+  if (!categoryGroup || Object.entries(categoryGroup).length === 0) {
+    console.log("storage categoryGroup", categoryGroup);
+    categoryGroup = await getData({
+      url: "/api/budgets/group",
+      params: {
+        clientId: clientId,
+      },
+    });
+  }
+
+  if (categoryGroup.status === 200) {
+    console.log("categoryGroup", categoryGroup);
+    setLocal(SESSIONKEY.categoryGroup, categoryGroup);
+    return categoryGroup;
   }
 }

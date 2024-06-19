@@ -1,5 +1,3 @@
-import { SESSIONKEY } from "@/utils/constants";
-import { setLocal } from "@/utils/session";
 import Link from "next/link";
 import {
   BsPlusCircleFill,
@@ -17,9 +15,6 @@ const menus = [
 ];
 
 export default function Home() {
-  const clientId = "1717515";
-  setLocal(SESSIONKEY.clientId, clientId);
-
   return (
     <div className="w-full p-8 min-h-[94vh] bg-white border border-gray-200 rounded-lg shadow">
       <div className="flex items-center justify-between mb-8">

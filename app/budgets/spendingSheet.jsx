@@ -1,18 +1,21 @@
 "use client";
 import CardBudget from "@/components/Card/Budget";
 import SkeletonList from "@/components/Skeleton/List";
-import { months } from "@/utils/constants";
-import { fetchCategoryGroups, fetchTransactions } from "@/utils/fetch";
+import { SESSIONKEY, months } from "@/utils/constants";
+import { getData } from "@/utils/fetch";
+import { fetchSheetTransaction } from "@/utils/fetchSheetData";
 import {
   formatRupiah,
+  getCashValue,
   getDefaultSheetName,
   getTotalObjectValue,
 } from "@/utils/helper";
+import { getLocal, setLocal } from "@/utils/session";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 export default function SpendingTabs({ selectedMonth }) {
-  const year = new Date().getFullYear().toString();
+  const clientId = "1717515";
   const currentMonth = getDefaultSheetName(months);
   const [isLoadingContent, setIsLoadingContent] = useState(true);
   const [categoryGroup, setCategoryGroup] = useState([]);
@@ -23,6 +26,7 @@ export default function SpendingTabs({ selectedMonth }) {
   const percentage =
     (parseFloat(totalSpending) / -parseFloat(totalBudget)) * 100;
   const stringPercent = percentage.toFixed(0);
+  const year = new Date().getFullYear().toString();
 
   const sumCategoryGroupSpending = useCallback(
     (transaction, categoryGroupBudget, nameCategoryGroups, typeTransaction) => {
@@ -30,47 +34,33 @@ export default function SpendingTabs({ selectedMonth }) {
       const newCategorySpending = {};
 
       for (const group of categoryGroupBudget) {
-        if (!group.groupId) {
+        const { name: parentCategory } = group;
+        const categories = nameCategoryGroups.filter(
+          (category) => category.groupName === parentCategory
+        );
+
+        let totalGroupAmount = 0;
+        for (const category of categories) {
           const transactionsInCategory = transaction.filter(
             (item) =>
-              item.categoryId === group.categoryId &&
-              item.type === typeTransaction
+              item["Category or Account"] === category.name &&
+              item.Transaction === typeTransaction
           );
-          const totalCategorySpending = transactionsInCategory.reduce(
-            (acc, item) => acc + item.amount,
+          const totalAmount = transactionsInCategory.reduce(
+            (acc, item) => acc + getCashValue(item),
             0
           );
-          newCategorySpending[group.name] = totalCategorySpending;
-        } else {
-          const { name: parentCategory } = group;
-          const categories = nameCategoryGroups.filter(
-            (category) => category.groupName === parentCategory
-          );
 
-          let totalGroupAmount = 0;
-          for (const category of categories) {
-            const transactionsInCategory = transaction.filter(
-              (item) =>
-                item.category.name === category.name &&
-                item.type === typeTransaction
-            );
-            const totalGroupSpending = transactionsInCategory.reduce(
-              (acc, item) => acc + item.amount,
-              0
-            );
-
-            // Menambahkan nilai total ke kategori yang sesuai
-            if (!newSubCategorySpending[parentCategory]) {
-              newSubCategorySpending[parentCategory] = {};
-            }
-            newSubCategorySpending[parentCategory][category.name] =
-              totalGroupSpending;
-
-            // Tambahkan totalGroupSpending dari kategori ke total grup
-            totalGroupAmount += totalGroupSpending;
+          // Menambahkan nilai total ke kategori yang sesuai
+          if (!newSubCategorySpending[parentCategory]) {
+            newSubCategorySpending[parentCategory] = {};
           }
-          newCategorySpending[parentCategory] = totalGroupAmount;
+          newSubCategorySpending[parentCategory][category.name] = totalAmount;
+
+          // Tambahkan totalAmount dari kategori ke total grup
+          totalGroupAmount += totalAmount;
         }
+        newCategorySpending[parentCategory] = totalGroupAmount;
       }
       return newCategorySpending;
     },
@@ -82,15 +72,25 @@ export default function SpendingTabs({ selectedMonth }) {
       try {
         setIsLoadingContent(true);
 
-        const categoryGroup = await fetchCategoryGroups(true);
+        let categoryGroup = getLocal(SESSIONKEY.categoryGroup);
+        if (!categoryGroup) {
+          console.log("storage categoryGroup", categoryGroup);
+          categoryGroup = await getData({
+            url: "/api/budgets/group",
+            params: { clientId },
+          });
+          setLocal(SESSIONKEY.categoryGroup, categoryGroup);
+        }
+
         if (categoryGroup.status === 200) {
           const categoryGroupBudget = categoryGroup.data;
+          // Combine the fetched data directly for use
           const amountCategoryGroups = {};
           const nameCategoryGroups = [];
 
           // Get data & total category group budget
           categoryGroupBudget.forEach((group) => {
-            amountCategoryGroups[group.name] = group.budget;
+            amountCategoryGroups[group.name] = group.totalAmount;
             group.categories.forEach((category) => {
               nameCategoryGroups.push({
                 ...category,
@@ -101,40 +101,28 @@ export default function SpendingTabs({ selectedMonth }) {
           setTotalBudget(getTotalObjectValue(amountCategoryGroups));
 
           // Get data & total category group spending
-          const transactions = await fetchTransactions(false, {});
+
+          let transactions = getLocal(SESSIONKEY.transactions);
+          if (!transactions || currentMonth != selectedMonth) {
+            console.log("storage transactions", transactions);
+            transactions = await fetchSheetTransaction(selectedMonth);
+            setLocal(SESSIONKEY.transactions, transactions);
+          }
           const categoryGroupSpending = sumCategoryGroupSpending(
             transactions,
             categoryGroupBudget,
             nameCategoryGroups,
-            "spending"
+            "Spending"
           );
           setTotalSpending(getTotalObjectValue(categoryGroupSpending));
 
           // Combine data
           const mergedData = categoryGroupBudget.map((group) => {
-            const categories = [];
-            group.categories.map((category) => {
-              const transactionsInCategory = transactions.filter(
-                (item) =>
-                  item.categoryId === category.id && item.type === "spending"
-              );
-              const totalSpending = transactionsInCategory.reduce(
-                (acc, item) => acc + item.amount,
-                0
-              );
-              categories.push({
-                id: category.id,
-                name: category.name,
-                budget: category.budget,
-                spending: totalSpending,
-              });
-            });
             return {
               groupId: group.groupId,
               name: group.name,
-              budget: group.budget,
+              budget: group.totalAmount,
               spending: categoryGroupSpending[group.name] || 0,
-              categories: categories,
             };
           });
           setCategoryGroup(mergedData);
@@ -198,25 +186,26 @@ export default function SpendingTabs({ selectedMonth }) {
             </div>
           </div>
           <div className="flow-root">
-            <ul role="list">
-              {categoryGroup.map((group, key) => (
+            <ul
+              role="list"
+              className="border-y-[1.5px] border-y-gray-200 divide-y divide-gray-200"
+            >
+              {categoryGroup.map((category, key) => (
                 <div key={key}>
                   <Link
-                    // href={{
-                    //   pathname: `/budgets/${category.name.toLowerCase()}`,
-                    //   query: {
-                    //     month: selectedMonth,
-                    //     year: year,
-                    //     groupId: category.groupId,
-                    //   },
-                    // }}
-                    href=""
+                    href={{
+                      pathname: `/budgets/${category.name.toLowerCase()}`,
+                      query: {
+                        month: selectedMonth,
+                        year: year,
+                        groupId: category.groupId,
+                      },
+                    }}
                   >
                     <CardBudget
-                      name={group.name}
-                      budget={group.budget}
-                      spending={group.spending}
-                      subCategory={group.categories}
+                      category={category.name}
+                      budget={category.budget}
+                      spending={category.spending}
                     />
                   </Link>
                 </div>

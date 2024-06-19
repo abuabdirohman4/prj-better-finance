@@ -1,12 +1,11 @@
 "use client";
 import SwipeTabs from "@/components/SwipeTabs/page";
 import { months } from "@/utils/constants";
-import { getDefaultSheetName } from "@/utils/helper";
 import { useState } from "react";
 import SpendingTabs from "./spending";
 
 export default function Budgets() {
-  const currentMonth = getDefaultSheetName(months);
+  const currentMonth = new Date().getMonth() + 1;
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const year = new Date().getFullYear().toString();
 
@@ -26,8 +25,8 @@ export default function Budgets() {
                   setSelectedMonth(e.target.value);
                 }}
               >
-                {months.map((month) => (
-                  <option key={month} value={month}>
+                {months.map((month, index) => (
+                  <option key={index} value={index + 1}>
                     {month}
                   </option>
                 ))}

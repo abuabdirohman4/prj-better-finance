@@ -1,14 +1,11 @@
 import prisma from "@/utils/prisma";
-import { SESSIONKEY } from "@/utils/constants";
-import { getLocal } from "@/utils/session";
 import { NextResponse } from "next/server";
 import { excludeData } from "@/utils/helper";
-
-const clientId = getLocal(SESSIONKEY.clientId);
 
 export async function GET(req) {
   const url = new URL(req.url);
   const params = url.searchParams;
+  const clientId = params.get("clientId");
   const day = params.get("date[day]");
   const month = params.get("date[month]");
   const year = params.get("date[year]");

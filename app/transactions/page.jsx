@@ -66,7 +66,7 @@ export default function Transactions() {
   useEffect(() => {
     const fetchData = async () => {
       setIsLoadingContent(true);
-      const transactions = await fetchTransactions({
+      const transactions = await fetchTransactions(false, {
         params: {
           date: { month: selectedMonth },
         },

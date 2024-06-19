@@ -41,7 +41,7 @@ export default function BottomNav() {
         <Menu name="Pockets" href="/pockets" />
         {/* <Menu name="Income" href='/' /> */}
         <Menu name="Budgets" href="/budgets" />
-        <div className="flex items-center justify-center mb-2">
+        {/* <div className="flex items-center justify-center mb-2">
           <button
             className={`inline-flex items-center justify-center w-10 h-10 font-medium bg-blue-500 rounded-full hover:bg-blue-800 group focus:ring-4 focus:ring-blue-300 focus:outline-none`}
             onClick={fetchData}
@@ -70,7 +70,7 @@ export default function BottomNav() {
               <TbRefresh color="white" size={35} />
             )}
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
