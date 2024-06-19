@@ -213,7 +213,7 @@ export default function SpendingTabs({ selectedMonth }) {
             </ul>
             <div className="mt-3 text-center underline">
               <Link
-                href="/budgets/create-category-group"
+                href="/budgets/create-group"
                 className="text-black hover:text-blue-500"
               >
                 Add Category Groups

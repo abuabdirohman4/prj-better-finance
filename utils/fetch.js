@@ -50,9 +50,9 @@ export async function deleteData({ url, token }) {
   }
 }
 
-export async function fetchAllCategories({ state }) {
+export async function fetchAllCategories(updateStorage) {
   let resAllCategories = {};
-  if (state !== "update") {
+  if (!updateStorage) {
     resAllCategories = getLocal(SESSIONKEY.categories);
   }
   if (!resAllCategories || Object.entries(resAllCategories).length === 0) {

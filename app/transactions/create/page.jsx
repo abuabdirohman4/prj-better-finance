@@ -2,7 +2,7 @@
 import ButtonBack from "@/components/Button/BackButton/page";
 import InputWithLabel from "@/components/Input/InputWithLabel/page";
 import SelectInput from "@/components/Input/SelectInput/page";
-import { SESSIONKEY } from "@/utils/constants";
+import { SESSIONKEY, styleSelect } from "@/utils/constants";
 import { getData, postData } from "@/utils/fetch";
 import { getLocal, setLocal } from "@/utils/session";
 import { useEffect, useState } from "react";
@@ -13,25 +13,6 @@ const optionTypes = [
   { value: "transfer", label: "Transfer" },
   { value: "spending", label: "Spending" },
 ];
-const styleSelect = {
-  control: (base, state) => ({
-    ...base,
-    backgroundColor: "#f9fafb", // bg-gray-50
-    borderColor: state.isFocused ? "#3b82f6" : "#d1d5db", // focus:border-blue-500 or border-gray-300
-    color: state.isFocused ? "#ffffff" : "#111827", // or text-gray-900
-    fontSize: "14px", // text-sm
-    borderRadius: "0.5rem", // rounded-lg
-    boxShadow: state.isFocused ? "0 0 0 1px #3b82f6" : null, // focus:ring-blue-500
-    width: "100%", // w-full
-    padding: "0.125rem 0", // py-5 px-0
-  }),
-  option: (base, state) => ({
-    ...base,
-    fontSize: "14px", // text-sm
-    backgroundColor: state.isFocused && "#1d4ed8", // bg-blue-799
-    color: state.isFocused ? "#ffffff" : "#111827", // text-white or text-gray-900
-  }),
-};
 
 export default function CreateTransactions({ searchParams }) {
   const clientId = "1717515";

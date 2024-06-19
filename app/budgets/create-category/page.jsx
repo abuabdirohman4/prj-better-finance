@@ -11,7 +11,6 @@ export default function CreateCategoryBudget({ params, searchParams }) {
   const [categoryName, setCategoryName] = useState("");
   const [categoryType, setCategoryType] = useState(type);
   const groupName = toCapitalCase(params.group);
-  const groupId = searchParams.groupId;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,8 +21,7 @@ export default function CreateCategoryBudget({ params, searchParams }) {
           clientId: clientId,
           name: categoryName,
           type: categoryType,
-          groupId: groupId,
-          reqFunc: "PostCategoryWithGroup",
+          reqFunc: "PostCategory",
         },
       });
       if (res.status == 201) {
@@ -45,7 +43,6 @@ export default function CreateCategoryBudget({ params, searchParams }) {
       url: "/api/budgets/categories",
       params: {
         clientId: clientId,
-        groupId: groupId,
         type: type,
         reqFunc: "GetCategories",
       },
@@ -54,7 +51,7 @@ export default function CreateCategoryBudget({ params, searchParams }) {
       console.log("res", res);
       setCategories(res.data);
     }
-  }, [groupId]);
+  }, []);
 
   useEffect(() => {
     fetchCategories();
@@ -62,7 +59,7 @@ export default function CreateCategoryBudget({ params, searchParams }) {
 
   return (
     <div className="p-5 min-h-[94vh]">
-      <ButtonBack />
+      <ButtonBack href='/budgets'/>
       <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900">
         Add Category {groupName}
       </h5>

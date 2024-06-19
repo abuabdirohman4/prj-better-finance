@@ -3,6 +3,7 @@ import SwipeTabs from "@/components/SwipeTabs/page";
 import { months } from "@/utils/constants";
 import { useState } from "react";
 import SpendingTabs from "./spending";
+import Link from "next/link";
 
 export default function Budgets() {
   const currentMonth = new Date().getMonth() + 1;
@@ -53,6 +54,20 @@ export default function Budgets() {
         ]}
         defaultTabs={1}
       />
+      <div className="mt-3 pb-12 flex flex-col text-center underline">
+        <Link
+          href="/budgets/create-category"
+          className="text-black hover:text-blue-500"
+        >
+          Add Category
+        </Link>
+        <Link
+          href="/budgets/create-group"
+          className="text-black hover:text-blue-500"
+        >
+          Add Category Groups
+        </Link>
+      </div>
     </div>
   );
 }

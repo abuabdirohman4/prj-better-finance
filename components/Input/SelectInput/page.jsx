@@ -14,7 +14,7 @@ function SelectInput({
   placeholder,
   options,
   isClearable,
-  isSearchable,
+  isSearchable = false,
   menuIsOpen,
   onChange,
   defaultValue,

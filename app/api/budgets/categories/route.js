@@ -165,6 +165,8 @@ export async function POST(req) {
       newCategory = await PostCategoryWithGroup(body);
     } else if (reqFunc === "PostCategoryBulk") {
       newCategory = await PostCategoryBulk(body);
+    } else if (reqFunc === "PostCategoryLinkGroup") {
+      newCategory = await PostCategoryLinkGroup(body);
     }
 
     return NextResponse.json(newCategory, { status: 201 });
@@ -218,6 +220,18 @@ export async function PostCategoryWithGroup(body) {
     },
     include: {
       memberships: true,
+    },
+  });
+}
+
+export async function PostCategoryLinkGroup(body) {
+  const {  categoryId, groupId } = body;
+  validateFields([categoryId, groupId]);
+
+  return await prisma.categoryGroupMembership.create({
+    data: {
+      categoryId,
+      groupId,
     },
   });
 }
