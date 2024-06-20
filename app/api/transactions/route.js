@@ -125,7 +125,7 @@ export async function GET(req) {
     },
   });
 
-  transactions = excludeData(transactions, ["id", "clientId"]);
+  transactions = excludeData(transactions, ["clientId"]);
   return NextResponse.json(transactions, { status: 200 });
 }
 
@@ -158,6 +158,7 @@ export async function POST(req) {
         amount: amount,
       },
     });
+    console.log("newCategory", newCategory);
 
     return NextResponse.json(newCategory, { status: 201 });
   } catch (error) {

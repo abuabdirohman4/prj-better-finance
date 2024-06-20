@@ -1,11 +1,15 @@
 "use client";
 import ButtonBack from "@/components/Button/BackButton/page";
+import Button from "@/components/Button/page";
 import InputWithLabel from "@/components/Input/InputWithLabel/page";
 import SelectInput from "@/components/Input/SelectInput/page";
 import { SESSIONKEY, styleSelect } from "@/utils/constants";
 import { fetchTransactions, getData, postData } from "@/utils/fetch";
+import { notify } from "@/utils/helper";
 import { getLocal, setLocal } from "@/utils/session";
+import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
 
 const optionTypes = [
   { value: "initial", label: "Initial" },
@@ -18,6 +22,7 @@ export default function CreateTransactions({ searchParams }) {
   const clientId = "1717515";
   const type = searchParams.type;
   const today = new Date(Date.now());
+  const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState([{ value: "", label: "" }]);
   const [pockets, setPockets] = useState([{ value: "", label: "" }]);
   const [form, setForm] = useState({
@@ -46,6 +51,7 @@ export default function CreateTransactions({ searchParams }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     const res = await postData({
       url: "/api/transactions",
@@ -62,6 +68,12 @@ export default function CreateTransactions({ searchParams }) {
       desc: "",
       amount: "",
     });
+    setIsLoading(false);
+    notify(
+      <Link href={"/transactions"}>
+        Input Success, Click here to go Transactions Page
+      </Link>
+    );
   };
 
   useEffect(() => {
@@ -120,6 +132,7 @@ export default function CreateTransactions({ searchParams }) {
 
   return (
     <div className="p-5 min-h-[94vh]">
+      <ToastContainer />
       <ButtonBack />
       <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900">
         Create Transactions
@@ -213,12 +226,7 @@ export default function CreateTransactions({ searchParams }) {
           />
         </div>
         <div className="text-right">
-          <button
-            type="submit"
-            className="mt-3 mb-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-          >
-            Submit
-          </button>
+          <Button loading={isLoading}>Submit</Button>
         </div>
       </form>
     </div>

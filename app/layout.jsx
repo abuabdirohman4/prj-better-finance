@@ -1,6 +1,8 @@
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
 import BottomNav from "@/components/BottomNav/page";
+import "react-toastify/dist/ReactToastify.css";
+import "../styles/toastify.css";
 import { Suspense } from "react";
 import SkeletonList from "@/components/Skeleton/List";
 

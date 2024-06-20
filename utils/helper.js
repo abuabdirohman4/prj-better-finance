@@ -1,3 +1,6 @@
+import { toast } from "react-toastify";
+import { FaInfoCircle } from "react-icons/fa";
+
 export function excludeData(data, keys) {
   // return Object.fromEntries(
   //   Object.entries(data).filter(([key]) => !keys.includes(key))
@@ -202,6 +205,14 @@ export function getTotalCashGroupedByDate(groupedTransactions, type) {
 
 export function getTotalObjectValue(data) {
   return Object.values(data).reduce((total, value) => total + value, 0);
+}
+
+export function notify(message) {
+  toast.info(message, {
+    icon: <FaInfoCircle className="text-teal-1" />,
+    autoClose: 3000,
+    position: "top-center",
+  });
 }
 
 export function toCapitalCase(string) {

@@ -1,3 +1,4 @@
+import TransactionsAction from "@/components/TransactionsAction/page";
 import Link from "next/link";
 import {
   BsPlusCircleFill,
@@ -20,7 +21,8 @@ export default function Home() {
       <div className="flex items-center justify-between mb-8">
         <h5 className="text-xl font-bold leading-none text-gray-900">Home</h5>
       </div>
-      <div className="grid grid-cols-3 gap-6 mb-5">
+      <TransactionsAction/>
+      {/* <div className="grid grid-cols-3 gap-6 mb-5">
         <Link
           href={{
             pathname: `/transactions/create`,
@@ -66,7 +68,7 @@ export default function Home() {
             Spending
           </div>
         </Link>
-      </div>
+      </div> */}
       <div className="grid grid-cols-2 gap-6 mb-1 text-center">
         {menus.map((menu, index) => (
           <Link

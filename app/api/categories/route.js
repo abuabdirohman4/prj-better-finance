@@ -44,3 +44,38 @@ export async function GET(req) {
 
   return NextResponse.json(categories, { status: 200 });
 }
+
+export async function POST(req) {
+  try {
+    const body = await req.json();
+    const { clientId, name, type } = body;
+    validateFields([clientId, name, type]);
+
+    // Periksa apakah nama kategori sudah ada
+    const existingCategory = await prisma.category.findFirst({
+      where: {
+        clientId: clientId,
+        name: name,
+      },
+    });
+    if (existingCategory) {
+      return NextResponse.json(
+        { error: "Category name already exists" },
+        { status: 400 }
+      );
+    }
+
+    const newCategory =  await prisma.category.create({
+      data: {
+        clientId,
+        name,
+        type,
+      },
+    });
+
+    return NextResponse.json(newCategory, { status: 201 });
+  } catch (error) {
+    console.error("Error adding category:", error);
+    Response.json({ status: 500, message: "Error adding category" });
+  }
+}

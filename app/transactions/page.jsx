@@ -11,6 +11,7 @@ import SkeletonList from "@/components/Skeleton/List";
 import SkeletonText from "@/components/Skeleton/Text";
 import CardTransaction from "@/components/Card/Transaction";
 import { fetchTransactions } from "@/utils/fetch";
+import TransactionsAction from "@/components/TransactionsAction/page";
 
 export default function Transactions() {
   const [isLoadingPage, setisLoadingPage] = useState(true);
@@ -85,7 +86,7 @@ export default function Transactions() {
         <SkeletonList listNumber={15} />
       ) : (
         <>
-          <div className="p-8 bg-[#F1F3F4] rounded-t-lg border-gray-200 shadow">
+          <div className="p-8 pb-4 bg-[#F1F3F4] rounded-t-lg border-gray-200 shadow">
             <div className="flex justify-center">
               <Image
                 src="/img/money-bag.svg"
@@ -94,6 +95,9 @@ export default function Transactions() {
                 alt="Picture of the author"
                 priority={true}
               />
+            </div>
+            <div className="mt-6">
+              <TransactionsAction />
             </div>
             <div className="flex items-center justify-between ">
               {isLoadingContent ? (
