@@ -30,6 +30,7 @@ model Client {
 
 model Category {
   id                Int                       @id @default(autoincrement())
+  index             Int?
   client            Client                    @relation(fields: [clientId], references: [clientId])
   clientId          String
   name              String
@@ -44,6 +45,7 @@ model Category {
 
 model CategoryGroup {
   id          Int                       @id @default(autoincrement())
+  index       Int?
   client      Client                    @relation(fields: [clientId], references: [clientId])
   clientId    String
   name        String
