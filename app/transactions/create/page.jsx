@@ -3,7 +3,7 @@ import ButtonBack from "@/components/Button/BackButton/page";
 import InputWithLabel from "@/components/Input/InputWithLabel/page";
 import SelectInput from "@/components/Input/SelectInput/page";
 import { SESSIONKEY, styleSelect } from "@/utils/constants";
-import { getData, postData } from "@/utils/fetch";
+import { fetchTransactions, getData, postData } from "@/utils/fetch";
 import { getLocal, setLocal } from "@/utils/session";
 import { useEffect, useState } from "react";
 
@@ -56,6 +56,7 @@ export default function CreateTransactions({ searchParams }) {
     });
 
     console.log("res post", res);
+    await fetchTransactions(true);
     setForm({
       ...form,
       desc: "",
