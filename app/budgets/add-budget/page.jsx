@@ -144,7 +144,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
         Update Budget
       </h5>
 
-      <div className="grid gap-6 mb-1 sm:grid-cols-2 text-center">
+      <div className="grid gap-6 mb-1 grid-cols-2 text-center">
         <label className="block mb-2 text-sm font-medium text-gray-900">
           Name
         </label>
@@ -154,7 +154,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
       </div>
       <form className="space-y-3" onSubmit={handleSubmitInputMass}>
         {categories.map((category, index) => (
-          <div key={index} className="grid gap-6 sm:grid-cols-2">
+          <div key={index} className="grid gap-6 grid-cols-2">
             <div>
               <input
                 type="text"
