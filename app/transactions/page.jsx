@@ -126,7 +126,7 @@ export default function Transactions() {
               )}
             </div>
           </div>
-          <div className="w-full max-w-md p-8 bg-white border border-b-0 border-gray-200 rounded-lg rounded-t-none">
+          <div className="w-full min-h-[72vh] max-w-md p-8 bg-white border border-b-0 border-gray-200 rounded-lg rounded-t-none">
             <div className="flex items-center justify-between mb-4">
               <h5 className="text-xl font-bold leading-none text-gray-900">
                 Transactions
