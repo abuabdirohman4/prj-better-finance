@@ -63,6 +63,7 @@ export async function GET(req) {
         (subtotal, budget) => subtotal + budget.amount,
         0
       ),
+      categories: [], // Tidak ada subkategori
     })),
   }));
 
