@@ -24,7 +24,7 @@ export default function Transactions() {
 
   const groupTransactionsByDate = (transactions) => {
     // Mengelompokkan data berdasarkan tanggal
-    const grouped = transactions.reduce((groups, transaction) => {
+    const grouped = transactions.reverse().reduce((groups, transaction) => {
       const date = new Date(transaction.date)
         .toLocaleString("en-GB", {
           timeZone: "Asia/Jakarta",
