@@ -67,9 +67,7 @@ export default function Transactions() {
     const fetchData = async () => {
       setIsLoadingContent(true);
       const transactions = await fetchTransactions(false, {
-        params: {
-          date: { month: selectedMonth },
-        },
+        date: { month: selectedMonth },
       });
       const group = groupTransactionsByDate(transactions);
       setTransaction(group);

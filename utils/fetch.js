@@ -50,38 +50,9 @@ export async function deleteData({ url, token }) {
   }
 }
 
-export async function fetchAllCategories(updateStorage) {
-  let resAllCategories = {};
-  if (!updateStorage) {
-    resAllCategories = getLocal(SESSIONKEY.categories);
-  }
-  if (!resAllCategories || Object.entries(resAllCategories).length === 0) {
-    resAllCategories = await getData({
-      url: "/api/budgets/categories",
-      params: {
-        clientId: clientId,
-        reqFunc: "GetCategories",
-      },
-    });
-  }
-  if (resAllCategories.status == 200) {
-    console.log("resAllCategories", resAllCategories);
-    setLocal(SESSIONKEY.categories, resAllCategories);
-    return resAllCategories;
-  }
-}
-
 export async function fetchCategories(
   updateStorage,
-  {
-    params: {
-      groupId = "",
-      groupName = "",
-      month = "",
-      type = "",
-      year = "",
-    } = {},
-  }
+  { groupId = "", groupName = "", month = "", type = "", year = "" } = {}
 ) {
   let categories = {};
   if (!updateStorage) {
@@ -132,7 +103,7 @@ export async function fetchCategoryGroups(updateStorage) {
 
 export async function fetchMonthlyCategories(
   updateStorage,
-  { params: { groupId = "", year = "", month = "" } = {} }
+  { groupId = "", year = "", month = "" } = {}
 ) {
   let monthlyCategories = {};
   if (!updateStorage) {
@@ -159,16 +130,14 @@ export async function fetchMonthlyCategories(
 export async function fetchTransactions(
   updateStorage,
   {
-    params: {
-      date: { day = "", month = "", year = "" } = {},
-      type = "",
-      pocket1 = "",
-      pocket2 = "",
-      category = "",
-      desc = "",
-      amount = "",
-    } = {},
-  }
+    date: { day = "", month = "", year = "" } = {},
+    type = "",
+    pocket1 = "",
+    pocket2 = "",
+    category = "",
+    desc = "",
+    amount = "",
+  } = {}
 ) {
   let resAllTransactions = {};
   if (!updateStorage) {

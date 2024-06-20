@@ -24,8 +24,11 @@ export async function GET(req) {
     },
   });
 
+  // Query untuk mengambil semua group kategori beserta montly category
   const categoryGroups = await prisma.categoryGroup.findMany({
-    where: { client: { clientId } },
+    where: {
+      client: { clientId },
+    },
     include: {
       memberships: {
         include: {
@@ -39,12 +42,7 @@ export async function GET(req) {
     },
   });
 
-  // Ambil semua transaksi yang berkaitan dengan clientId
-  // const transactions = await prisma.transaction.findMany({
-  //   where: { clientId },
-  // });
-
-  // Hitung total jumlah amount untuk setiap grup
+  // Mapping data budget & anggota category dari group category
   const categoryGroupWithBudget = categoryGroups.map((group) => ({
     groupId: group.id,
     name: group.name,
@@ -58,36 +56,17 @@ export async function GET(req) {
         )
       );
     }, 0),
-    // categories: group.memberships.map((membership) => ({
-    //   name: membership.category.name,
-    //   budget: membership.category.monthlyCategories.reduce(
-    //     (subtotal, budget) => subtotal + budget.amount,
-    //     0
-    //   ),
-    // })),
-    categories: group.memberships.map((membership) => {
-      // const categoryTransactions = transactions.filter(
-      //   (transaction) => transaction.categoryId === membership.categoryId
-      // );
-
-      return {
-        id: membership.category.id,
-        name: membership.category.name,
-        budget: membership.category.monthlyCategories.reduce(
-          (subtotal, budget) => subtotal + budget.amount,
-          0
-        ),
-        // spending: categoryTransactions
-        //   .filter((transaction) => transaction.type === "spending")
-        //   .reduce((total, transaction) => total + transaction.amount, 0),
-        // earning: categoryTransactions
-        //   .filter((transaction) => transaction.type === "earning")
-        //   .reduce((total, transaction) => total + transaction.amount, 0),
-      };
-    }),
+    categories: group.memberships.map((membership) => ({
+      id: membership.category.id,
+      name: membership.category.name,
+      budget: membership.category.monthlyCategories.reduce(
+        (subtotal, budget) => subtotal + budget.amount,
+        0
+      ),
+    })),
   }));
 
-  // Gabungkan kategori yang tidak memiliki grup dengan hasil kategori grup
+  // Gabungkan kategori yang memiliki & tidak memiliki grup
   const allCategories = [
     ...categoryGroupWithBudget,
     ...categoriesWithoutGroup.map((category) => ({
@@ -98,7 +77,6 @@ export async function GET(req) {
         (subtotal, budget) => subtotal + budget.amount,
         0
       ),
-      categories: [], // Tidak ada subkategori
     })),
   ];
 

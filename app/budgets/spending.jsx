@@ -101,7 +101,7 @@ export default function SpendingTabs({ selectedMonth }) {
           setTotalBudget(getTotalObjectValue(amountCategoryGroups));
 
           // Get data & total category group spending
-          const transactions = await fetchTransactions(false, {});
+          const transactions = await fetchTransactions(false);
           const categoryGroupSpending = sumCategoryGroupSpending(
             transactions,
             categoryGroupBudget,

@@ -1,6 +1,11 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { fetchAllCategories, getData, postData } from "@/utils/fetch";
+import {
+  fetchCategories,
+  fetchCategoryGroups,
+  getData,
+  postData,
+} from "@/utils/fetch";
 import ButtonBack from "@/components/Button/BackButton/page";
 
 export default function CreateCategoryBudget() {
@@ -26,8 +31,9 @@ export default function CreateCategoryBudget() {
         console.log("res post", res.data);
         setCategoryName("");
         setCategoryType(type);
-        fetchCategories();
-        fetchAllCategories(true);
+        const categories = await fetchCategories(true, { type });
+        setCategories(categories.data);
+        await fetchCategoryGroups(true);
       } else {
         console.log("res post", res.response.data);
       }
@@ -36,28 +42,17 @@ export default function CreateCategoryBudget() {
     }
   };
 
-  const fetchCategories = useCallback(async () => {
-    const res = await getData({
-      url: "/api/budgets/categories",
-      params: {
-        clientId: clientId,
-        type: type,
-        reqFunc: "GetCategories",
-      },
-    });
-    if (res.status == 200) {
-      console.log("res", res);
-      setCategories(res.data);
-    }
-  }, []);
-
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+    const fetchData = async () => {
+      const categories = await fetchCategories(false, { type });
+      setCategories(categories.data);
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="p-5 min-h-[94vh]">
-      <ButtonBack href='/budgets'/>
+      <ButtonBack href="/budgets" />
       <h5 className="text-center text-xl mb-8 font-bold leading-none text-gray-900">
         Add Category
       </h5>

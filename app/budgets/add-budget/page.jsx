@@ -2,9 +2,10 @@
 import ButtonBack from "@/components/Button/BackButton/page";
 import {
   fetchCategories,
+  fetchCategoryGroups,
   fetchMonthlyCategories,
   postData,
-  putData
+  putData,
 } from "@/utils/fetch";
 import { useEffect, useState } from "react";
 
@@ -99,6 +100,7 @@ export default function AddBudgetCategory({ params, searchParams }) {
         });
         console.log("res put", res);
       }
+      await fetchCategoryGroups(true);
 
       // Fetch updated categories or handle UI state update as necessary
     } catch (error) {
@@ -110,27 +112,22 @@ export default function AddBudgetCategory({ params, searchParams }) {
     async function fetchData() {
       // GetCategoryAmount
       const categories = await fetchCategories(true, {
-        params: {
-          // groupId: groupId,
-          // groupName: group,
-          type: type,
-          year: year,
-          month: month,
-        },
+        // groupId: groupId,
+        // groupName: group,
+        type: type,
+        year: year,
+        month: month,
       });
       if (categories.status == 200) {
-        console.log("GetCategoryAmount");
         console.log("categories", categories);
         setCategories(categories.data);
       }
 
       const monthlyCategories = await fetchMonthlyCategories(true, {
-        params: {
-          // groupId: groupId,
-          type: type,
-          year: year,
-          month: month,
-        },
+        // groupId: groupId,
+        type: type,
+        year: year,
+        month: month,
       });
       if (monthlyCategories.status == 200) {
         console.log("monthlyCategories", monthlyCategories);
