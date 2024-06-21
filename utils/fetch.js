@@ -30,9 +30,13 @@ export async function postData({ url, payload, token, formData }) {
   }
 }
 
-export async function putData({ url, payload }) {
+export async function putData({ url, payload, token }) {
   try {
-    return await axios.put(`${url}`, payload);
+    return await axios.put(`${url}`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   } catch (error) {
     return error;
   }

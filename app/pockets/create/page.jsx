@@ -19,7 +19,6 @@ export default function CreatePocket() {
           clientId: clientId,
           name: pocketName,
           actual: pocketAmount,
-          reqFunc: "PostPocket",
         },
       });
       if (res.status == 201) {

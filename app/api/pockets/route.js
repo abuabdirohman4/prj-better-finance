@@ -21,47 +21,38 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { reqFunc } = body;
-    validateField(reqFunc);
+    const { clientId, name, actual } = body;
+    validateFields([clientId, name, actual]);
 
-    let newCategory = null;
-    if (reqFunc === "PostPocket") {
-      newCategory = await PostPocket(body);
+    // Periksa apakah nama pocket sudah ada
+    const existingPocket = await prisma.pocket.findFirst({
+      where: {
+        clientId: clientId,
+        name: name,
+      },
+    });
+    if (existingPocket) {
+      return NextResponse.json(
+        { error: "Pocket name already exists" },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json(newCategory, { status: 201 });
+    const newPocket = await prisma.pocket.create({
+      data: {
+        clientId,
+        name,
+        actual: parseFloat(actual),
+      },
+    });
+
+    return NextResponse.json(newPocket, { status: 201 });
   } catch (error) {
     console.error("Error adding category budget:", error);
     Response.json({ status: 500, message: "Error adding category budget" });
   }
 }
 
-async function PostPocket(body) {
-  const { clientId, name, actual } = body;
-  validateFields([clientId, name, actual]);
-
-  // Periksa apakah nama pocket sudah ada
-  const existingPocket = await prisma.pocket.findFirst({
-    where: {
-      clientId: clientId,
-      name: name,
-    },
-  });
-  if (existingPocket) {
-    return NextResponse.json(
-      { error: "Pocket name already exists" },
-      { status: 400 }
-    );
-  }
-
-  return await prisma.pocket.create({
-    data: {
-      clientId,
-      name,
-      actual: parseFloat(actual),
-    },
-  });
-}
 
 export async function PUT(req) {
   try {

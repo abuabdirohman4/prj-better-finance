@@ -25,3 +25,7 @@ async function GetPocket(id) {
     },
   });
 }
+
+export async function PUT(req, { params }) {
+
+}
