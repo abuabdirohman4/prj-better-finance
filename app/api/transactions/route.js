@@ -134,11 +134,13 @@ export async function POST(req) {
     const body = await req.json();
     const { transactions, clientId } = body;
 
+    // create minus for spending
     let amount = parseFloat(transactions.amount);
     if (transactions.type === "spending" && amount > 0) {
       amount = -amount;
     }
 
+    // format date
     const now = new Date();
     let dateWithTime = new Date(transactions.date);
     dateWithTime.setHours(now.getHours() + 7);
@@ -146,23 +148,51 @@ export async function POST(req) {
     dateWithTime.setSeconds(now.getSeconds());
     dateWithTime.setMilliseconds(now.getMilliseconds());
 
+    // logic for transfer
+    let pocket2 = transactions.pocket2;
+    let categoryId = transactions.category;
+    if (transactions.type === "transfer") {
+      categoryId = null;
+      pocket2 = null;
+      amount = -amount;
+    }
+
     const newCategory = await prisma.transaction.create({
       data: {
         clientId: clientId,
         date: dateWithTime,
         type: transactions.type,
         pocket1: transactions.pocket1,
-        pocket2: transactions.pocket2,
-        categoryId: transactions.category,
+        pocket2: null,
+        categoryId: categoryId,
         desc: transactions.desc,
         amount: amount,
       },
     });
     console.log("newCategory", newCategory);
 
+    if (transactions.type === "transfer") {
+      const pocket1 = transactions.pocket2;
+      const newCategory2 = await prisma.transaction.create({
+        data: {
+          clientId: clientId,
+          date: dateWithTime,
+          type: transactions.type,
+          pocket1: pocket1,
+          pocket2: pocket2,
+          categoryId: categoryId,
+          desc: transactions.desc,
+          amount: -amount,
+        },
+      });
+      console.log("newCategory2", newCategory2);
+
+      return NextResponse.json([newCategory, newCategory2], { status: 201 });
+    }
+
     return NextResponse.json(newCategory, { status: 201 });
   } catch (error) {
-    console.error("Error adding category budget:", error);
-    Response.json({ status: 500, message: "Error adding category budget" });
+    console.error("Error adding transactions:", error);
+    Response.json({ status: 500, message: "Error adding transactions" });
   }
 }

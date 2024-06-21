@@ -4,7 +4,7 @@ import Button from "@/components/Button/page";
 import InputWithLabel from "@/components/Input/InputWithLabel/page";
 import SelectInput from "@/components/Input/SelectInput/page";
 import { SESSIONKEY, styleSelect } from "@/utils/constants";
-import { fetchTransactions, getData, postData } from "@/utils/fetch";
+import { fetchPockets, fetchTransactions, getData, postData } from "@/utils/fetch";
 import { notify } from "@/utils/helper";
 import { getLocal, setLocal } from "@/utils/session";
 import Link from "next/link";
@@ -23,6 +23,9 @@ export default function CreateTransactions({ searchParams }) {
   const type = searchParams.type;
   const today = new Date(Date.now());
   const [isLoading, setIsLoading] = useState(false);
+  const [showPocket2, setShowPocket2] = useState(false);
+  const [showCategory, setShowCategory] = useState(true);
+  const [showSubCategory, setShowSubCategory] = useState(false);
   const [categories, setCategories] = useState([{ value: "", label: "" }]);
   const [pockets, setPockets] = useState([{ value: "", label: "" }]);
   const [form, setForm] = useState({
@@ -38,6 +41,21 @@ export default function CreateTransactions({ searchParams }) {
 
   const handleChange = (e, action) => {
     if (!e.target) {
+      if (action.name === "type") {
+        if (e.value === "transfer") {
+          setShowPocket2(true);
+          setShowCategory(false);
+        } else {
+          setShowPocket2(false);
+          setShowCategory(true);
+        }
+      } else if (action.name === 'category') {
+        if (e.label === "Goals") {
+          setShowSubCategory(true);
+        } else {
+          setShowSubCategory(false);
+        }
+      }
       setForm({ ...form, [action.name]: e.value });
     } else {
       let value = e.target.value;
@@ -81,19 +99,7 @@ export default function CreateTransactions({ searchParams }) {
       console.log("fetchData");
 
       // get pockets
-      let resPockets = getLocal(SESSIONKEY.pockets);
-      if (!resPockets) {
-        console.log("storage pockets", resPockets);
-        resPockets = await getData({
-          url: "/api/pockets",
-          params: {
-            clientId: clientId,
-            reqFunc: "GetPocket",
-          },
-        });
-        if (resPockets.status === 200) setLocal(SESSIONKEY.pockets, resPockets);
-      }
-
+      const resPockets = await fetchPockets(false)
       if (resPockets.status === 200) {
         setPockets(
           resPockets.data.map(({ id, name }) => ({
@@ -128,7 +134,15 @@ export default function CreateTransactions({ searchParams }) {
       }
     }
     fetchData();
-  }, []);
+
+    if (type === "transfer") {
+      setShowPocket2(true);
+      setShowCategory(false);
+    } else {
+      setShowPocket2(false);
+      setShowCategory(true);
+    }
+  }, [type]);
 
   return (
     <div className="p-5 min-h-[94vh]">
@@ -154,7 +168,7 @@ export default function CreateTransactions({ searchParams }) {
             name="type"
             placeholder="Type"
             options={optionTypes}
-            value={optionTypes.find((option) => option.value === type)}
+            value={optionTypes.find((option) => option.value === form.type)}
             onChange={handleChange}
             styles={styleSelect}
           />
@@ -170,7 +184,7 @@ export default function CreateTransactions({ searchParams }) {
             styles={styleSelect}
           />
         </div>
-        <div className="mb-3 hidden">
+        <div className={`mb-3 ${!showPocket2 ? "hidden" : ""}`}>
           <SelectInput
             label="To Pocket"
             name="pocket2"
@@ -181,7 +195,7 @@ export default function CreateTransactions({ searchParams }) {
             styles={styleSelect}
           />
         </div>
-        <div className="mb-3">
+        <div className={`mb-3 ${!showCategory ? "hidden" : ""}`}>
           <SelectInput
             label="Category"
             name="category"
@@ -192,7 +206,7 @@ export default function CreateTransactions({ searchParams }) {
             styles={styleSelect}
           />
         </div>
-        <div className="mb-3 hidden">
+        <div className={`mb-3 ${!showSubCategory ? "hidden" : ""}`}>
           <SelectInput
             label="Sub Category"
             name="subCategory"

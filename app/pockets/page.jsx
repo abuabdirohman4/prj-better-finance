@@ -1,6 +1,6 @@
 "use client";
 import { SESSIONKEY, months } from "@/utils/constants";
-import { getData } from "@/utils/fetch";
+import { fetchPockets } from "@/utils/fetch";
 import {
   fetchSheetSummary,
   fetchSheetTransaction,
@@ -91,18 +91,7 @@ export default function PocketsPage() {
   useEffect(() => {
     async function fetchData() {
       console.log("fetchData");
-      let pockets = getLocal(SESSIONKEY.pockets);
-      if (!pockets) {
-        console.log("storage pockets", pockets);
-        pockets = await getData({
-          url: "/api/pockets",
-          params: {
-            clientId: clientId,
-            reqFunc: "GetPocket",
-          },
-        });
-        if (pockets.status === 200) setLocal(SESSIONKEY.pockets, pockets);
-      }
+      const pockets = await fetchPockets(false)
 
       if (pockets.status === 200) {
         let resSummary = getLocal(SESSIONKEY.summary);

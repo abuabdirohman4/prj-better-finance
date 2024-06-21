@@ -1,8 +1,6 @@
 "use client";
 import ButtonBack from "@/components/Button/BackButton/page";
-import { SESSIONKEY } from "@/utils/constants";
-import { getData, postData } from "@/utils/fetch";
-import { setLocal } from "@/utils/session";
+import { fetchPockets, postData } from "@/utils/fetch";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -26,29 +24,13 @@ export default function CreatePocket() {
       });
       if (res.status == 201) {
         console.log("res post", res.data);
-        await fetchPockets();
+        await fetchPockets(true);
         push("/pockets");
       } else {
         console.error("Error adding pocket:", res.response.data);
       }
     } catch (error) {
       console.error("Error adding pocket:", error);
-    }
-  };
-
-  const fetchPockets = async () => {
-    const pockets = await getData({
-      url: "/api/pockets",
-      params: {
-        clientId: clientId,
-        reqFunc: "GetPocket",
-      },
-    });
-    if (pockets.status === 200) {
-      setLocal(SESSIONKEY.pockets, pockets);
-    } else {
-      console.error("failed get pockets");
-      return false;
     }
   };
 

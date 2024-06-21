@@ -84,8 +84,8 @@ model Transaction {
   pocket1    Int?
   pockets2   Pocket?  @relation("Pocket2", fields: [pocket2], references: [id])
   pocket2    Int?
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId Int
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
   desc       String
   amount     Float
 }

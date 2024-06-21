@@ -3,20 +3,11 @@ import { NextResponse } from "next/server";
 import { validateField, validateFields } from "../helper";
 
 export async function GET(req) {
-  const url = new URL(req.url);
-  const clientId = url.searchParams.get("clientId");
-  const reqFunc = url.searchParams.get("reqFunc");
-  validateFields([clientId, reqFunc]);
+  const { searchParams } = new URL(req.url);
+  const clientId = searchParams.get("clientId");
+  validateFields([clientId]);
 
-  let pockets = null;
-  if (reqFunc === "GetPocket") {
-    pockets = await GetPocket(clientId);
-  }
-  return NextResponse.json(pockets, { status: 200 });
-}
-
-async function GetPocket(clientId) {
-  return await prisma.pocket.findMany({
+  const pockets = await prisma.pocket.findMany({
     where: { clientId },
     select: {
       id: true,
@@ -24,7 +15,7 @@ async function GetPocket(clientId) {
       actual: true,
     },
   });
-
+  return NextResponse.json(pockets, { status: 200 });
 }
 
 export async function POST(req) {

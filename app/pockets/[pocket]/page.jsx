@@ -1,6 +1,6 @@
 "use client";
 import ButtonBack from "@/components/Button/BackButton/page";
-import { getData, putData } from "@/utils/fetch";
+import { fetchPockets, putData } from "@/utils/fetch";
 import { formatRupiah } from "@/utils/helper";
 import { useEffect, useState } from "react";
 import CurrencyInput from "react-currency-input-field";
@@ -35,16 +35,13 @@ export default function PocketPage({ params, searchParams }) {
   useEffect(() => {
     async function fetchData() {
       console.log('fetchData')
-      const res = await getData({
-        url: `/api/pockets/${pocketId}`,
-        params: { reqFunc: "GetPocket" },
-      });
-      if (res.status == 200) {
-        console.log('res.data', res.data)
-        setPocketActual(res.data.actual)
-        setPocketDifference(res.data.actual - pocketAmount);
+      const pockets = await fetchPockets(false)
+      if (pockets.status == 200) {
+        console.log("pockets", pockets.data);
+        setPocketActual(pockets.data.actual);
+        setPocketDifference(pockets.data.actual - pocketAmount);
       } else {
-        console.error('error get pocket', res.response)
+        console.error("error get pocket", pockets.response);
       }
     }
     fetchData()

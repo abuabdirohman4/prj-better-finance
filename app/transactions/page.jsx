@@ -1,17 +1,17 @@
 "use client";
+import CardTransaction from "@/components/Card/Transaction";
+import SkeletonList from "@/components/Skeleton/List";
+import SkeletonText from "@/components/Skeleton/Text";
+import TransactionsAction from "@/components/TransactionsAction/page";
 import { months } from "@/utils/constants";
-import { useEffect, useState } from "react";
+import { fetchIcons, fetchTransactions } from "@/utils/fetch";
 import {
   formatDateWithTodayYesterdayCheck,
   formatRupiah,
   getTotalCashGroupedByDate,
 } from "@/utils/helper";
 import Image from "next/image";
-import SkeletonList from "@/components/Skeleton/List";
-import SkeletonText from "@/components/Skeleton/Text";
-import CardTransaction from "@/components/Card/Transaction";
-import { fetchTransactions } from "@/utils/fetch";
-import TransactionsAction from "@/components/TransactionsAction/page";
+import { useEffect, useState } from "react";
 
 export default function Transactions() {
   const [isLoadingPage, setisLoadingPage] = useState(true);
@@ -19,6 +19,7 @@ export default function Transactions() {
   const [transaction, setTransaction] = useState([]);
   const currentMonth = new Date().getMonth() + 1;
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
+  const [icons, setIcons] = useState([]);
 
   const spending = getTotalCashGroupedByDate(transaction, "spending");
   const earning = getTotalCashGroupedByDate(transaction, "earning");
@@ -73,6 +74,9 @@ export default function Transactions() {
       const group = groupTransactionsByDate(transactions);
       setTransaction(group);
       console.log("group", group);
+
+      const icons = await fetchIcons(false);
+      setIcons(icons.data)
 
       setisLoadingPage(false);
       setIsLoadingContent(false);
@@ -163,8 +167,9 @@ export default function Transactions() {
                           <CardTransaction
                             date={data.date}
                             type={data.type}
+                            icons={icons}
                             account={data.pockets.name}
-                            category={data.category.name}
+                            category={data.category && data.category.name}
                             note={data.desc}
                             cash={data.amount}
                           />

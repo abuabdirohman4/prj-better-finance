@@ -26,8 +26,8 @@ CREATE TABLE "MonthlyIncome" (
 -- CreateTable
 CREATE TABLE "Transaction" (
     "id" SERIAL NOT NULL,
-    "categoryId" INTEGER NOT NULL,
     "clientId" INTEGER NOT NULL,
+    "categoryId" INTEGER NOT NULL,
     "amount" DOUBLE PRECISION NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
 

@@ -127,6 +127,49 @@ export async function fetchMonthlyCategories(
   }
 }
 
+export async function fetchPockets(updateStorage) {
+  let pockets = {};
+  if (!updateStorage) {
+    pockets = getLocal(SESSIONKEY.pockets);
+  }
+  if (!pockets || Object.entries(pockets).length === 0) {
+    console.log("storage pockets", pockets);
+    pockets = await getData({
+      url: "/api/pockets",
+      params: {
+        clientId: clientId,
+      },
+    });
+  }
+  if (pockets.status == 200) {
+    console.log("pockets", pockets);
+    setLocal(SESSIONKEY.pockets, pockets);
+    return pockets;
+  }
+}
+
+export async function fetchIcons(updateStorage) {
+  let icons = {};
+  if (!updateStorage) {
+    icons = getLocal(SESSIONKEY.icons);
+  }
+  if (!icons || Object.entries(icons).length === 0) {
+    console.log("storage icons", icons);
+    try {
+      icons = await getData({
+        url: "/api/icons",
+      });
+    } catch (error) {
+      console.error("Error fetching icons:", error);
+    }
+  }
+  if (icons.status == 200) {
+    console.log("icons", icons);
+    setLocal(SESSIONKEY.icons, icons);
+    return icons;
+  }
+}
+
 export async function fetchTransactions(
   updateStorage,
   {
