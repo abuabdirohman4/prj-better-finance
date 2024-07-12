@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 
-export async function GET(req) {
+export async function GET() {
   const iconsDir = path.join(process.cwd(), "public", "icons");
 
   try {
