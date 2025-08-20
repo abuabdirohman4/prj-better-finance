@@ -1,86 +1,80 @@
-import TransactionsAction from "@/components/TransactionsAction/page";
-import Link from "next/link";
 import {
-  BsPlusCircleFill,
-  BsArrowUpCircleFill,
-  BsArrowRightCircleFill,
-} from "react-icons/bs";
-
-const menus = [
-  { name: "Transactions", href: "/transactions" },
-  { name: "Budgets", href: "/budgets" },
-  { name: "Goals", href: "" },
-  { name: "Pockets", href: "/pockets" },
-  { name: "Inventory", href: "" },
-  { name: "AR/AP", href: "" },
-];
+  ArrowUpIcon,
+  ArrowDownIcon,
+  WalletIcon,
+  ChartBarIcon,
+} from "@heroicons/react/24/outline";
 
 export default function Home() {
+  const quickActions = [
+    { name: "Transfer", icon: ArrowUpIcon, color: "bg-blue-100 text-blue-600" },
+    {
+      name: "Terima",
+      icon: ArrowDownIcon,
+      color: "bg-green-100 text-green-600",
+    },
+    {
+      name: "Pembayaran",
+      icon: WalletIcon,
+      color: "bg-purple-100 text-purple-600",
+    },
+    {
+      name: "Investasi",
+      icon: ChartBarIcon,
+      color: "bg-yellow-100 text-yellow-600",
+    },
+  ];
+
   return (
-    <div className="w-full p-8 min-h-[94vh] bg-white border border-gray-200 rounded-lg shadow">
-      <div className="flex items-center justify-between mb-8">
-        <h5 className="text-xl font-bold leading-none text-gray-900">Home</h5>
+    <div className="p-4">
+      {/* Balance Card */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-6 text-white mb-6">
+        <h2 className="text-sm opacity-80">Total Saldo</h2>
+        <p className="text-3xl font-bold mt-2">Rp 5.000.000</p>
+        <div className="flex justify-between mt-4 text-sm">
+          <div>
+            <p className="opacity-80">Pemasukan</p>
+            <p className="font-semibold">Rp 2.500.000</p>
+          </div>
+          <div>
+            <p className="opacity-80">Pengeluaran</p>
+            <p className="font-semibold">Rp 1.500.000</p>
+          </div>
+        </div>
       </div>
-      <TransactionsAction/>
-      {/* <div className="grid grid-cols-3 gap-6 mb-5">
-        <Link
-          href={{
-            pathname: `/transactions/create`,
-            query: { type: "earning" },
-          }}
-          className="group cursor-pointer"
-        >
-          <BsPlusCircleFill
-            className="mx-auto mb-2 text-gray-500 group-hover:text-blue-600"
-            size={40}
-          />
-          <div className="text-center text-sm text-gray-500 group-hover:text-blue-600">
-            Earning
-          </div>
-        </Link>
-        <Link
-          href={{
-            pathname: `/transactions/create`,
-            query: { type: "transfer" },
-          }}
-          className="group cursor-pointer"
-        >
-          <BsArrowUpCircleFill
-            className="mx-auto mb-2 text-gray-500 group-hover:text-blue-600"
-            size={40}
-          />
-          <div className="text-center text-sm text-gray-500 group-hover:text-blue-600">
-            Transfer
-          </div>
-        </Link>
-        <Link
-          href={{
-            pathname: `/transactions/create`,
-            query: { type: "spending" },
-          }}
-          className="group cursor-pointer"
-        >
-          <BsArrowRightCircleFill
-            className="mx-auto mb-2 text-gray-500 group-hover:text-blue-600"
-            size={40}
-          />
-          <div className="text-center text-sm text-gray-500 group-hover:text-blue-600">
-            Spending
-          </div>
-        </Link>
-      </div> */}
-      <div className="grid grid-cols-2 gap-6 mb-1 text-center">
-        {menus.map((menu, index) => (
-          <Link
-            key={index}
-            href={menu.href}
-            className="block max-w-sm bg-white border border-gray-200 rounded-sm shadow cursor-pointer hover:bg-gray-100"
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        {quickActions.map((action) => (
+          <button
+            key={action.name}
+            className={`flex flex-col items-center justify-center p-3 rounded-xl ${action.color}`}
           >
-            <h5 className="my-8 font-bold tracking-tight text-gray-900">
-              {menu.name}
-            </h5>
-          </Link>
+            <action.icon className="w-6 h-6" />
+            <span className="text-xs mt-2">{action.name}</span>
+          </button>
         ))}
+      </div>
+
+      {/* Recent Transactions */}
+      <div className="bg-white rounded-xl p-4 shadow-sm">
+        <h3 className="font-semibold mb-4">Transaksi Terakhir</h3>
+        <div className="space-y-4">
+          {[1, 2, 3].map((item) => (
+            <div key={item} className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <WalletIcon className="w-5 h-5 text-blue-600" />
+                </div>
+                <div className="ml-3">
+                  <p className="font-medium">Belanja Bulanan</p>
+                  <p className="text-sm text-gray-500">12 Mar 2024</p>
+                </div>
+              </div>
+              <p className="text-red-600 font-medium">-Rp 500.000</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

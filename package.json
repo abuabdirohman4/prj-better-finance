@@ -10,6 +10,7 @@
     "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@prisma/client": "^5.15.1",
     "@vercel/postgres": "^0.8.0",
     "axios": "^1.7.2",
