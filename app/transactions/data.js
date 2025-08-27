@@ -1,4 +1,4 @@
-import { getData } from "@/utils/fetch";
+import { googleSheetsService } from "@/utils/google";
 
 const parseCSV = (data) => {
   // Normalize newlines for consistent parsing
@@ -123,33 +123,15 @@ const groupTransactionsByDate = (transactions) => {
 };
 
 export const fetchTransaction = async (sheetName) => {
-  const sheetId = process.env.NEXT_PUBLIC_GOOGLE_SHEET_ID;
-  const encodedSheetName = encodeURIComponent(sheetName);
-  const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodedSheetName}`;
-
   try {
-    const res = await getData({
-      url: sheetURL,
-    });
+    const csvData = await googleSheetsService.fetchSheet(sheetName);
     
-    if (res.status === 200 && res.data) {
-      const parsedData = parseCSV(res.data);
-      
-      if (parsedData.length === 0) {
-        console.warn('No valid data found after parsing');
-        return [];
-      }
-      
-      const sortedData = parsedData.sort().reverse();
-      const groupedData = groupTransactionsByDate(sortedData);
-      return groupedData;
-
-    } else {
-      console.error('Failed to fetch data:', res.status);
-      return [];
-    }
+    const parsedData = parseCSV(csvData);
+    const sortedData = parsedData.sort().reverse();
+    const groupedData = groupTransactionsByDate(sortedData);
+    return groupedData;
   } catch (error) {
-    console.error('Error fetching transaction:', error);
+    console.error('Error fetching transaction data:', error);
     return [];
   }
 }

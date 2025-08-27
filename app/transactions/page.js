@@ -7,9 +7,9 @@ import {
   formatDate,
   formatRupiah,
   getCashValue,
-  getDefaultSheetName,
   getTotalCashGroupedByDate,
 } from "@/utils/helper";
+import { getDefaultSheetName } from "@/utils/google";
 import Image from "next/image";
 
 export default function Transactions() {

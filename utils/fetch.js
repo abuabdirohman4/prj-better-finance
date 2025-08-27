@@ -1,6 +1,4 @@
-// import axios from "../configs";
-import axios from "axios";
-import { redirect } from "next/navigation";
+import axios from "../configs";
 
 export async function getData({ url, params, token }) {
   try {
@@ -11,10 +9,6 @@ export async function getData({ url, params, token }) {
       },
     });
   } catch (error) {
-    const res = JSON.parse(JSON.stringify(error));
-    if (res.status === 401) {
-      redirect("/masuk");
-    }
     throw error;
   }
 }

@@ -15,10 +15,26 @@ export function formatRupiah(amount) {
   }
 }
 
-export function getDefaultSheetName(months) {
-  const currentMonth = new Date().getMonth();
-  return months[currentMonth];
-}
+export function formatDate(dateString) {
+  const options = { day: "2-digit", month: "short", year: "numeric" };
+  const date = new Date(dateString.split("/").reverse().join("-"));
+
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  // Periksa apakah tanggal adalah hari ini
+  if (date.toDateString() === today.toDateString()) {
+    return "Today";
+  }
+
+  // Periksa apakah tanggal adalah kemarin
+  if (date.toDateString() === yesterday.toDateString()) {
+    return "Yesterday";
+  }
+
+  return date.toLocaleDateString("en-GB", options).replace(/ /g, " ");
+};
 
 export function toCapitalCase(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -108,27 +124,7 @@ export function getTotalCashGroupedByDate(groupedTransactions, type) {
 
   return total;
 }
+
 export function getTotalObjectValue(data) {
   return Object.values(data).reduce((total, value) => total + value, 0);
 }
-
-export const formatDate = (dateString) => {
-  const options = { day: "2-digit", month: "short", year: "numeric" };
-  const date = new Date(dateString.split("/").reverse().join("-"));
-
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
-
-  // Periksa apakah tanggal adalah hari ini
-  if (date.toDateString() === today.toDateString()) {
-    return "Today";
-  }
-
-  // Periksa apakah tanggal adalah kemarin
-  if (date.toDateString() === yesterday.toDateString()) {
-    return "Yesterday";
-  }
-
-  return date.toLocaleDateString("en-GB", options).replace(/ /g, " ");
-};
