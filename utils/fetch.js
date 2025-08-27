@@ -28,7 +28,7 @@ export async function postData({ url, payload, token, formData }) {
       },
     });
   } catch (error) {
-    return error;
+    throw error;
   }
 }
 
@@ -36,8 +36,7 @@ export async function putData({ url, payload }) {
   try {
     return await axios.put(`${url}`, payload);
   } catch (error) {
-    console.log(error);
-    return error;
+    throw error;
   }
 }
 
@@ -49,6 +48,6 @@ export async function deleteData({ url, token }) {
       },
     });
   } catch (error) {
-    return error;
+    throw error;
   }
 }

@@ -1,5 +1,5 @@
 "use client";
-import { fetchTransaction } from "@/utils/fetchTransaction";
+import { fetchTransaction } from "./data";
 import { months } from "@/utils/constants";
 import { useEffect, useState } from "react";
 import Transaction from "@/components/Card/Transaction";
@@ -21,27 +21,10 @@ export default function Transactions() {
   const spending = getTotalCashGroupedByDate(transaction, "Spending");
   const earning = getTotalCashGroupedByDate(transaction, "Earning");
 
-  const groupTransactionsByDate = (transactions) => {
-    return transactions.reduce((groups, transaction) => {
-      const date = transaction.Date;
-      if (date) {
-        if (!groups[date]) {
-          groups[date] = [];
-        }
-        groups[date].push(transaction);
-      } else {
-        console.log(`invalid date for:`);
-        console.log(transaction);
-      }
-      return groups;
-    }, {});
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchTransaction(selectedMonth);
-      const group = groupTransactionsByDate(data);
-      setTransaction(group);
+      setTransaction(data);
     };
     fetchData();
   }, [selectedMonth]);
