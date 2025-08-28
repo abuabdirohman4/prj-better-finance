@@ -51,7 +51,7 @@ export default function Budget({ category, budget, spending }) {
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">Sisa:</span>
             <span className={`font-medium ${balance < 0 ? 'text-red-600' : 'text-gray-900'}`}>
-              {formatCurrency(balance)}
+              {formatCurrency(balance, "brackets")}
             </span>
           </div>
         </div>

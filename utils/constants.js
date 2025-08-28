@@ -1,6 +1,7 @@
 export const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",];
 
 export const categories = {
+  eating: ["Dining Out", "Food", "Groceries", "Grab Credit"],
   living: [
     "Charge",
     "Credit",
@@ -14,14 +15,12 @@ export const categories = {
     "Transport",
     "Other Spend",
   ],
-  eating: ["Dining Out", "Food", "Groceries", "Grab Credit"],
   saving: ["AP", "AR", "Retained", "Sinking", "Wishlist"],
   investing: ["Business", "Emergency", "Investment"],
   giving: ["Infaq Rezeki", "Tax Salary", "Shodaqoh"],
-  shodaqoh: ["Orang Tua", "Saudara", "Lain-lain"],
 };
 
-const Earning = [
+export const earning = [
   "Net Salary",
   "Salary",
   "Allowance",

@@ -11,6 +11,7 @@ import {
 } from "@/utils/helper";
 import { getDefaultSheetName } from "@/utils/google";
 import { useCallback, useEffect, useState } from "react";
+import { fetchBudgets } from "./data";
 
 const budgetCategory = {
   eating: 3200000,
@@ -30,7 +31,6 @@ export default function Budgets() {
   const percentage = (parseFloat(totalSpending) / -parseFloat(totalBudget)) * 100;
   const stringPercent = percentage.toFixed(0);
   const colors = getBudgetColors(percentage);
-  console.log('colors')
 
   const sumCategory = useCallback(
     (transaction, categoryList, typeTransaction) => {
@@ -77,6 +77,7 @@ export default function Budgets() {
 
   useEffect(() => {
     const fetchData = async () => {
+      // Fetch transaction data
       const data = await fetchTransaction(selectedMonth);
       const totalSpendingCategory = sumCategory(
         data,
@@ -86,12 +87,14 @@ export default function Budgets() {
           ...categories.saving,
           ...categories.investing,
           ...categories.giving,
-          ...categories.shodaqoh,
         ],
         "Spending"
       );
       setTotalSpending(getTotalObjectValue(totalSpendingCategory));
       setTotalBudget(getTotalObjectValue(budgetCategory));
+
+      // Fetch budget data
+      const budgetData = await fetchBudgets(selectedMonth);
     };
     fetchData();
   }, [selectedMonth, sumCategory]);
