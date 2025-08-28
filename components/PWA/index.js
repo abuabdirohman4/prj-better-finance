@@ -15,7 +15,7 @@ export default function PWAComponents() {
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setShowInstallPrompt(false);
+      setShowInstallPrompt(true);
     };
 
     // Offline/Online Handler

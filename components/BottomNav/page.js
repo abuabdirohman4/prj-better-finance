@@ -11,7 +11,7 @@ export default function BottomNav() {
     <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md">
       {/* Background with blur effect */}
       <div className="bg-white/80 backdrop-blur-xl border-t border-gray-200/50 shadow-2xl">
-        <div className="flex h-20 justify-around items-center px-4">
+        <div className="flex h-16 justify-around items-center px-4">
           {/* Home */}
           <Link
             href="/"
