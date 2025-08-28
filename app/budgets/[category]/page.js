@@ -4,7 +4,7 @@ import Link from "next/link";
 import Budget from "@/components/Card/Budget";
 import { getDefaultSheetName } from "@/utils/google";
 import {
-  formatRupiah,
+  formatCurrency,
   getCashValue,
   getTotalObjectValue,
   toCapitalCase,
@@ -96,7 +96,7 @@ export default async function Budgets({ params }) {
               Budget
             </p>
             <div className="text-base font-semibold text-gray-900 dark:text-white">
-              {formatRupiah(totalBudget)}
+              {formatCurrency(totalBudget, "brackets")}
             </div>
           </h5>
           <h5 className="text-center">
@@ -108,7 +108,7 @@ export default async function Budgets({ params }) {
                 balance < 0 && "text-red-500"
               }`}
             >
-              {formatRupiah(balance)}
+              {formatCurrency(balance, "brackets")}
             </div>
           </h5>
           <h5 className="text-center">
@@ -116,14 +116,13 @@ export default async function Budgets({ params }) {
               Spending
             </p>
             <div className="text-base font-semibold text-red-600 dark:text-white">
-              {formatRupiah(totalSpending)}
+              {formatCurrency(totalSpending, "brackets")}
             </div>
           </h5>
         </div>
         <div className="flow-root mt-5">
           <ul
             role="list"
-            className="border-y-[1.5px] border-y-gray-200 divide-y divide-gray-200 dark:divide-gray-700"
           >
             {Object.entries(categorySpending).map(
               ([category, spending], key) => (

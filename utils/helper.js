@@ -1,3 +1,24 @@
+export function formatCurrency(amount, format = 'rupiah') {
+  const absAmount = Math.abs(amount);
+  
+  switch (format) {
+    case 'rupiah':
+      return formatRupiah(amount);
+    case 'brackets':
+      if (amount < 0) {
+        return `(${formatRupiah(absAmount)})`;
+      }
+      return formatRupiah(absAmount);
+    case 'signs':
+      if (amount < 0) {
+        return `- ${formatRupiah(absAmount)}`;
+      }
+      return `+ ${formatRupiah(absAmount)}`;
+    default:
+      return formatRupiah(amount);
+  }
+}
+
 export function formatRupiah(amount) {
   if (amount || amount == 0) {
     // Lakukan parsing terlebih dahulu jika amount masih dalam format string
@@ -126,3 +147,22 @@ export function getTotalCashGroupedByDate(groupedTransactions, type) {
 export function getTotalObjectValue(data) {
   return Object.values(data).reduce((total, value) => total + value, 0);
 }
+
+export function getBudgetColors(percent) {
+  if (percent > 100) {
+    return {
+      text: 'text-red-600 font-semibold',
+      progress: 'bg-red-500'
+    };
+  } else if (percent > 80) {
+    return {
+      text: 'text-yellow-500 font-semibold',
+      progress: 'bg-yellow-300'
+    };
+  } else {
+    return {
+      text: 'text-green-600 font-semibold',
+      progress: 'bg-green-500'
+    };
+  }
+};

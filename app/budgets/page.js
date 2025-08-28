@@ -4,7 +4,8 @@ import Budget from "@/components/Card/Budget";
 import { categories, months } from "@/utils/constants";
 import { fetchTransaction } from "../transactions/data";
 import {
-  formatRupiah,
+  formatCurrency,
+  getBudgetColors,
   getCashValue,
   getTotalObjectValue,
 } from "@/utils/helper";
@@ -22,11 +23,14 @@ const budgetCategory = {
 
 export default function Budgets() {
   const [categorySpending, setCategorySpending] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState(
-    getDefaultSheetName(months)
-  );
+  const [selectedMonth, setSelectedMonth] = useState(getDefaultSheetName(months));
   const [totalSpending, setTotalSpending] = useState(0);
   const [totalBudget, setTotalBudget] = useState(0);
+  const balance = parseFloat(totalSpending) + parseFloat(totalBudget);
+  const percentage = (parseFloat(totalSpending) / -parseFloat(totalBudget)) * 100;
+  const stringPercent = percentage.toFixed(0);
+  const colors = getBudgetColors(percentage);
+  console.log('colors')
 
   const sumCategory = useCallback(
     (transaction, categoryList, typeTransaction) => {
@@ -71,11 +75,6 @@ export default function Budgets() {
     []
   );
 
-  const balance = parseFloat(totalSpending) + parseFloat(totalBudget);
-  const percentage =
-    (parseFloat(totalSpending) / -parseFloat(totalBudget)) * 100;
-  const stringPercent = percentage.toFixed(0);
-
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchTransaction(selectedMonth);
@@ -98,7 +97,7 @@ export default function Budgets() {
   }, [selectedMonth, sumCategory]);
 
   return (
-    <main>
+    <main className="mb-10">
       <div className="w-full max-w-md min-h-screen p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex items-center justify-between mb-8">
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
@@ -123,7 +122,7 @@ export default function Budgets() {
               Budget
             </p>
             <div className="text-base font-semibold text-gray-900 dark:text-white">
-              {formatRupiah(totalBudget)}
+              {formatCurrency(totalBudget, "brackets")}
             </div>
           </h5>
           <h5 className="text-center">
@@ -135,7 +134,7 @@ export default function Budgets() {
                 balance < 0 && "text-red-500"
               }`}
             >
-              {formatRupiah(balance)}
+              {formatCurrency(balance, "brackets")}
             </div>
           </h5>
           <h5 className="text-center">
@@ -143,17 +142,17 @@ export default function Budgets() {
               Spending
             </p>
             <div className="text-base font-semibold text-red-600 dark:text-white">
-              {formatRupiah(totalSpending)}
+              {formatCurrency(totalSpending, "brackets")}
             </div>
           </h5>
         </div>
         <div className="flex items-center justify-center mt-4 mb-3">
-          <p className="text-sm text-gray-500 truncate me-2">
+          <p className={`text-sm text-gray-500 truncate me-2 ${colors.text}`}>
             {stringPercent}%
           </p>
           <div className="w-8/12 bg-gray-200 rounded-full">
             <div
-              className={`bg-blue-600 text-xs h-2 font-medium text-center p-0.5 leading-none rounded-full`}
+              className={`text-xs h-2 font-medium text-center p-0.5 leading-none rounded-full ${colors.progress}`}
               style={{ width: `${percentage > 100 ? "100" : stringPercent}%` }}
             ></div>
           </div>
@@ -161,7 +160,6 @@ export default function Budgets() {
         <div className="flow-root">
           <ul
             role="list"
-            className="border-y-[1.5px] border-y-gray-200 divide-y divide-gray-200 dark:divide-gray-700"
           >
             {Object.keys(categories).map((category, key) => {
               const totalSpending = categorySpending[category];

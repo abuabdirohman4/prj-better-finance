@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Transaction from "@/components/Card/Transaction";
 import {
   formatDate,
-  formatRupiah,
+  formatCurrency,
   getCashValue,
   getTotalCashGroupedByDate,
 } from "@/utils/helper";
@@ -47,7 +47,7 @@ export default function Transactions() {
               Earning
             </p>
             <div className="text-base font-semibold text-green-600 dark:text-white">
-              +{formatRupiah(earning)}
+              {formatCurrency(earning, "signs")}
             </div>
           </h5>
           <h5 className="text-center">
@@ -55,7 +55,7 @@ export default function Transactions() {
               Spending
             </p>
             <div className="text-base font-semibold text-gray-900 dark:text-white">
-              {formatRupiah(spending)}
+              {formatCurrency(spending, "signs")}
             </div>
           </h5>
         </div>
@@ -63,7 +63,7 @@ export default function Transactions() {
       <div className="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg rounded-t-none shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex items-center justify-between mb-4">
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
-            Transactions
+            Transaksi
           </h5>
           <select
             id="month"

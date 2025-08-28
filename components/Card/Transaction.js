@@ -1,4 +1,4 @@
-import { formatRupiah } from "@/utils/helper";
+import { formatCurrency } from "@/utils/helper";
 
 export default function Transaction({
   date,
@@ -30,7 +30,7 @@ export default function Transaction({
           cash > 0 && "text-green-600"
         }`}
       >
-        {cash > 0 ? `+${formatRupiah(cash)}` : formatRupiah(cash)}
+        {cash > 0 ? `${formatCurrency(cash, "signs")}` : formatCurrency(cash, "signs")}
       </div>
     </div>
   );
