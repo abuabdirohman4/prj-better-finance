@@ -15,7 +15,7 @@ export default function PWAComponents() {
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setShowInstallPrompt(true);
+      setShowInstallPrompt(false);
     };
 
     // Offline/Online Handler
@@ -121,7 +121,7 @@ export default function PWAComponents() {
 
       {/* PWA Install Prompt - Top Center (Improved Design) */}
       {showInstallPrompt && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 max-w-sm w-full mx-4 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4 z-50">
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 max-w-sm w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4 z-50">
           <div className="flex items-center space-x-3 mb-3">
             <div className="flex-shrink-0">
               <Image 

@@ -126,23 +126,37 @@ export function getTotalCashGroupedByDate(groupedTransactions, type) {
   // Inisialisasi total cash
   let total = 0;
 
-  Object.keys(groupedTransactions).forEach((date) => {
-    groupedTransactions[date].forEach((data) => {
-      if (data.Transaction === type) {
-        // Periksa apakah nilai cash dapat diubah menjadi angka
-        const cashValue = parseFloat(getCashValue(data));
-        if (!isNaN(cashValue)) {
-          // Jika valid, tambahkan ke total
-          total += cashValue;
-        } else {
-          // Jika tidak valid, log pesan kesalahan
-          console.error(
-            `Invalid cash value for transaction: ${JSON.stringify(data.Note)}`
-          );
-        }
+  // Check if groupedTransactions is an array (ungrouped) or object (grouped)
+  if (Array.isArray(groupedTransactions)) {
+    // If it's an array, use the simple function
+    return getTotalCashTransactions(groupedTransactions, type);
+  }
+
+  // If it's an object with grouped data
+  if (typeof groupedTransactions === 'object' && groupedTransactions !== null) {
+    Object.keys(groupedTransactions).forEach((date) => {
+      // Check if the date key has an array value
+      if (Array.isArray(groupedTransactions[date])) {
+        groupedTransactions[date].forEach((data) => {
+          if (data.Transaction === type) {
+            // Periksa apakah nilai cash dapat diubah menjadi angka
+            const cashValue = parseFloat(getCashValue(data));
+            if (!isNaN(cashValue)) {
+              // Jika valid, tambahkan ke total
+              total += cashValue;
+            } else {
+              // Jika tidak valid, log pesan kesalahan
+              console.error(
+                `Invalid cash value for transaction: ${JSON.stringify(data.Note)}`
+              );
+            }
+          }
+        });
+      } else {
+        console.warn(`Date ${date} does not contain an array of transactions`);
       }
     });
-  });
+  }
 
   return total;
 }
