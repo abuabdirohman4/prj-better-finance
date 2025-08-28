@@ -57,8 +57,11 @@ export function formatDate(dateString) {
   return date.toLocaleDateString("en-GB", options).replace(/ /g, " ");
 };
 
-export function toCapitalCase(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+export function toProperCase(string) {
+  if (!string) return '';
+  return string.split(' ').map(word => 
+    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+  ).join(' ');
 }
 
 export function getCashValue(data) {
@@ -149,20 +152,20 @@ export function getTotalObjectValue(data) {
 }
 
 export function getBudgetColors(percent) {
-  if (percent > 100) {
+  if (percent == 100 || percent < 80) {
+    return {
+      text: 'text-green-600 font-semibold',
+      progress: 'bg-green-500'
+    };
+  } else if (percent > 100) {
     return {
       text: 'text-red-600 font-semibold',
       progress: 'bg-red-500'
     };
-  } else if (percent > 80) {
+  } else if (percent >= 80) {
     return {
       text: 'text-yellow-500 font-semibold',
       progress: 'bg-yellow-300'
-    };
-  } else {
-    return {
-      text: 'text-green-600 font-semibold',
-      progress: 'bg-green-500'
     };
   }
 };

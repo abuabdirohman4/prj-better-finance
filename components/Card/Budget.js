@@ -1,4 +1,4 @@
-import { formatCurrency, getBudgetColors, toCapitalCase } from "@/utils/helper";
+import { formatCurrency, getBudgetColors, toProperCase } from "@/utils/helper";
 
 export default function Budget({ category, budget, spending }) {
   const percentage = (parseFloat(spending) / -parseFloat(budget)) * 100;
@@ -12,7 +12,7 @@ export default function Budget({ category, budget, spending }) {
         {/* Header with Category Name and Percentage */}
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-base font-medium text-gray-900">
-            {toCapitalCase(category)}
+            {toProperCase(category)}
           </h3>
           <span className={`text-sm font-medium ${colors.text}`}>
             {stringPercent === "NaN" ? "0" : stringPercent}%
