@@ -106,7 +106,7 @@ const parseCSV = (data) => {
   return parsedData;
 }
 
-const groupTransactionsByDate = (transactions) => {
+export const groupTransactionsByDate = (transactions) => {
   return transactions.reduce((groups, transaction) => {
     const date = transaction.Date;
     if (date) {
@@ -128,8 +128,9 @@ export const fetchTransaction = async (sheetName) => {
     
     const parsedData = parseCSV(csvData);
     const sortedData = parsedData.sort().reverse();
-    const groupedData = groupTransactionsByDate(sortedData);
-    return groupedData;
+    return sortedData;
+    // const groupedData = groupTransactionsByDate(sortedData);
+    // return groupedData;
   } catch (error) {
     console.error('Error fetching transaction data:', error);
     return [];

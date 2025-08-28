@@ -12,10 +12,12 @@ import { getDefaultSheetName } from "@/utils/google";
 import { useCallback, useEffect, useState } from "react";
 
 const budgetCategory = {
-  living: 4000000,
-  saving: 2000000,
-  investing: 3000000,
-  giving: 3579642,
+  eating: 3200000,
+  living: 4726350,
+  saving: 1969232,
+  investing: 1941000,
+  giving: 1026074,
+  shodaqoh: 300000,
 };
 
 export default function Budgets() {
@@ -80,10 +82,12 @@ export default function Budgets() {
       const totalSpendingCategory = sumCategory(
         data,
         [
+          ...categories.eating,
           ...categories.living,
           ...categories.saving,
           ...categories.investing,
           ...categories.giving,
+          ...categories.shodaqoh,
         ],
         "Spending"
       );

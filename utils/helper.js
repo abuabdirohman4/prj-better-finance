@@ -44,13 +44,11 @@ export function getCashValue(data) {
   let amount = "";
   const ATM = ["Mandiri", "BCA"];
   const Platform = [
-    "Ponch",
-    "Dana",
+    "E-Toll",
     "Flip",
-    "Gopay",
+    "GoPay",
     "Grab",
     "Jenius",
-    "MyTelkomsel",
     "Ovo",
   ];
 
@@ -61,7 +59,7 @@ export function getCashValue(data) {
   } else if (Platform.includes(data.Account)) {
     amount = data.Platform;
   } else if (data.Account === "BNI") {
-    amount = data.INVESTMENT;
+    amount = data.Saving;
   } else if (data.Account === "AR") {
     amount = data.AR;
   } else if (data.Account === "AP") {

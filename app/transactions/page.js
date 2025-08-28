@@ -1,5 +1,5 @@
 "use client";
-import { fetchTransaction } from "./data";
+import { fetchTransaction, groupTransactionsByDate } from "./data";
 import { months } from "@/utils/constants";
 import { useEffect, useState } from "react";
 import Transaction from "@/components/Card/Transaction";
@@ -24,7 +24,8 @@ export default function Transactions() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchTransaction(selectedMonth);
-      setTransaction(data);
+      const groupedData = groupTransactionsByDate(data);
+      setTransaction(groupedData);
     };
     fetchData();
   }, [selectedMonth]);
