@@ -1,3 +1,20 @@
+export function formatRupiah(amount) {
+  if (amount || amount == 0) {
+    // Lakukan parsing terlebih dahulu jika amount masih dalam format string
+    const parsedAmount =
+      typeof amount === "string" ? parseFloat(amount) : amount;
+
+    // Lakukan formatting ke dalam format Rupiah
+    const formattedAmount = new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0, // Maksimum 0 digit di belakang koma
+    }).format(parsedAmount);
+
+    return formattedAmount;
+  }
+}
+
 export function formatCurrency(amount, format = 'rupiah') {
   const absAmount = Math.abs(amount);
   
@@ -19,20 +36,19 @@ export function formatCurrency(amount, format = 'rupiah') {
   }
 }
 
-export function formatRupiah(amount) {
-  if (amount || amount == 0) {
-    // Lakukan parsing terlebih dahulu jika amount masih dalam format string
-    const parsedAmount =
-      typeof amount === "string" ? parseFloat(amount) : amount;
-
-    // Lakukan formatting ke dalam format Rupiah
-    const formattedAmount = new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      maximumFractionDigits: 0, // Maksimum 0 digit di belakang koma
-    }).format(parsedAmount);
-
-    return formattedAmount;
+export function formatCurrencyShort(amount) {
+  if (amount === 0) return 'Rp0';
+  
+  const absAmount = Math.abs(amount);
+  
+  if (absAmount >= 1000000000) {
+    return `Rp${(absAmount / 1000000000).toFixed(1)}M`;
+  } else if (absAmount >= 1000000) {
+    return `Rp${(absAmount / 1000000).toFixed(1)}jt`;
+  } else if (absAmount >= 1000) {
+    return `Rp${(absAmount / 1000).toFixed(0)}rb`;
+  } else {
+    return `Rp${absAmount.toFixed(0)}`;
   }
 }
 
@@ -166,20 +182,41 @@ export function getTotalObjectValue(data) {
 }
 
 export function getBudgetColors(percent) {
-  if (percent == 100 || percent < 80) {
+  if (percent <= 100 && percent < 80) {
     return {
       text: 'text-green-600 font-semibold',
-      progress: 'bg-green-500'
+      progress: 'bg-green-500',
+      status: 'On Track',
+      statusBg: 'bg-green-100 text-green-700'
     };
   } else if (percent > 100) {
     return {
       text: 'text-red-600 font-semibold',
-      progress: 'bg-red-500'
+      progress: 'bg-red-500',
+      status: 'Over Budget',
+      statusBg: 'bg-red-100 text-red-700'
     };
-  } else if (percent >= 80) {
+  } else if (percent >= 80 && percent < 100) {
     return {
       text: 'text-yellow-500 font-semibold',
-      progress: 'bg-yellow-300'
+      progress: 'bg-yellow-300',
+      status: 'Warning',
+      statusBg: 'bg-yellow-100 text-yellow-700'
+    };
+  } else if (percent === 100) {
+    return {
+      text: 'text-green-600 font-semibold',
+      progress: 'bg-green-500',
+      status: 'On Track',
+      statusBg: 'bg-green-100 text-green-700'
     };
   }
+  
+  // Default fallback untuk nilai yang tidak masuk kondisi di atas
+  return {
+    text: 'text-gray-600 font-semibold',
+    progress: 'bg-gray-500',
+    status: 'Unknown',
+    statusBg: 'bg-gray-100 text-gray-700'
+  };
 };

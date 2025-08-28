@@ -148,8 +148,7 @@ export default function Transactions() {
       <div className="px-3 pb-24">
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <div className="p-6 border-b border-gray-100">
-            <h3 className="text-xl font-bold text-gray-900">Transaction History</h3>
-            <p className="text-sm text-gray-600 mt-1">All your financial activities for {selectedMonth}</p>
+            <h3 className="text-xl font-bold text-gray-900">Transaction</h3>
           </div>
           
           <div className="p-6">

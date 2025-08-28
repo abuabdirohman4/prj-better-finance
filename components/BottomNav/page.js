@@ -60,7 +60,7 @@ export default function BottomNav() {
             <span className={`text-xs font-medium ${
               isActive('/transactions') ? 'text-white' : 'text-gray-600'
             }`}>
-              Transactions
+              Trans
             </span>
           </Link>
 

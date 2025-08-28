@@ -122,15 +122,17 @@ export default function PWAComponents() {
       {/* PWA Install Prompt - Top Center (Improved Design) */}
       {showInstallPrompt && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 max-w-sm w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4 z-50">
-          <div className="flex items-center space-x-3 mb-3">
+          <div className="flex items-center space-x-4 mb-4">
             <div className="flex-shrink-0">
-              <Image 
-                src="/img/money-bag.png" 
-                alt="App Icon" 
-                width={40}
-                height={40}
-                className="rounded-lg" 
-              />
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <Image 
+                  src="/img/logo.svg" 
+                  alt="App Icon" 
+                  width={32}
+                  height={32}
+                  className="rounded-lg" 
+                />
+              </div>
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">

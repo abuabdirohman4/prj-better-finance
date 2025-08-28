@@ -3,6 +3,7 @@ import { categories, months } from "@/utils/constants";
 import { fetchTransaction } from "../transactions/data";
 import {
   formatCurrency,
+  formatCurrencyShort,
   getBudgetColors,
   getCashValue,
   getTotalObjectValue,
@@ -12,6 +13,8 @@ import { getDefaultSheetName } from "@/utils/google";
 import { useCallback, useEffect, useState } from "react";
 import { fetchBudgets } from "./data";
 import Cookies from 'js-cookie';
+
+
 
 export default function Budgets() {
   const [categorySpending, setCategorySpending] = useState([]);
@@ -133,36 +136,12 @@ export default function Budgets() {
     const usedKeys = new Set(); // Track keys yang sudah digunakan
     
     const getCategoryForKey = (key) => {
-      // Prioritas: eating > living > giving > saving > investing
-      if (categories.eating.some(cat => 
-        cat.toLowerCase() === key.toLowerCase() || 
-        cat.toLowerCase().includes(key.toLowerCase()) ||
-        key.toLowerCase().includes(cat.toLowerCase())
-      )) return 'eating';
-      
-      if (categories.living.some(cat => 
-        cat.toLowerCase() === key.toLowerCase() || 
-        cat.toLowerCase().includes(key.toLowerCase()) ||
-        key.toLowerCase().includes(cat.toLowerCase())
-      )) return 'living';
-      
-      if (categories.giving.some(cat => 
-        cat.toLowerCase() === key.toLowerCase() || 
-        cat.toLowerCase().includes(key.toLowerCase()) ||
-        key.toLowerCase().includes(cat.toLowerCase())
-      )) return 'giving';
-      
-      if (categories.saving.some(cat => 
-        cat.toLowerCase() === key.toLowerCase() || 
-        cat.toLowerCase().includes(key.toLowerCase()) ||
-        key.toLowerCase().includes(cat.toLowerCase())
-      )) return 'saving';
-      
-      if (categories.investing.some(cat => 
-        cat.toLowerCase() === key.toLowerCase() || 
-        cat.toLowerCase().includes(key.toLowerCase()) ||
-        key.toLowerCase().includes(cat.toLowerCase())
-      )) return 'investing';
+      // Exact match only - no partial matching
+      if (categories.eating.some(cat => cat.toLowerCase() === key.toLowerCase())) return 'eating';
+      if (categories.living.some(cat => cat.toLowerCase() === key.toLowerCase())) return 'living';
+      if (categories.giving.some(cat => cat.toLowerCase() === key.toLowerCase())) return 'giving';
+      if (categories.saving.some(cat => cat.toLowerCase() === key.toLowerCase())) return 'saving';
+      if (categories.investing.some(cat => cat.toLowerCase() === key.toLowerCase())) return 'investing';
       
       return null;
     };
@@ -181,6 +160,8 @@ export default function Budgets() {
       if (category && !usedKeys.has(key)) {
         result[category][key] = value;
         usedKeys.add(key);
+      } else if (!category) {
+        console.log(`⚠️ Spending item "${key}" tidak masuk ke kategori manapun`);
       }
     });
 
@@ -190,6 +171,8 @@ export default function Budgets() {
       if (category && !usedKeys.has(key)) {
         result[category][key] = value;
         usedKeys.add(key);
+      } else if (!category) {
+        console.log(`⚠️ Transfer item "${key}" tidak masuk ke kategori manapun`);
       }
     });
 
@@ -242,7 +225,7 @@ export default function Budgets() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
       {/* Header Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 px-6 pt-8 pb-6">
+      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 px-3 pt-8 pb-6">
         {/* Background decoration */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
@@ -297,7 +280,7 @@ export default function Budgets() {
       </div>
 
       {/* Budget Summary Cards */}
-      <div className="px-6 mt-6 mb-8">
+      <div className="px-3 mt-6 mb-8">
         <div className="grid grid-cols-1 gap-4">
           {/* Overall Progress Card */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
@@ -346,14 +329,13 @@ export default function Budgets() {
       </div>
 
       {/* Budget Categories */}
-      <div className="px-6 pb-24">
+      <div className="px-3 pb-24">
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <div className="p-6 border-b border-gray-100">
-            <h3 className="text-xl font-bold text-gray-900">Budget Categories</h3>
-            <p className="text-sm text-gray-600 mt-1">Manage your spending by category</p>
+            <h3 className="text-xl font-bold text-gray-900">Budget Spending</h3>
           </div>
           
-          <div className="p-6">
+          <div className="p-6 pt-0">
             {/* Loading State */}
             {isLoading ? (
               <div className="text-center py-8">
@@ -399,108 +381,139 @@ export default function Budgets() {
                                categoryKey === 'giving' ? '❤️' : '📋'}
                             </span>
                           </div>
-                          <div>
+                          <div className="flex-1">
                             <h4 className="text-lg font-semibold text-gray-900 capitalize">
                               {categoryKey}
                             </h4>
                             <p className="text-sm text-gray-600">
-                              {Object.keys(categoryData).length} subcategories
+                              {Object.keys(categoryData).length} Items
                             </p>
                           </div>
                         </div>
                         
-                        {/* Category Summary */}
-                        <div className="grid grid-cols-3 gap-3 text-sm">
+                        {/* Category Summary - Ringkas */}
+                        <div className="grid grid-cols-3 gap-3 text-sm mb-3">
                           <div className="text-center">
-                            <div className="text-gray-600 mb-1">Budget</div>
-                            <div className="font-semibold text-blue-600">
-                              {formatCurrency(totals.budget, "brackets")}
+                            <div className="text-gray-600 text-xs mb-1">Total Budget</div>
+                            <div className="font-semibold text-blue-600 text-sm">
+                              {formatCurrencyShort(totals.budget)}
                             </div>
                           </div>
                           <div className="text-center">
-                            <div className="text-sm text-gray-600 mb-1">Spent</div>
-                            <div className="font-semibold text-red-600">
-                              {formatCurrency(totals.spent, "brackets")}
+                            <div className="text-gray-600 text-xs mb-1">Progress</div>
+                            <div className={`font-semibold text-sm ${getBudgetColors(totals.percentageUsed).text}`}>
+                              {totals.percentageUsed.toFixed(0)}%
                             </div>
                           </div>
                           <div className="text-center">
-                            <div className="text-sm text-gray-600 mb-1">Remaining</div>
-                            <div className={`font-semibold ${
-                              totals.remaining >= 0 ? 'text-green-600' : 'text-red-600'
-                            }`}>
-                              {formatCurrency(totals.remaining, "brackets")}
+                            <div className="text-gray-600 text-xs mb-1">Status</div>
+                            <div className={`font-semibold text-xs px-2 py-1 rounded-full ${getBudgetColors(totals.percentageUsed).statusBg}`}>
+                              {getBudgetColors(totals.percentageUsed).status}
                             </div>
                           </div>
                         </div>
                         
-                        {/* Progress Bar */}
-                        <div className="mt-3">
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div 
-                              className={`h-2 rounded-full transition-all duration-300 ${categoryColors.progress}`}
-                              style={{ width: `${Math.min(totals.percentageUsed, 100)}%` }}
-                            ></div>
-                          </div>
-                          <div className={`text-xs text-center mt-2 ${categoryColors.text}`}>
-                            {totals.percentageUsed.toFixed(1)}% used
-                          </div>
+                        {/* Mini Progress Bar */}
+                        <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                          <div 
+                            className={`h-2 rounded-full transition-all duration-300 ${getBudgetColors(totals.percentageUsed).progress}`}
+                            style={{ width: `${Math.min(totals.percentageUsed, 100)}%` }}
+                          ></div>
                         </div>
+                        
+
                       </div>
                       
                       {/* Collapsible Subcategories */}
                       <div className={`overflow-hidden transition-all duration-300 ${
-                        collapsedCategories[categoryKey] ? 'max-h-0 opacity-0' : 'max-h-screen opacity-100'
+                        collapsedCategories[categoryKey] ? 'max-h-0 opacity-0' : 'max-h-none opacity-100'
                       }`}>
                         <div className="p-4 bg-gray-50 space-y-3">
                           {Object.entries(categoryData).map(([subCategory, data]) => {
                             const subBudget = Math.abs(data.budget);
                             const subSpent = Math.abs(data.actual);
-                            const subRemaining = subBudget - subSpent;
                             const subPercentageUsed = subBudget > 0 ? (subSpent / subBudget) * 100 : 0;
                             const subColors = getBudgetColors(subPercentageUsed);
                             
+                            // Get appropriate icon based on subcategory
+                            const getSubCategoryIcon = (category, subCat) => {
+                              if (category === 'eating') {
+                                if (subCat.toLowerCase().includes('dining') || subCat.toLowerCase().includes('out')) return '🍔';
+                                if (subCat.toLowerCase().includes('food')) return '🍽️';
+                                if (subCat.toLowerCase().includes('grocery')) return '🛒';
+                                if (subCat.toLowerCase().includes('grab')) return '🚗';
+                                return '🍽️';
+                              } else if (category === 'living') {
+                                if (subCat.toLowerCase().includes('transport')) return '🚗';
+                                if (subCat.toLowerCase().includes('house') || subCat.toLowerCase().includes('home')) return '🏠';
+                                if (subCat.toLowerCase().includes('health')) return '🏥';
+                                if (subCat.toLowerCase().includes('children')) return '👶';
+                                if (subCat.toLowerCase().includes('spouse')) return '💑';
+                                if (subCat.toLowerCase().includes('entertainment')) return '🎮';
+                                if (subCat.toLowerCase().includes('tools')) return '🔧';
+                                if (subCat.toLowerCase().includes('credit')) return '💳';
+                                if (subCat.toLowerCase().includes('charge')) return '⚡';
+                                return '🏠';
+                              } else if (category === 'giving') {
+                                if (subCat.toLowerCase().includes('infaq')) return '🕌';
+                                if (subCat.toLowerCase().includes('tax')) return '📊';
+                                if (subCat.toLowerCase().includes('shodaqoh')) return '❤️';
+                                return '❤️';
+                              } else if (category === 'saving') {
+                                if (subCat.toLowerCase().includes('sinking')) return '💰';
+                                if (subCat.toLowerCase().includes('wishlist')) return '🎁';
+                                return '💰';
+                              } else if (category === 'investing') {
+                                if (subCat.toLowerCase().includes('business')) return '💼';
+                                if (subCat.toLowerCase().includes('emergency')) return '🚨';
+                                if (subCat.toLowerCase().includes('investment')) return '📈';
+                                return '💹';
+                              }
+                              return '📋';
+                            };
+                            
                             return (
-                              <div key={subCategory} className={`p-3 rounded-lg border ${
-                                categoryKey === 'saving' || categoryKey === 'investing' 
-                                  ? 'bg-blue-50 border-blue-200' 
-                                  : 'bg-white border-gray-200'
-                              }`}>
-                                <div className="flex justify-between items-center mb-3">
-                                  <h6 className="font-medium text-gray-900 text-sm">
-                                    {toProperCase(subCategory)}
-                                  </h6>
-                                  <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 font-medium">
-                                    {formatCurrency(subBudget, "brackets")}
+                              <div key={subCategory} className="bg-white rounded-lg border border-gray-200 p-3 shadow-sm">
+                                {/* Header with Icon and Title */}
+                                <div className="flex items-center justify-between mb-3">
+                                  <div className="flex items-center">
+                                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-2">
+                                      <span className="text-white text-sm">
+                                        {getSubCategoryIcon(categoryKey, subCategory)}
+                                      </span>
+                                    </div>
+                                    <h6 className="font-medium text-gray-900 text-sm">
+                                      {toProperCase(subCategory)}
+                                    </h6>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="text-xs text-gray-600">
+                                      {formatCurrencyShort(subSpent)} / {formatCurrencyShort(subBudget)}
+                                    </p>
+                                  </div>
+                                </div>
+                                
+                                {/* Progress Bar with Percentage */}
+                                <div className="flex items-center gap-3 mb-2">
+                                  <div className="flex-1 bg-gray-200 rounded-full h-2">
+                                    <div 
+                                      className={`h-2 rounded-full transition-all duration-300 ${subColors.progress}`}
+                                      style={{ width: `${Math.min(subPercentageUsed, 100)}%` }}
+                                    ></div>
+                                  </div>
+                                  <span className={`text-xs font-medium ${subColors.text}`}>
+                                    {subPercentageUsed.toFixed(0)}%
                                   </span>
                                 </div>
                                 
-                                <div className="grid grid-cols-2 gap-3 text-xs mb-3">
-                                  <div>
-                                    <span className="text-gray-600">Spent:</span>
-                                    <span className="ml-1 font-medium text-red-600">
-                                      {formatCurrency(subSpent, "brackets")}
-                                    </span>
+                                {/* Status Message - Right Aligned */}
+                                {subPercentageUsed > 100 && (
+                                  <div className="text-right">
+                                    <p className="text-xs font-medium text-red-600">
+                                      Over Budget!
+                                    </p>
                                   </div>
-                                  <div>
-                                    <span className="text-gray-600">Remaining:</span>
-                                    <span className={`ml-1 font-medium ${
-                                      subRemaining >= 0 ? 'text-green-600' : 'text-red-600'
-                                    }`}>
-                                      {formatCurrency(subRemaining, "brackets")}
-                                    </span>
-                                  </div>
-                                </div>
-                                
-                                {/* Progress Bar per Sub-category */}
-                                <div className="w-full bg-gray-200 rounded-full h-1.5">
-                                  <div 
-                                    className={`h-1.5 rounded-full transition-all duration-300 ${subColors.progress}`}
-                                    style={{ width: `${Math.min(subPercentageUsed, 100)}%` }}
-                                  ></div>
-                                </div>
-                                <div className={`text-xs text-center mt-2 ${subColors.text}`}>
-                                  {subPercentageUsed.toFixed(1)}% used
-                                </div>
+                                )}
                               </div>
                             );
                           })}
