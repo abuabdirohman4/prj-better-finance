@@ -285,27 +285,11 @@ export default function Budgets() {
           {/* Overall Progress Card */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-800">Overall Budget Progress</h2>
+              <h2 className="text-lg font-semibold text-gray-800">Overall Progress</h2>
               <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full flex items-center justify-center">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
-              </div>
-            </div>
-            
-            {/* Progress Bar */}
-            <div className="mb-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-600">Budget Usage</span>
-                <span className={`text-sm font-semibold ${colors.text}`}>
-                  {percentageFromSheet.toFixed(0)}%
-                </span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
-                <div
-                  className={`h-3 rounded-full transition-all duration-500 ${colors.progress}`}
-                  style={{ width: `${Math.min(percentageFromSheet, 100)}%` }}
-                ></div>
               </div>
             </div>
 
@@ -313,15 +297,30 @@ export default function Budgets() {
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center">
                 <p className="text-sm text-gray-600 mb-1">Total Budget</p>
-                <p className="text-lg font-bold text-blue-600">
+                <p className="text-lg font-bold">
                   {formatCurrency(totalBudgetFromSheet, "brackets")}
                 </p>
               </div>
               <div className="text-center">
                 <p className="text-sm text-gray-600 mb-1">Total Spent</p>
-                <p className="text-lg font-bold text-green-600">
+                <p className="text-lg font-bold text-red-600">
                   {formatCurrency(totalActualFromSheet, "brackets")}
                 </p>
+              </div>
+            </div>
+            
+            {/* Progress Bar with Percentage */}
+            <div className="mt-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="flex-1 bg-gray-200 rounded-full h-3">
+                  <div
+                    className={`h-3 rounded-full transition-all duration-500 ${colors.progress}`}
+                    style={{ width: `${Math.min(percentageFromSheet, 100)}%` }}
+                  ></div>
+                </div>
+                <span className={`text-sm font-semibold ${colors.text}`}>
+                  {percentageFromSheet.toFixed(0)}%
+                </span>
               </div>
             </div>
           </div>
@@ -351,84 +350,88 @@ export default function Budgets() {
                   
                   return (
                     <div key={categoryKey} className="border border-gray-200 rounded-xl overflow-hidden">
-                      {/* Category Header */}
+                                              {/* Category Header */}
                       <div 
                         className="relative cursor-pointer p-4 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 transition-all duration-200"
                         onClick={() => toggleCategory(categoryKey)}
                       >
-                        {/* Arrow icon */}
-                        <div className="absolute top-4 right-4 z-10">
-                          <svg 
-                            className={`w-5 h-5 text-gray-600 transition-transform duration-200 ${
-                              collapsedCategories[categoryKey] ? 'rotate-180' : ''
-                            }`}
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                        
-                        {/* Category Info */}
-                        <div className="flex items-center mb-3">
-                          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3">
-                            <span className="text-white text-lg">
-                              {categoryKey === 'eating' ? '🍽️' : 
-                               categoryKey === 'living' ? '🏠' : 
-                               categoryKey === 'saving' ? '💰' : 
-                               categoryKey === 'investing' ? '💹' : 
-                               categoryKey === 'giving' ? '❤️' : '📋'}
-                            </span>
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="text-lg font-semibold text-gray-900 capitalize">
-                              {categoryKey}
-                            </h4>
-                            <p className="text-sm text-gray-600">
-                              {Object.keys(categoryData).length} Items
-                            </p>
-                          </div>
-                        </div>
-                        
-                        {/* Category Summary - Ringkas */}
-                        <div className="grid grid-cols-3 gap-3 text-sm mb-3">
-                          <div className="text-center">
-                            <div className="text-gray-600 text-xs mb-1">Total Budget</div>
-                            <div className="font-semibold text-blue-600 text-sm">
-                              {formatCurrencyShort(totals.budget)}
+                        {/* Category Info with Budget Summary and Arrow */}
+                        <div className="flex items-center justify-between mb-3">
+                          {/* Left: Icon + Nama Kategori */}
+                          <div className="flex items-center">
+                            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3">
+                              <span className="text-white text-lg">
+                                {categoryKey === 'eating' ? '🍽️' : 
+                                 categoryKey === 'living' ? '🏠' : 
+                                 categoryKey === 'saving' ? '💰' : 
+                                 categoryKey === 'investing' ? '💹' : 
+                                 categoryKey === 'giving' ? '❤️' : '📋'}
+                              </span>
+                            </div>
+                            <div>
+                              <h4 className="text-lg font-semibold text-gray-900 capitalize">
+                                {categoryKey}
+                              </h4>
+                              <p className="text-sm text-gray-600">
+                                {Object.keys(categoryData).length} Items
+                              </p>
                             </div>
                           </div>
-                          <div className="text-center">
-                            <div className="text-gray-600 text-xs mb-1">Progress</div>
-                            <div className={`font-semibold text-sm ${getBudgetColors(totals.percentageUsed).text}`}>
-                              {totals.percentageUsed.toFixed(0)}%
+                          
+                          {/* Right: Budget Summary + Arrow */}
+                          <div className="flex items-center space-x-3">
+                            {/* Budget Summary */}
+                            <div className="text-right">
+                              <p className="text-sm font-medium text-gray-900">
+                                {formatCurrencyShort(totals.spent)} / {formatCurrencyShort(totals.budget)}
+                              </p>
                             </div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-gray-600 text-xs mb-1">Status</div>
-                            <div className={`font-semibold text-xs px-2 py-1 rounded-full ${getBudgetColors(totals.percentageUsed).statusBg}`}>
-                              {getBudgetColors(totals.percentageUsed).status}
+                            
+                            {/* Arrow icon */}
+                            <div className="flex-shrink-0">
+                              <svg 
+                                className={`w-5 h-5 text-gray-600 transition-all duration-500 ease-in-out transform-gpu ${
+                                  collapsedCategories[categoryKey] ? 'rotate-180 scale-110' : 'rotate-0 scale-100'
+                                }`}
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                              >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                              </svg>
                             </div>
                           </div>
                         </div>
                         
-                        {/* Mini Progress Bar */}
-                        <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                          <div 
-                            className={`h-2 rounded-full transition-all duration-300 ${getBudgetColors(totals.percentageUsed).progress}`}
-                            style={{ width: `${Math.min(totals.percentageUsed, 100)}%` }}
-                          ></div>
+
+                        
+                        {/* Mini Progress Bar with Percentage */}
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="flex-1 bg-gray-200 rounded-full h-2">
+                            <div 
+                              className={`h-2 rounded-full transition-all duration-300 ${getBudgetColors(totals.percentageUsed).progress}`}
+                              style={{ width: `${Math.min(totals.percentageUsed, 100)}%` }}
+                            ></div>
+                          </div>
+                          <span className={`text-sm font-medium ${getBudgetColors(totals.percentageUsed).text}`}>
+                            {totals.percentageUsed.toFixed(0)}%
+                          </span>
                         </div>
                         
 
                       </div>
                       
                       {/* Collapsible Subcategories */}
-                      <div className={`overflow-hidden transition-all duration-300 ${
-                        collapsedCategories[categoryKey] ? 'max-h-0 opacity-0' : 'max-h-none opacity-100'
+                      <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                        collapsedCategories[categoryKey] 
+                          ? 'max-h-0 opacity-0 scale-95 transform-gpu' 
+                          : 'max-h-[2000px] opacity-100 scale-100 transform-gpu'
                       }`}>
-                        <div className="p-4 bg-gray-50 space-y-3">
+                        <div className={`p-4 bg-gray-50 space-y-3 transition-all duration-500 ease-in-out ${
+                          collapsedCategories[categoryKey] 
+                            ? 'transform -translate-y-2 opacity-0' 
+                            : 'transform translate-y-0 opacity-100'
+                        }`}>
                           {Object.entries(categoryData).map(([subCategory, data]) => {
                             const subBudget = Math.abs(data.budget);
                             const subSpent = Math.abs(data.actual);
@@ -474,11 +477,11 @@ export default function Budgets() {
                             
                             return (
                               <div key={subCategory} className="bg-white rounded-lg border border-gray-200 p-3 shadow-sm">
-                                {/* Header with Icon and Title */}
+                                                                {/* Header with Icon and Title */}
                                 <div className="flex items-center justify-between mb-3">
                                   <div className="flex items-center">
-                                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-2">
-                                      <span className="text-white text-sm">
+                                    <div className="w-8 h-8 flex items-center justify-center mr-2">
+                                      <span className="text-2xl">
                                         {getSubCategoryIcon(categoryKey, subCategory)}
                                       </span>
                                     </div>
