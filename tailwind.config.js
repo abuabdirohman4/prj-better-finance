@@ -17,6 +17,7 @@ module.exports = {
       variants: ['hover', 'focus']
     }
   ],
+
   theme: {
     extend: {
       backgroundImage: {

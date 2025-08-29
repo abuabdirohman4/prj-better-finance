@@ -121,7 +121,7 @@ export default function PWAComponents() {
 
       {/* PWA Install Prompt - Top Center (Improved Design) */}
       {showInstallPrompt && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 max-w-sm w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4 z-50">
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 max-w-sm w-full mx-auto bg-white rounded-xl shadow-2xl border border-gray-200 p-4 z-50">
           <div className="flex items-center space-x-4 mb-4">
             <div className="flex-shrink-0">
               <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
@@ -135,10 +135,10 @@ export default function PWAComponents() {
               </div>
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+              <h3 className="text-sm font-semibold text-gray-900 truncate">
                 Install Better Finance
               </h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 Add to home screen for quick access
               </p>
             </div>
@@ -152,7 +152,7 @@ export default function PWAComponents() {
             </button>
             <button
               onClick={handleInstallDismiss}
-              className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium py-2.5 px-4 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              className="flex-1 bg-gray-100 text-gray-700 text-sm font-medium py-2.5 px-4 rounded-lg hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
             >
               Not now
             </button>

@@ -15,13 +15,12 @@
   --neutral-gray: 107, 114, 128;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+/* Force light mode - disable any dark mode */
+* {
+  color-scheme: light only !important;
 }
+
+
 
 body {
   color: rgb(var(--foreground-rgb));
