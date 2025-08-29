@@ -35,9 +35,6 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
       {/* Header Section - Livin By Mandiri Style */}
       <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 px-6 pt-8 pb-6">
-        {/* Background decoration */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
         
         {/* Asymmetrical Wave Shape at Bottom */}
         <div className="absolute bottom-0 left-0 w-full h-8">

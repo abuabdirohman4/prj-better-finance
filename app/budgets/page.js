@@ -314,7 +314,7 @@ export default function Budgets() {
               <div className="flex items-center gap-3 mb-2">
                 <div className="flex-1 bg-gray-200 rounded-full h-3">
                   <div
-                    className={`h-3 rounded-full transition-all duration-500 ${colors.progress}`}
+                    className={`h-3 rounded-full transition-all duration-200 ease-out md:duration-500 ${colors.progress}`}
                     style={{ width: `${Math.min(percentageFromSheet, 100)}%` }}
                   ></div>
                 </div>
@@ -390,8 +390,8 @@ export default function Budgets() {
                             {/* Arrow icon */}
                             <div className="flex-shrink-0">
                               <svg 
-                                className={`w-5 h-5 text-gray-600 transition-all duration-500 ease-in-out transform-gpu ${
-                                  collapsedCategories[categoryKey] ? 'rotate-180 scale-110' : 'rotate-0 scale-100'
+                                className={`w-5 h-5 text-gray-600 transition-all duration-200 ease-out md:duration-500 md:ease-in-out transform-gpu ${
+                                  collapsedCategories[categoryKey] ? 'rotate-180 md:scale-110 scale-100' : 'rotate-0 scale-100'
                                 }`}
                                 fill="none" 
                                 stroke="currentColor" 
@@ -405,31 +405,31 @@ export default function Budgets() {
                         
 
                         
-                        {/* Mini Progress Bar with Percentage */}
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="flex-1 bg-gray-200 rounded-full h-2">
-                            <div 
-                              className={`h-2 rounded-full transition-all duration-300 ${getBudgetColors(totals.percentageUsed).progress}`}
-                              style={{ width: `${Math.min(totals.percentageUsed, 100)}%` }}
-                            ></div>
-                          </div>
-                          <span className={`text-sm font-medium ${getBudgetColors(totals.percentageUsed).text}`}>
-                            {totals.percentageUsed.toFixed(0)}%
-                          </span>
-                        </div>
+                                                 {/* Mini Progress Bar with Percentage */}
+                         <div className="flex items-center gap-3 mb-2">
+                           <div className="flex-1 bg-gray-200 rounded-full h-2">
+                             <div 
+                               className={`h-2 rounded-full transition-all duration-200 ease-out md:duration-300 ${getBudgetColors(totals.percentageUsed).progress}`}
+                               style={{ width: `${Math.min(totals.percentageUsed, 100)}%` }}
+                             ></div>
+                           </div>
+                           <span className={`text-sm font-medium ${getBudgetColors(totals.percentageUsed).text}`}>
+                             {totals.percentageUsed.toFixed(0)}%
+                           </span>
+                         </div>
                         
 
                       </div>
                       
                       {/* Collapsible Subcategories */}
-                      <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                      <div className={`overflow-hidden transition-all duration-500 ease-in-out md:duration-500 duration-200 ${
                         collapsedCategories[categoryKey] 
-                          ? 'max-h-0 opacity-0 scale-95 transform-gpu' 
+                          ? 'max-h-0 opacity-0 scale-95 transform-gpu md:scale-95 scale-100' 
                           : 'max-h-[2000px] opacity-100 scale-100 transform-gpu'
                       }`}>
-                        <div className={`p-4 bg-gray-50 space-y-3 transition-all duration-500 ease-in-out ${
+                        <div className={`p-4 bg-gray-50 space-y-3 transition-all duration-500 ease-in-out md:duration-500 duration-200 ${
                           collapsedCategories[categoryKey] 
-                            ? 'transform -translate-y-2 opacity-0' 
+                            ? 'transform -translate-y-2 opacity-0 md:-translate-y-2 translate-y-0' 
                             : 'transform translate-y-0 opacity-100'
                         }`}>
                           {Object.entries(categoryData).map(([subCategory, data]) => {
@@ -500,7 +500,7 @@ export default function Budgets() {
                                 <div className="flex items-center gap-3 mb-2">
                                   <div className="flex-1 bg-gray-200 rounded-full h-2">
                                     <div 
-                                      className={`h-2 rounded-full transition-all duration-300 ${subColors.progress}`}
+                                      className={`h-2 rounded-full transition-all duration-200 ease-out md:duration-300 ${subColors.progress}`}
                                       style={{ width: `${Math.min(subPercentageUsed, 100)}%` }}
                                     ></div>
                                   </div>
