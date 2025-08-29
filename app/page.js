@@ -34,7 +34,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
       {/* Header Section - Livin By Mandiri Style */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 px-6 pt-8 pb-6">
+      <div className="fixed top-0 left-1/2 transform -translate-x-1/2 z-40 overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 px-6 pt-8 pb-6 max-w-md w-full">
         
         {/* Asymmetrical Wave Shape at Bottom */}
         <div className="absolute bottom-0 left-0 w-full h-8">
@@ -57,7 +57,7 @@ export default function Home() {
             {/* User Profile */}
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
-                <span className="text-white font-bold text-base">AA</span>
+                <span className="text-white font-bold text-white">AA</span>
               </div>
               <div>
                 <h2 className="text-lg font-bold text-white">ABU ABDIROHMAN</h2>
@@ -91,7 +91,7 @@ export default function Home() {
       </div>
 
       {/* Financial Summary Cards */}
-      <div className="px-6 mt-6 mb-8">
+      <div className="px-6 mt-6 mb-8 pt-28">
         <div className="grid grid-cols-1 gap-4">
           {/* Balance Card */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
