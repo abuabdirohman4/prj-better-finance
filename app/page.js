@@ -34,7 +34,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
       {/* Header Section - Livin By Mandiri Style */}
-      <div className="fixed top-0 left-1/2 transform -translate-x-1/2 z-40 overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 px-6 pt-8 pb-6 max-w-md w-full">
+      <div className="fixed top-0 left-1/2 transform -translate-x-1/2 z-40 overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 px-6 pt-5 pb-4 max-w-md w-full">
         
         {/* Asymmetrical Wave Shape at Bottom */}
         <div className="absolute bottom-0 left-0 w-full h-8">
@@ -91,7 +91,7 @@ export default function Home() {
       </div>
 
       {/* Financial Summary Cards */}
-      <div className="px-6 mt-6 mb-8 pt-28">
+      <div className="px-6 mt-6 mb-8 pt-24">
         <div className="grid grid-cols-1 gap-4">
           {/* Balance Card */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
