@@ -1,14 +1,14 @@
 export function formatRupiah(amount) {
   if (amount || amount == 0) {
-    // Lakukan parsing terlebih dahulu jika amount masih dalam format string
+    // Parse first if amount is still in string format
     const parsedAmount =
       typeof amount === "string" ? parseFloat(amount) : amount;
 
-    // Lakukan formatting ke dalam format Rupiah
+    // Format to Rupiah currency format
     const formattedAmount = new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
-      maximumFractionDigits: 0, // Maksimum 0 digit di belakang koma
+      maximumFractionDigits: 0, // Maximum 0 decimal places
     }).format(parsedAmount);
 
     return formattedAmount;
@@ -60,12 +60,12 @@ export function formatDate(dateString) {
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
 
-  // Periksa apakah tanggal adalah hari ini
+  // Check if date is today
   if (date.toDateString() === today.toDateString()) {
     return "Today";
   }
 
-  // Periksa apakah tanggal adalah kemarin
+  // Check if date is yesterday
   if (date.toDateString() === yesterday.toDateString()) {
     return "Yesterday";
   }
@@ -116,18 +116,18 @@ export function getCashValue(data) {
 }
 
 export function getTotalCashTransactions(transactions, type) {
-  // Inisialisasi total cash
+  // Initialize total cash
   let total = 0;
 
   transactions.forEach((data) => {
     if (data.Transaction === type) {
-      // Periksa apakah nilai cash dapat diubah menjadi angka
+      // Check if cash value can be converted to number
       const cashValue = parseFloat(getCashValue(data));
       if (!isNaN(cashValue)) {
-        // Jika valid, tambahkan ke total
+        // If valid, add to total
         total += cashValue;
       } else {
-        // Jika tidak valid, log pesan kesalahan
+        // If not valid, log error message
         console.error(
           `Invalid cash value for transaction: ${JSON.stringify(data.Note)}`
         );
@@ -139,7 +139,7 @@ export function getTotalCashTransactions(transactions, type) {
 }
 
 export function getTotalCashGroupedByDate(groupedTransactions, type) {
-  // Inisialisasi total cash
+  // Initialize total cash
   let total = 0;
 
   // Check if groupedTransactions is an array (ungrouped) or object (grouped)
@@ -155,13 +155,13 @@ export function getTotalCashGroupedByDate(groupedTransactions, type) {
       if (Array.isArray(groupedTransactions[date])) {
         groupedTransactions[date].forEach((data) => {
           if (data.Transaction === type) {
-            // Periksa apakah nilai cash dapat diubah menjadi angka
+            // Check if cash value can be converted to number
             const cashValue = parseFloat(getCashValue(data));
             if (!isNaN(cashValue)) {
-              // Jika valid, tambahkan ke total
+              // If valid, add to total
               total += cashValue;
             } else {
-              // Jika tidak valid, log pesan kesalahan
+              // If not valid, log error message
               console.error(
                 `Invalid cash value for transaction: ${JSON.stringify(data.Note)}`
               );
@@ -212,7 +212,7 @@ export function getBudgetColors(percent) {
     };
   }
   
-  // Default fallback untuk nilai yang tidak masuk kondisi di atas
+  // Default fallback for values that don't meet the above conditions
   return {
     text: 'text-gray-600 font-semibold',
     progress: 'bg-gray-500',

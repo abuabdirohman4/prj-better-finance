@@ -22,7 +22,7 @@ export default function Budgets() {
   const [totalSpending, setTotalSpending] = useState(0);
   const [budgetData, setBudgetData] = useState(null);
   
-  // State untuk mengontrol collapse setiap kategori dengan default hide semua
+  // State to control collapse for each category with default hide all
   const [collapsedCategories, setCollapsedCategories] = useState({
     eating: true,
     living: true,
@@ -31,7 +31,7 @@ export default function Budgets() {
     giving: true
   });
 
-  // Load collapse state dari cookies saat component mount
+  // Load collapse state from cookies when component mounts
   useEffect(() => {
     const savedCollapseState = Cookies.get('budget-collapse-state');
     if (savedCollapseState) {
@@ -47,7 +47,7 @@ export default function Budgets() {
     }
   }, []);
 
-  // Function untuk toggle collapse dan simpan ke cookies
+  // Function to toggle collapse and save to cookies
   const toggleCategory = (categoryKey) => {
     const newState = {
       ...collapsedCategories,
@@ -56,7 +56,7 @@ export default function Budgets() {
     
     setCollapsedCategories(newState);
     
-    // Simpan ke cookies
+    // Save to cookies
     Cookies.set('budget-collapse-state', JSON.stringify(newState), { 
       expires: 365,
       sameSite: 'strict'
@@ -77,14 +77,14 @@ export default function Budgets() {
           (acc, item) => acc + getCashValue(item),
           0
         );
-        // Menentukan kategori induk
+        // Determine parent category
         let parentCategory = "";
         for (const item in categories) {
           if (categories[item].includes(category)) {
             parentCategory = item;
           }
         }
-        // Menambahkan nilai total ke kategori yang sesuai
+        // Add total value to appropriate category
         if (parentCategory) {
           if (!newSubCategorySpending[parentCategory]) {
             newSubCategorySpending[parentCategory] = {};
@@ -130,10 +130,10 @@ export default function Budgets() {
     fetchData();
   }, [selectedMonth, sumCategory]);
 
-  // Group budget data berdasarkan categories constants dengan case-insensitive matching
-  // DAN mencegah duplikasi dengan prioritas kategori
+  // Group budget data based on categories constants with case-insensitive matching
+  // AND prevent duplication with category priority
   const groupedBudgetData = budgetData ? (() => {
-    const usedKeys = new Set(); // Track keys yang sudah digunakan
+    const usedKeys = new Set(); // Track keys that have been used
     
     const getCategoryForKey = (key) => {
       // Exact match only - no partial matching
@@ -161,7 +161,7 @@ export default function Budgets() {
         result[category][key] = value;
         usedKeys.add(key);
       } else if (!category) {
-        console.log(`⚠️ Spending item "${key}" tidak masuk ke kategori manapun`);
+        console.log(`⚠️ Spending item "${key}" doesn't fit into any category`);
       }
     });
 
@@ -172,14 +172,14 @@ export default function Budgets() {
         result[category][key] = value;
         usedKeys.add(key);
       } else if (!category) {
-        console.log(`⚠️ Transfer item "${key}" tidak masuk ke kategori manapun`);
+        console.log(`⚠️ Transfer item "${key}" doesn't fit into any category`);
       }
     });
 
     return result;
   })() : null;
 
-  // Calculate totals per category dengan konsep yang lebih jelas
+  // Calculate totals per category with clearer concept
   const calculateCategoryTotals = (groupedBudgetData) => {
     if (!groupedBudgetData) return {};
     
@@ -215,7 +215,7 @@ export default function Budgets() {
       Object.values(categoryData).reduce((catSum, item) => catSum + Math.abs(item.actual), 0) + sum, 0
     ) : 0;
 
-  // Hitung percentage dan colors berdasarkan data dari sheet
+  // Calculate percentage and colors based on data from sheet
   const percentageFromSheet = totalBudgetFromSheet !== 0 ? Math.abs(totalActualFromSheet / totalBudgetFromSheet * 100) : 0;
   const colors = getBudgetColors(percentageFromSheet);
 
