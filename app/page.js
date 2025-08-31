@@ -1,34 +1,21 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { fetchTransaction } from './transactions/data';
+import { useTransactions } from '@/utils/hooks';
 import { months } from '@/utils/constants';
 import { formatCurrency, getCashValue, getTotalCashGroupedByDate } from '@/utils/helper';
 import { getDefaultSheetName } from '@/utils/google';
 
 export default function Home() {
   const [selectedMonth, setSelectedMonth] = useState(getDefaultSheetName(months));
-  const [transactionData, setTransactionData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  
+  // Use SWR hook for data fetching (consistent with transactions and budgets pages)
+  const { data: transactionData, isLoading, error } = useTransactions(selectedMonth);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const data = await fetchTransaction(selectedMonth);
-        setTransactionData(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, [selectedMonth]);
-
-  const spending = getTotalCashGroupedByDate(transactionData, "Spending");
-  const earning = getTotalCashGroupedByDate(transactionData, "Earning");
+  // Calculate financial data with proper type checking
+  const spending = getTotalCashGroupedByDate(transactionData || [], "Spending");
+  const earning = getTotalCashGroupedByDate(transactionData || [], "Earning");
   const balance = earning - spending;
 
   return (
@@ -215,7 +202,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          ) : transactionData.length > 0 ? (
+          ) : transactionData && transactionData.length > 0 ? (
             <div className="space-y-3">
               {transactionData.slice(0, 3).map((transaction, index) => (
                 <div key={index} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">

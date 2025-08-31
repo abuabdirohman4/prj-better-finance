@@ -10,32 +10,14 @@ export const fetchBudgets = async (month) => {
       googleSheetsService.fetchSheet("SpendingTF")
     ]);
 
-    // Parse all data with budget-specific parser
-    const parsedSpending = parseCSV(spendingData, 'Spending');
-    const parsedEarning = parseCSV(earningData, 'Earning');
-    const parsedTransfer = parseCSV(transferData, 'Transfer');
-    const parsedSpendingTF = parseCSV(spendingTFData, 'SpendingTF');
-
-    // Extract data for the selected month
-    const spendingMonthly = extractMonthlyData(parsedSpending, month, 'Spending');
-    const earningMonthly = extractMonthlyData(parsedEarning, month, 'Earning');
-    const transferMonthly = extractMonthlyData(parsedTransfer, month, 'Transfer');
-    const spendingTFMonthly = extractMonthlyData(parsedSpendingTF, month, 'SpendingTF');
-
-    const budgetOverview = {
-      spending: spendingMonthly,
-      earning: earningMonthly,
-      transfer: transferMonthly,
-      spendingTF: spendingTFMonthly,
-      summary: {
-        totalEarning: Object.values(earningMonthly).reduce((sum, item) => sum + item.actual, 0),
-        totalSpending: Object.values(spendingMonthly).reduce((sum, item) => sum + item.actual, 0),
-        totalTransfer: Object.values(transferMonthly).reduce((sum, item) => sum + item.budget, 0),
-        totalSpendingTF: Object.values(spendingTFMonthly).reduce((sum, item) => sum + item.actual, 0)
-      }
+    const rawData = {
+      spendingData,
+      earningData,
+      transferData,
+      spendingTFData
     };
 
-    return budgetOverview;
+    return processBudgetData(rawData, month);
 
   } catch (error) {
     console.error('Error fetching budget data:', error);
@@ -52,6 +34,38 @@ export const fetchBudgets = async (month) => {
       }
     };
   }
+};
+
+// Helper function to process budget data (reusable)
+export const processBudgetData = (rawData, month) => {
+  if (!rawData) return null;
+
+  const { spendingData, earningData, transferData, spendingTFData } = rawData;
+  
+  // Parse all data with budget-specific parser
+  const parsedSpending = parseCSV(spendingData, 'Spending');
+  const parsedEarning = parseCSV(earningData, 'Earning');
+  const parsedTransfer = parseCSV(transferData, 'Transfer');
+  const parsedSpendingTF = parseCSV(spendingTFData, 'SpendingTF');
+
+  // Extract data for the selected month
+  const spendingMonthly = extractMonthlyData(parsedSpending, month, 'Spending');
+  const earningMonthly = extractMonthlyData(parsedEarning, month, 'Earning');
+  const transferMonthly = extractMonthlyData(parsedTransfer, month, 'Transfer');
+  const spendingTFMonthly = extractMonthlyData(parsedSpendingTF, month, 'SpendingTF');
+
+  return {
+    spending: spendingMonthly,
+    earning: earningMonthly,
+    transfer: transferMonthly,
+    spendingTF: spendingTFMonthly,
+    summary: {
+      totalEarning: Object.values(earningMonthly).reduce((sum, item) => sum + item.actual, 0),
+      totalSpending: Object.values(spendingMonthly).reduce((sum, item) => sum + item.actual, 0),
+      totalTransfer: Object.values(transferMonthly).reduce((sum, item) => sum + item.budget, 0),
+      totalSpendingTF: Object.values(spendingTFMonthly).reduce((sum, item) => sum + item.actual, 0)
+    }
+  };
 };
 
 // CSV parser for budget data using PapaParse

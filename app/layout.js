@@ -3,6 +3,8 @@ import "../styles/globals.css";
 import BottomNav from "@/components/BottomNav/page";
 import PWAComponents from "@/components/PWA";
 import SplashScreen from "@/components/SplashScreen";
+import { SWRConfig } from 'swr';
+import { swrConfig } from '@/configs';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -64,10 +66,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="mx-auto max-w-md">
       <body className={`${inter.className} bg-gray-50`}>
-        <PWAComponents />
-        <SplashScreen />
-        {children}
-        <BottomNav />
+        <SWRConfig value={swrConfig}>
+          <PWAComponents />
+          <SplashScreen />
+          {children}
+          <BottomNav />
+        </SWRConfig>
       </body>
     </html>
   );

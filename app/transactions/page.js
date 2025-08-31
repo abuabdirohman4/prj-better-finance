@@ -1,7 +1,7 @@
 "use client";
-import { fetchTransaction, groupTransactionsByDate } from "./data";
+import { useState } from "react";
 import { months } from "@/utils/constants";
-import { useEffect, useState } from "react";
+import { useTransactions } from "@/utils/hooks";
 import Transaction from "@/components/Card/Transaction";
 import {
   formatDate,
@@ -10,66 +10,43 @@ import {
   getTotalCashGroupedByDate,
 } from "@/utils/helper";
 import { getDefaultSheetName } from "@/utils/google";
-import Image from "next/image";
 
 export default function Transactions() {
-  const [transaction, setTransaction] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(
     getDefaultSheetName(months)
   );
 
-  const spending = getTotalCashGroupedByDate(transaction, "Spending");
-  const earning = getTotalCashGroupedByDate(transaction, "Earning");
-  const balance = earning + spending;
+  // Use SWR hook for data fetching (consistent with budgets page)
+  const { data: transactionData, isLoading, error } = useTransactions(selectedMonth);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchTransaction(selectedMonth);
-      const groupedData = groupTransactionsByDate(data);
-      setTransaction(groupedData);
-    };
-    fetchData();
-  }, [selectedMonth]);
+  // Calculate financial data with proper type checking
+  const spending = getTotalCashGroupedByDate(transactionData || [], "Spending");
+  const earning = getTotalCashGroupedByDate(transactionData || [], "Earning");
+  const balance = earning + spending;
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
-      {/* Header Section */}
+      {/* Header */}
       <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 px-3 pt-5 pb-4">
-        {/* Background decoration */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
-        
-        {/* Asymmetrical Wave Shape at Bottom */}
         <div className="absolute bottom-0 left-0 w-full h-8">
-          <svg
-            viewBox="0 0 400 32"
-            className="w-full h-full"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M0,32 Q100,20 200,32 T400,20 L400,32 Z"
-              fill="rgb(249 250 251)"
-              className="transition-all duration-300"
-            />
+          <svg viewBox="0 0 400 32" className="w-full h-full" preserveAspectRatio="none">
+            <path d="M0,32 Q100,20 200,32 T400,20 L400,32 Z" fill="rgb(249 250 251)" className="transition-all duration-300"></path>
           </svg>
         </div>
-        
         <div className="relative z-10">
-          {/* Top Row - Page Title and Month Selector */}
           <div className="flex items-center justify-between mb-4">
-            {/* Page Title */}
             <div>
               <h1 className="text-2xl font-bold text-white mb-1">Transactions</h1>
               <p className="text-blue-100 text-sm">Track your financial activities</p>
             </div>
-
-            {/* Month Selector */}
             <div className="relative">
               <select
                 id="month"
+                className="appearance-none bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 pr-10 cursor-pointer hover:bg-white/30 transition-all duration-200"
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
-                className="appearance-none bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 pr-10 cursor-pointer hover:bg-white/30 transition-all duration-200"
               >
                 {months.map((month) => (
                   <option key={month} value={month} className="text-gray-800 bg-white">
@@ -77,7 +54,6 @@ export default function Transactions() {
                   </option>
                 ))}
               </select>
-              {/* Custom dropdown arrow */}
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                 <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -88,10 +64,10 @@ export default function Transactions() {
         </div>
       </div>
 
-      {/* Financial Summary Cards */}
+      {/* Summary Cards */}
       <div className="px-3 mt-6 mb-8">
         <div className="grid grid-cols-1 gap-4">
-          {/* Balance Card */}
+          {/* Net Balance Card */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-800">Net Balance</h2>
@@ -104,9 +80,7 @@ export default function Transactions() {
             <div className="text-3xl font-bold text-gray-900 mb-2">
               {formatCurrency(balance, "signs")}
             </div>
-            <p className="text-sm text-gray-600">
-              {balance >= 0 ? 'Positive balance' : 'Negative balance'}
-            </p>
+            <p className="text-sm text-gray-600">Positive balance</p>
           </div>
 
           {/* Income & Expense Cards */}
@@ -152,35 +126,47 @@ export default function Transactions() {
           </div>
           
           <div className="p-6">
-            {Object.keys(transaction).length > 0 ? (
+            {isLoading ? (
+              <div className="space-y-4">
+                {/* Skeleton for transactions */}
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="h-5 bg-gray-200 rounded w-32"></div>
+                      <div className="h-5 bg-gray-200 rounded w-20"></div>
+                    </div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="flex-1 bg-gray-200 rounded-full h-3"></div>
+                      <div className="h-4 bg-gray-200 rounded w-16"></div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="h-4 bg-gray-200 rounded w-24"></div>
+                      <div className="h-4 bg-gray-200 rounded w-20"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Error loading transactions</h3>
+                <p className="text-gray-500 text-sm">Failed to fetch transactions for {selectedMonth}. Please try again later.</p>
+              </div>
+            ) : transactionData && Array.isArray(transactionData) && transactionData.length > 0 ? (
               <div className="space-y-6">
-                {Object.keys(transaction).map((date) => (
-                  <div key={date} className="space-y-3">
-                    {/* Date Header */}
-                    <div className="flex items-center space-x-3">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <h4 className="text-sm font-semibold text-gray-700 bg-gray-100 px-3 py-1 rounded-full">
-                        {formatDate(date)}
-                      </h4>
-                    </div>
-                    
-                    {/* Transactions for this date */}
-                    <div className="space-y-3 ml-5">
-                      {transaction[date].map(
-                        (data, key) =>
-                          data.Note !== "Moving Period" && (
-                            <div key={key}>
-                              <Transaction
-                                type={data.Transaction}
-                                account={data.Account}
-                                category={data["Category or Account"]}
-                                note={data.Note}
-                                cash={getCashValue(data)}
-                              />
-                            </div>
-                          )
-                      )}
-                    </div>
+                {transactionData.map((transaction, index) => (
+                  <div key={index}>
+                    <Transaction
+                      type={transaction.Transaction}
+                      account={transaction.Account}
+                      category={transaction["Category or Account"]}
+                      note={transaction.Note}
+                      cash={getCashValue(transaction)}
+                    />
                   </div>
                 ))}
               </div>

@@ -1,26 +1,24 @@
 "use client";
+
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { categories, months } from "@/utils/constants";
-import { fetchTransaction } from "../transactions/data";
+import { useTransactions, useBudgets } from "@/utils/hooks";
+import { processBudgetData } from "./data";
 import {
   formatCurrency,
   formatCurrencyShort,
-  getBudgetColors,
   getCashValue,
   getTotalObjectValue,
+  getBudgetColors,
   toProperCase,
 } from "@/utils/helper";
 import { getDefaultSheetName } from "@/utils/google";
-import { useCallback, useEffect, useState } from "react";
-import { fetchBudgets } from "./data";
 import Cookies from 'js-cookie';
 
-
-
 export default function Budgets() {
-  const [categorySpending, setCategorySpending] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(getDefaultSheetName(months));
+  const [categorySpending, setCategorySpending] = useState([]);
   const [totalSpending, setTotalSpending] = useState(0);
-  const [budgetData, setBudgetData] = useState(null);
   
   // State to control collapse for each category with default hide all
   const [collapsedCategories, setCollapsedCategories] = useState({
@@ -63,13 +61,56 @@ export default function Budgets() {
     });
   };
 
+  // Use SWR hooks for data fetching
+  const { data: transactionData, isLoading: isTransactionLoading, error: transactionError } = useTransactions(selectedMonth);
+  const { data: budgetRawData, isLoading: isBudgetLoading, error: budgetError } = useBudgets(selectedMonth);
+
+  // Process transaction data when it changes
+  useEffect(() => {
+    if (transactionData && Array.isArray(transactionData)) {
+      const totalSpendingCategory = sumCategory(
+        transactionData,
+        [
+          ...categories.eating,
+          ...categories.living,
+          ...categories.saving,
+          ...categories.investing,
+          ...categories.giving,
+        ],
+        "Spending"
+      );
+      setCategorySpending(totalSpendingCategory);
+      setTotalSpending(getTotalObjectValue(totalSpendingCategory));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactionData]);
+
+  // Process budget data when it changes
+  const budgetData = useMemo(() => {
+    if (!budgetRawData) return null;
+    return processBudgetData(budgetRawData, selectedMonth);
+  }, [budgetRawData, selectedMonth]);
+
   const sumCategory = useCallback(
     (transaction, categoryList, typeTransaction) => {
+      // Add type checking and error handling
+      if (!transaction || !Array.isArray(transaction)) {
+        console.warn('sumCategory: transaction is not an array:', transaction);
+        return {};
+      }
+
+      if (!categoryList || !Array.isArray(categoryList)) {
+        console.warn('sumCategory: categoryList is not an array:', categoryList);
+        return {};
+      }
+
       const newSubCategorySpending = {};
       const newCategorySpending = {};
+      
       for (const category of categoryList) {
         const transactionsInCategory = transaction.filter(
           (item) =>
+            item && 
             item["Category or Account"] === category &&
             item.Transaction === typeTransaction
         );
@@ -95,7 +136,7 @@ export default function Budgets() {
 
       for (const category in categories) {
         const totalAmount = Object.values(
-          newSubCategorySpending[category]
+          newSubCategorySpending[category] || {}
         ).reduce((acc, curr) => acc + curr, 0);
         newCategorySpending[category] = totalAmount;
       }
@@ -105,30 +146,6 @@ export default function Budgets() {
     },
     []
   );
-
-  useEffect(() => {
-    const fetchData = async () => {
-      // Fetch transaction data
-      const data = await fetchTransaction(selectedMonth);
-      const totalSpendingCategory = sumCategory(
-        data,
-        [
-          ...categories.eating,
-          ...categories.living,
-          ...categories.saving,
-          ...categories.investing,
-          ...categories.giving,
-        ],
-        "Spending"
-      );
-      setTotalSpending(getTotalObjectValue(totalSpendingCategory));
-
-      // Fetch budget data
-      const budgetData = await fetchBudgets(selectedMonth);
-      setBudgetData(budgetData);
-    };
-    fetchData();
-  }, [selectedMonth, sumCategory]);
 
   // Group budget data based on categories constants with case-insensitive matching
   // AND prevent duplication with category priority
@@ -220,7 +237,8 @@ export default function Budgets() {
   const colors = getBudgetColors(percentageFromSheet);
 
   // Loading state
-  const isLoading = !groupedBudgetData;
+  const isLoading = isTransactionLoading || isBudgetLoading;
+  const hasError = transactionError || budgetError;
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
@@ -335,22 +353,42 @@ export default function Budgets() {
           </div>
           
           <div className="p-6 pt-0">
-            {/* Loading State */}
             {isLoading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p className="text-gray-600">Loading budget data...</p>
+              <div className="space-y-4">
+                {/* Skeleton for budget categories */}
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="h-5 bg-gray-200 rounded w-32"></div>
+                      <div className="h-5 bg-gray-200 rounded w-20"></div>
+                    </div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="flex-1 bg-gray-200 rounded-full h-3"></div>
+                      <div className="h-4 bg-gray-200 rounded w-16"></div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="h-4 bg-gray-200 rounded w-24"></div>
+                      <div className="h-4 bg-gray-200 rounded w-20"></div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ) : (
+            ) : hasError ? (
+              <div className="text-center py-8">
+                <div className="text-red-500 text-6xl mb-4">⚠️</div>
+                <p className="text-red-600 font-semibold">Error loading data</p>
+                <p className="text-gray-600 text-sm mt-2">Please try again later</p>
+              </div>
+            ) : groupedBudgetData && Object.keys(groupedBudgetData).length > 0 ? (
               <div className="space-y-4">
                 {/* Grouped Categories */}
                 {Object.entries(groupedBudgetData).map(([categoryKey, categoryData]) => {
                   const totals = categoryTotals[categoryKey];
-                  const categoryColors = getBudgetColors(totals.percentageUsed);
-                  
+                  if (!totals || Object.keys(categoryData).length === 0) return null;
+
                   return (
                     <div key={categoryKey} className="border border-gray-200 rounded-xl overflow-hidden">
-                                              {/* Category Header */}
+                      {/* Category Header */}
                       <div 
                         className="relative cursor-pointer p-4 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 transition-all duration-200"
                         onClick={() => toggleCategory(categoryKey)}
@@ -403,22 +441,18 @@ export default function Budgets() {
                           </div>
                         </div>
                         
-
-                        
-                                                 {/* Mini Progress Bar with Percentage */}
-                         <div className="flex items-center gap-3 mb-2">
-                           <div className="flex-1 bg-gray-200 rounded-full h-2">
-                             <div 
-                               className={`h-2 rounded-full transition-all duration-200 ease-out md:duration-300 ${getBudgetColors(totals.percentageUsed).progress}`}
-                               style={{ width: `${Math.min(totals.percentageUsed, 100)}%` }}
-                             ></div>
-                           </div>
-                           <span className={`text-sm font-medium ${getBudgetColors(totals.percentageUsed).text}`}>
-                             {totals.percentageUsed.toFixed(0)}%
-                           </span>
-                         </div>
-                        
-
+                        {/* Mini Progress Bar with Percentage */}
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="flex-1 bg-gray-200 rounded-full h-2">
+                            <div 
+                              className={`h-2 rounded-full transition-all duration-200 ease-out md:duration-300 ${getBudgetColors(totals.percentageUsed).progress}`}
+                              style={{ width: `${Math.min(totals.percentageUsed, 100)}%` }}
+                            ></div>
+                          </div>
+                          <span className={`text-sm font-medium ${getBudgetColors(totals.percentageUsed).text}`}>
+                            {totals.percentageUsed.toFixed(0)}%
+                          </span>
+                        </div>
                       </div>
                       
                       {/* Collapsible Subcategories */}
@@ -477,7 +511,7 @@ export default function Budgets() {
                             
                             return (
                               <div key={subCategory} className="bg-white rounded-lg border border-gray-200 p-3 shadow-sm">
-                                                                {/* Header with Icon and Title */}
+                                {/* Header with Icon and Title */}
                                 <div className="flex items-center justify-between mb-3">
                                   <div className="flex items-center">
                                     <div className="w-8 h-8 flex items-center justify-center mr-2">
@@ -525,6 +559,12 @@ export default function Budgets() {
                     </div>
                   );
                 })}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <div className="text-gray-400 text-6xl mb-4">📊</div>
+                <p className="text-gray-600 font-semibold">No budget data available</p>
+                <p className="text-gray-500 text-sm mt-2">Select a month to view budgets</p>
               </div>
             )}
           </div>
