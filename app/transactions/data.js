@@ -27,7 +27,6 @@ const parseCSV = (data) => {
       // Clean up cell values
       let cleanValue = value.replace(/"/g, '');
       if (cleanValue === '  - ' || cleanValue === ' - ') {
-        console.log('cleanValue', cleanValue);
         cleanValue = '0';
       }
       return cleanValue;

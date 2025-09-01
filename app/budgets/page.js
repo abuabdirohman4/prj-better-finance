@@ -178,7 +178,7 @@ export default function Budgets() {
         result[category][key] = value;
         usedKeys.add(key);
       } else if (!category) {
-        console.log(`⚠️ Spending item "${key}" doesn't fit into any category`);
+        // Item doesn't fit into any category - skip silently
       }
     });
 
@@ -189,7 +189,7 @@ export default function Budgets() {
         result[category][key] = value;
         usedKeys.add(key);
       } else if (!category) {
-        console.log(`⚠️ Transfer item "${key}" doesn't fit into any category`);
+        // Item doesn't fit into any category - skip silently
       }
     });
 

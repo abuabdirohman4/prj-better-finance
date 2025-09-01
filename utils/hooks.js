@@ -9,9 +9,7 @@ export const useTransactions = (sheetName) => {
       if (!sheetName) return null;
       
       try {
-        console.log('🔍 Fetching transactions for sheet:', sheetName);
         const csvData = await googleSheetsService.fetchSheet(sheetName);
-        console.log('📥 Raw CSV data:', csvData);
         
         // Parse CSV data
         const Papa = (await import('papaparse')).default;
@@ -38,7 +36,6 @@ export const useTransactions = (sheetName) => {
           }
         });
 
-        console.log('📊 PapaParse result:', result);
 
         // Filter and sort data
         const parsedData = result.data.filter(row => {
@@ -46,10 +43,7 @@ export const useTransactions = (sheetName) => {
                  row['Transaction'] && row['Transaction'].trim() !== '';
         });
 
-        console.log('✅ Filtered data:', parsedData);
-
         const sortedData = parsedData.sort().reverse();
-        console.log('🔄 Final sorted data:', sortedData);
         
         return sortedData;
       } catch (error) {
