@@ -1,0 +1,37 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle with gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f8fafc;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Main background circle -->
+  <circle cx="60" cy="60" r="55" fill="url(#bgGradient)" stroke="#1e40af" stroke-width="2"/>
+  
+  <!-- Finance icon - stylized money/coin -->
+  <g fill="url(#iconGradient)">
+    <!-- Main coin body -->
+    <circle cx="60" cy="60" r="25" fill="url(#iconGradient)"/>
+    
+    <!-- Inner circle for depth -->
+    <circle cx="60" cy="60" r="20" fill="none" stroke="url(#iconGradient)" stroke-width="2"/>
+    
+    <!-- Dollar sign -->
+    <path d="M60 45v30M55 50h10M55 70h10" stroke="url(#iconGradient)" stroke-width="3" stroke-linecap="round"/>
+    
+    <!-- Small decorative circles -->
+    <circle cx="45" cy="45" r="3" fill="url(#iconGradient)"/>
+    <circle cx="75" cy="45" r="3" fill="url(#iconGradient)"/>
+    <circle cx="45" cy="75" r="3" fill="url(#iconGradient)"/>
+    <circle cx="75" cy="75" r="3" fill="url(#iconGradient)"/>
+  </g>
+  
+  <!-- App name text -->
+  <text x="60" y="105" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1e40af">Better Finance</text>
+</svg>

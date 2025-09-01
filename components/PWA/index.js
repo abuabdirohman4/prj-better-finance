@@ -128,8 +128,8 @@ export default function PWAComponents() {
                 <Image 
                   src="/img/logo.svg" 
                   alt="App Icon" 
-                  width={32}
-                  height={32}
+                  width={45}
+                  height={45}
                   className="rounded-lg" 
                 />
               </div>
