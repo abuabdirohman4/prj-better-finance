@@ -78,7 +78,7 @@ export default function Home() {
       </div>
 
       {/* Financial Summary Cards */}
-      <div className="px-6 mt-6 mb-8 pt-24">
+      <div className="px-3 mt-6 mb-8 pt-24">
         <div className="grid grid-cols-1 gap-4">
           {/* Balance Card */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
@@ -143,7 +143,7 @@ export default function Home() {
       </div>
 
       {/* Quick Actions */}
-      <div className="px-6 mb-8">
+      <div className="px-3 mb-8">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
         <div className="grid grid-cols-2 gap-4">
           <Link
@@ -175,7 +175,7 @@ export default function Home() {
       </div>
 
       {/* Recent Activity Preview */}
-      <div className="px-6 pb-24">
+      <div className="px-3 pb-24">
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-800">Recent Activity</h3>
