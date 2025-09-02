@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useGoals } from "@/utils/hooks";
 import Goal from "@/components/Card/Goal";
 import { groupGoalsByType } from "./data";
@@ -42,7 +43,10 @@ export default function Goals() {
     Investing: false
   });
 
-  // Load collapse state from cookies when component mounts
+  // State to control hidden goals
+  const [hiddenGoals, setHiddenGoals] = useState({});
+
+  // Load collapse state and hidden goals from cookies when component mounts
   useEffect(() => {
     const savedCollapseState = Cookies.get('goals-collapse-state');
     if (savedCollapseState) {
@@ -54,6 +58,16 @@ export default function Goals() {
         }));
       } catch (error) {
         console.error('Error parsing collapse state from cookies:', error);
+      }
+    }
+
+    const savedHiddenGoals = Cookies.get('goals-hidden-state');
+    if (savedHiddenGoals) {
+      try {
+        const parsedHiddenGoals = JSON.parse(savedHiddenGoals);
+        setHiddenGoals(parsedHiddenGoals);
+      } catch (error) {
+        console.error('Error parsing hidden goals state from cookies:', error);
       }
     }
   }, []);
@@ -69,6 +83,22 @@ export default function Goals() {
     
     // Save to cookies
     Cookies.set('goals-collapse-state', JSON.stringify(newState), { 
+      expires: 365,
+      sameSite: 'strict'
+    });
+  };
+
+  // Function to toggle hide/show individual goal
+  const toggleGoalVisibility = (goalId) => {
+    const newHiddenGoals = {
+      ...hiddenGoals,
+      [goalId]: !hiddenGoals[goalId]
+    };
+    
+    setHiddenGoals(newHiddenGoals);
+    
+    // Save to cookies
+    Cookies.set('goals-hidden-state', JSON.stringify(newHiddenGoals), { 
       expires: 365,
       sameSite: 'strict'
     });
@@ -101,9 +131,9 @@ export default function Goals() {
     );
   })() : {};
 
-  // Calculate totals for each type
-  const calculateTotals = (goals) => {
-    return goals.reduce((totals, goal) => {
+  // Calculate totals for each type (including hidden goals for percentage calculation)
+  const calculateTotals = (goals, category) => {
+    return goals.reduce((totals, goal, index) => {
       // Handle column names with spaces
       const collected = parseFloat(goal.Collected || goal[' Collected '] || goal['Collected '] || goal[' Collected']) || 0;
       const target = parseFloat(goal.Target || goal[' Target '] || goal['Target '] || goal[' Target']) || 0;
@@ -170,11 +200,16 @@ export default function Goals() {
               <h1 className="text-2xl font-bold text-white mb-1">Goals</h1>
               <p className="text-blue-100 text-sm">Track your financial goals</p>
             </div>
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+            <Link 
+              href="/settings"
+              className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors duration-200"
+              title="Settings"
+            >
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-            </div>
+            </Link>
           </div>
         </div>
       </div>
@@ -211,8 +246,10 @@ export default function Goals() {
             
             {/* Overall Progress Bar */}
             {goalsData && goalsData.length > 0 && (() => {
-              const overallProgress = (goalsData.reduce((sum, goal) => sum + (parseFloat(goal.Collected || goal[' Collected '] || goal['Collected '] || goal[' Collected']) || 0), 0) / 
-                goalsData.reduce((sum, goal) => sum + (parseFloat(goal.Target || goal[' Target '] || goal['Target '] || goal[' Target']) || 0), 0)) * 100;
+              // Calculate overall progress using ALL goals (including hidden ones)
+              const totalCollected = goalsData.reduce((sum, goal) => sum + (parseFloat(goal.Collected || goal[' Collected '] || goal['Collected '] || goal[' Collected']) || 0), 0);
+              const totalTarget = goalsData.reduce((sum, goal) => sum + (parseFloat(goal.Target || goal[' Target '] || goal['Target '] || goal[' Target']) || 0), 0);
+              const overallProgress = totalTarget > 0 ? (totalCollected / totalTarget) * 100 : 0;
               const colors = getGoalColors(overallProgress);
               
               return (
@@ -275,7 +312,7 @@ export default function Goals() {
               <div className="space-y-6">
                 {Object.keys(groupedGoals).map((category) => {
                   const goals = groupedGoals[category];
-                  const totals = calculateTotals(goals);
+                  const totals = calculateTotals(goals, category);
                   const overallProgress = totals.totalTarget > 0 ? (totals.totalCollected / totals.totalTarget) * 100 : 0;
 
                   return (
@@ -355,12 +392,24 @@ export default function Goals() {
                             ? 'transform -translate-y-2 opacity-0 md:-translate-y-2 translate-y-0' 
                             : 'transform translate-y-0 opacity-100'
                         }`}>
-                          {goals.map((goal, index) => (
-                            <Goal
-                              key={`${category}-${index}`}
-                              goal={goal}
-                            />
-                          ))}
+                          {goals
+                            .filter(goal => {
+                              // Create a unique ID for each goal
+                              const goalId = `${category}-${goal['Saving'] || goal[' Saving '] || goal['Saving '] || goal[' Saving'] || goal['Investment'] || goal[' Investment '] || goal['Investment '] || goal[' Investment'] || index}`;
+                              return !hiddenGoals[goalId];
+                            })
+                            .map((goal, index) => {
+                              // Create a unique ID for each goal
+                              const goalId = `${category}-${goal['Saving'] || goal[' Saving '] || goal['Saving '] || goal[' Saving'] || goal['Investment'] || goal[' Investment '] || goal['Investment '] || goal[' Investment'] || index}`;
+                              return (
+                                <Goal
+                                  key={goalId}
+                                  goal={goal}
+                                  isHidden={hiddenGoals[goalId] || false}
+                                  onToggleVisibility={() => toggleGoalVisibility(goalId)}
+                                />
+                              );
+                            })}
                         </div>
                       </div>
                     </div>
@@ -377,6 +426,8 @@ export default function Goals() {
           </div>
         </div>
       </div>
+
+
     </main>
   );
 }
