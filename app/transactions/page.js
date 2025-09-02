@@ -10,6 +10,7 @@ import {
   getTotalCashGroupedByDate,
 } from "@/utils/helper";
 import { getDefaultSheetName } from "@/utils/google";
+import { groupTransactionsByDate } from "./data";
 
 export default function Transactions() {
   const [selectedMonth, setSelectedMonth] = useState(
@@ -19,6 +20,9 @@ export default function Transactions() {
   // Use SWR hook for data fetching (consistent with budgets page)
   const { data: transactionData, isLoading, error } = useTransactions(selectedMonth);
 
+  // Group transactions by date
+  const groupedTransactions = transactionData ? groupTransactionsByDate(transactionData) : {};
+  
   // Calculate financial data with proper type checking
   const spending = getTotalCashGroupedByDate(transactionData || [], "Spending");
   const earning = getTotalCashGroupedByDate(transactionData || [], "Earning");
@@ -158,17 +162,35 @@ export default function Transactions() {
               </div>
             ) : transactionData && Array.isArray(transactionData) && transactionData.length > 0 ? (
               <div className="space-y-6">
-                {transactionData.map((transaction, index) => (
-                  <div key={index}>
-                    <Transaction
-                      type={transaction.Transaction}
-                      account={transaction.Account}
-                      category={transaction["Category or Account"]}
-                      note={transaction.Note}
-                      cash={getCashValue(transaction)}
-                    />
-                  </div>
-                ))}
+                {Object.keys(groupedTransactions)
+                  .sort((a, b) => new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-')))
+                  .map((date) => (
+                    <div key={date} className="space-y-4">
+                      {/* Date Header */}
+                      <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                        <h4 className="text-sm font-semibold text-gray-700">
+                          {formatDate(date)}
+                        </h4>
+                        <div className="text-xs text-gray-500">
+                          {groupedTransactions[date].length} transaction{groupedTransactions[date].length !== 1 ? 's' : ''}
+                        </div>
+                      </div>
+                      
+                      {/* Transactions for this date */}
+                      <div className="space-y-3">
+                        {groupedTransactions[date].map((transaction, index) => (
+                          <Transaction
+                            key={`${date}-${index}`}
+                            type={transaction.Transaction}
+                            account={transaction.Account}
+                            category={transaction["Category or Account"]}
+                            note={transaction.Note}
+                            cash={getCashValue(transaction)}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
               </div>
             ) : (
               <div className="text-center py-12">

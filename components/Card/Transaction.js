@@ -1,6 +1,7 @@
 import { formatCurrency } from "@/utils/helper";
 
 export default function Transaction({
+  date,
   type,
   account,
   category,
@@ -71,8 +72,9 @@ export default function Transaction({
               ? 'text-red-600'
               : 'text-blue-600'
           }`}>
-            {isEarning ? '+' : isSpending ? '-' : ''}
-            {formatCurrency(Math.abs(cash), "brackets")}
+            {/* {isEarning ? '+' : isSpending ? '-' : ''} */}
+            {/* {formatCurrency(Math.abs(cash), "brackets")} */}
+            {cash > 0 ? `${formatCurrency(cash, "signs")}` : formatCurrency(cash, "signs")}
           </div>
         </div>
       </div>
