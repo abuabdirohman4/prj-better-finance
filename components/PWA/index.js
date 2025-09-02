@@ -9,13 +9,29 @@ export default function PWAComponents() {
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [showUpdatePrompt, setShowUpdatePrompt] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Mobile device detection
+    const checkIsMobile = () => {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+      const isSmallScreen = window.innerWidth <= 768;
+      setIsMobile(isMobileDevice || isSmallScreen);
+    };
+
+    // Check mobile on mount and resize
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+
     // PWA Install Prompt Handler
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setShowInstallPrompt(true);
+      // Only show install prompt on mobile devices
+      if (isMobile) {
+        setShowInstallPrompt(true);
+      }
     };
 
     // Offline/Online Handler
@@ -45,11 +61,12 @@ export default function PWAComponents() {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('resize', checkIsMobile);
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.removeEventListener('controllerchange', handleServiceWorkerUpdate);
       }
     };
-  }, []);
+  }, [isMobile]);
 
   // PWA Install Prompt Handlers
   const handleInstallClick = async () => {
@@ -119,8 +136,8 @@ export default function PWAComponents() {
         </div>
       )}
 
-      {/* PWA Install Prompt - Top Center (Improved Design) */}
-      {showInstallPrompt && (
+      {/* PWA Install Prompt - Top Center (Improved Design) - Mobile Only */}
+      {showInstallPrompt && isMobile && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 max-w-sm w-full mx-auto bg-white rounded-xl shadow-2xl border border-gray-200 p-4 z-50">
           <div className="flex items-center space-x-4 mb-4">
             <div className="flex-shrink-0">
