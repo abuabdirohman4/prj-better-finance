@@ -42,9 +42,11 @@ export function formatCurrencyShort(amount) {
   const absAmount = Math.abs(amount);
   
   if (absAmount >= 1000000000) {
-    return `Rp${(absAmount / 1000000000).toFixed(1)}M`;
+    const value = (absAmount / 1000000000).toFixed(1);
+    return `Rp${parseFloat(value)}M`;
   } else if (absAmount >= 1000000) {
-    return `Rp${(absAmount / 1000000).toFixed(1)}jt`;
+    const value = (absAmount / 1000000).toFixed(1);
+    return `Rp${parseFloat(value)}jt`;
   } else if (absAmount >= 1000) {
     return `Rp${(absAmount / 1000).toFixed(0)}rb`;
   } else {
