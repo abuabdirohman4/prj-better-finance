@@ -312,9 +312,6 @@ export default function Goals() {
                               <p className="text-sm font-medium text-gray-900">
                                 {formatCurrencyShort(totals.totalCollected)} / {formatCurrencyShort(totals.totalTarget)}
                               </p>
-                              <p className="text-xs text-gray-500">
-                                {overallProgress.toFixed(0)}% Complete
-                              </p>
                             </div>
                             
                             {/* Arrow icon */}
