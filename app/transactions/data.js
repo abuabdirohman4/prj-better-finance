@@ -60,7 +60,7 @@ export const groupTransactionsByDate = (transactions) => {
 
 export const fetchTransaction = async (sheetName) => {
   try {
-    const csvData = await googleSheetsService.fetchSheet(sheetName);
+    const csvData = await googleSheetsService.read(sheetName);
     
     const parsedData = parseCSV(csvData);
     const sortedData = parsedData.sort().reverse();

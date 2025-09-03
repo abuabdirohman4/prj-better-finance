@@ -4,10 +4,10 @@ import Papa from "papaparse";
 export const fetchBudgets = async (month) => {
   try {
     const [spendingData, earningData, transferData, spendingTFData] = await Promise.all([
-      googleSheetsService.fetchSheet("Spending"),
-      googleSheetsService.fetchSheet("Earning"),
-      googleSheetsService.fetchSheet("Transfer"),
-      googleSheetsService.fetchSheet("SpendingTF")
+      googleSheetsService.read("Spending"),
+      googleSheetsService.read("Earning"),
+      googleSheetsService.read("Transfer"),
+      googleSheetsService.read("SpendingTF")
     ]);
 
     const rawData = {

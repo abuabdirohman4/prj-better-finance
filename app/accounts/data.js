@@ -59,7 +59,7 @@ export const categorizeAccounts = (accounts) => {
 
 export const fetchAccountData = async () => {
   try {
-    const csvData = await googleSheetsService.fetchSheet("Summary");
+    const csvData = await googleSheetsService.read("Summary");
     const parsedData = parseAccountData(csvData);
     return parsedData;
   } catch (error) {

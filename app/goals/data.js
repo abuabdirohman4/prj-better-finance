@@ -46,7 +46,7 @@ export const groupGoalsByType = (goals) => {
 
 export const fetchGoals = async () => {
   try {
-    const csvData = await googleSheetsService.fetchSheet("Goals");
+    const csvData = await googleSheetsService.read("Goals");
     
     const parsedData = parseCSV(csvData);
     return parsedData;

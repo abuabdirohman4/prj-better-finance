@@ -1,5 +1,6 @@
 import useSWR from 'swr';
 import { googleSheetsService } from './google';
+import Papa from 'papaparse';
 
 // Custom hook for fetching transaction data
 export const useTransactions = (sheetName) => {
@@ -9,10 +10,9 @@ export const useTransactions = (sheetName) => {
       if (!sheetName) return null;
       
       try {
-        const csvData = await googleSheetsService.fetchSheet(sheetName);
+        const csvData = await googleSheetsService.read(sheetName);
         
         // Parse CSV data
-        const Papa = (await import('papaparse')).default;
         const result = Papa.parse(csvData, {
           header: true,
           skipEmptyLines: true,
@@ -74,10 +74,9 @@ export const useAccounts = () => {
     'accounts-summary',
     async () => {
       try {
-        const csvData = await googleSheetsService.fetchSheet("Summary");
+        const csvData = await googleSheetsService.read("Summary");
         
         // Parse CSV data
-        const Papa = (await import('papaparse')).default;
         const result = Papa.parse(csvData, {
           header: true,
           skipEmptyLines: true,
@@ -135,10 +134,10 @@ export const useBudgets = (month) => {
       if (!month) return null;
       
       const [spendingData, earningData, transferData, spendingTFData] = await Promise.all([
-        googleSheetsService.fetchSheet("Spending"),
-        googleSheetsService.fetchSheet("Earning"),
-        googleSheetsService.fetchSheet("Transfer"),
-        googleSheetsService.fetchSheet("SpendingTF")
+        googleSheetsService.read("Spending"),
+        googleSheetsService.read("Earning"),
+        googleSheetsService.read("Transfer"),
+        googleSheetsService.read("SpendingTF")
       ]);
 
       return {
@@ -173,10 +172,9 @@ export const useGoals = () => {
     'goals',
     async () => {
       try {
-        const csvData = await googleSheetsService.fetchSheet("Goals");
+        const csvData = await googleSheetsService.read("Goals");
         
         // Parse CSV data
-        const Papa = (await import('papaparse')).default;
         const result = Papa.parse(csvData, {
           header: true,
           skipEmptyLines: true,
