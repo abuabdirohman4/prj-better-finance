@@ -8,6 +8,7 @@ import {
   formatCurrency,
   getCashValue,
   getTotalCashGroupedByDate,
+  getTotalExpensesWithTransfers,
 } from "@/utils/helper";
 import { getDefaultSheetName } from "@/utils/google";
 import { groupTransactionsByDate } from "./data";
@@ -24,7 +25,7 @@ export default function Transactions() {
   const groupedTransactions = transactionData ? groupTransactionsByDate(transactionData) : {};
   
   // Calculate financial data with proper type checking
-  const spending = getTotalCashGroupedByDate(transactionData || [], "Spending");
+  const spending = getTotalExpensesWithTransfers(transactionData || []);
   const earning = getTotalCashGroupedByDate(transactionData || [], "Earning");
   const balance = earning + spending;
 
@@ -99,7 +100,7 @@ export default function Transactions() {
                 <span className="text-sm font-medium text-green-800">Income</span>
               </div>
               <div className="text-xl font-bold text-green-900">
-                {formatCurrency(earning, "signs")}
+                {formatCurrency(earning, "brackets")}
               </div>
             </div>
 
@@ -114,7 +115,7 @@ export default function Transactions() {
                 <span className="text-sm font-medium text-red-800">Expenses</span>
               </div>
               <div className="text-xl font-bold text-red-900">
-                {formatCurrency(spending, "signs")}
+                {formatCurrency(-spending, "brackets")}
               </div>
             </div>
           </div>

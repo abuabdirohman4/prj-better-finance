@@ -1,3 +1,5 @@
+import { categories } from "./constants";
+
 export function formatRupiah(amount) {
   if (amount || amount == 0) {
     // Parse first if amount is still in string format
@@ -167,6 +169,72 @@ export function getTotalCashGroupedByDate(groupedTransactions, type) {
               console.error(
                 `Invalid cash value for transaction: ${JSON.stringify(data.Note)}`
               );
+            }
+          }
+        });
+      } else {
+        console.warn(`Date ${date} does not contain an array of transactions`);
+      }
+    });
+  }
+
+  return total;
+}
+
+export function getTotalExpensesWithTransfers(groupedTransactions) {
+  // Initialize total expenses
+  let total = 0;
+
+  console.log('groupedTransactions', groupedTransactions)
+
+  // Check if groupedTransactions is an array (ungrouped) or object (grouped)
+  if (Array.isArray(groupedTransactions)) {
+    // If it's an array, process directly
+    groupedTransactions.forEach((data) => {
+      // Include regular spending transactions
+      if (data.Transaction === "Spending") {
+        const cashValue = parseFloat(getCashValue(data));
+        if (!isNaN(cashValue)) {
+          total += cashValue;
+        }
+      }
+      // Include transfers to Investment or Saving as expenses
+      else if (data.Transaction === "Transfer" && data.Note !== "Tabungan") {
+        const category = data["Category or Account"];
+        const allTransferCategories = [
+          ...(categories.investing || []),
+          ...(categories.saving || [])
+        ].map(cat => cat.toLowerCase());
+        if (allTransferCategories.includes((category || '').toLowerCase())) {
+          const cashValue = parseFloat(getCashValue(data));
+          if (!isNaN(cashValue)) {
+            total += cashValue;
+          }
+        }
+      }
+    });
+  } else if (typeof groupedTransactions === 'object' && groupedTransactions !== null) {
+    console.log('masuk else if')
+    // If it's an object with grouped data
+    Object.keys(groupedTransactions).forEach((date) => {
+      // Check if the date key has an array value
+      if (Array.isArray(groupedTransactions[date])) {
+        groupedTransactions[date].forEach((data) => {
+          // Include regular spending transactions
+          if (data.Transaction === "Spending") {
+            const cashValue = parseFloat(getCashValue(data));
+            if (!isNaN(cashValue)) {
+              total += cashValue;
+            }
+          }
+          // Include transfers to Investment or Saving as expenses
+          else if (data.Transaction === "Transfer") {
+            const category = data["Category or Account"];
+            if (category === "Investment" || category === "Saving") {
+              const cashValue = parseFloat(getCashValue(data));
+              if (!isNaN(cashValue)) {
+                total += cashValue;
+              }
             }
           }
         });
