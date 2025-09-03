@@ -1,17 +1,16 @@
 "use client";
 import { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { useTransactions } from '@/utils/hooks';
+import { useTransactions, useAccounts } from '@/utils/hooks';
 import { months } from '@/utils/constants';
 import { formatCurrency, getCashValue, getTotalCashGroupedByDate } from '@/utils/helper';
 import { getDefaultSheetName } from '@/utils/google';
+import AccountCard from '@/components/Card/Account';
 
 export default function Home() {
-  const [selectedMonth, setSelectedMonth] = useState(getDefaultSheetName(months));
-  
-  // Use SWR hook for data fetching (consistent with transactions and budgets pages)
+  const selectedMonth = getDefaultSheetName(months);
   const { data: transactionData, isLoading, error } = useTransactions(selectedMonth);
+  const { data: accountData, isLoading: accountsLoading } = useAccounts();
 
   // Calculate financial data with proper type checking
   const spending = getTotalCashGroupedByDate(transactionData || [], "Spending");
@@ -94,7 +93,7 @@ export default function Home() {
               {isLoading ? (
                 <div className="animate-pulse bg-gray-200 h-10 w-32 rounded"></div>
               ) : (
-                formatCurrency(balance)
+                formatCurrency(100000000)
               )}
             </div>
           </div>
@@ -142,36 +141,30 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Quick Actions */}
+      {/* Top Accounts */}
       <div className="px-3 mb-8">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <Link
-            href="/transactions"
-            className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-200 hover:-translate-y-1"
-          >
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            </div>
-            <h4 className="font-semibold text-gray-800 mb-2">Transactions</h4>
-            <p className="text-sm text-gray-600">View and manage your transactions</p>
-          </Link>
-
-          <Link
-            href="/budgets"
-            className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-200 hover:-translate-y-1"
-          >
-            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-            <h4 className="font-semibold text-gray-800 mb-2">Budgets</h4>
-            <p className="text-sm text-gray-600">Track your spending limits</p>
-          </Link>
-        </div>
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">Top Used Accounts</h3>
+        {accountsLoading ? (
+          <div className="grid grid-cols-3 gap-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-2xl shadow-lg border border-gray-100 p-3">
+                <div className="animate-pulse">
+                  <div className="w-8 h-8 bg-gray-200 rounded-full mx-auto mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
+                  <div className="h-3 bg-gray-200 rounded w-full"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-3">
+            {accountData && accountData
+              .filter(account => ['Wallet', 'Mandiri', 'BCA'].includes(account.name))
+              .map((account) => (
+                <AccountCard key={account.name} account={account} />
+              ))}
+          </div>
+        )}
       </div>
 
       {/* Recent Activity Preview */}

@@ -9,13 +9,20 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
 
 ### 💳 BUG ISSUE
 - [ ] Budget value decrease when categories/budget item hide
+- [ ] Fix Warning: Extra attributes from the server: data-new-gr-c-s-check-loaded, data-gr-ext-installed
+- [ ] Fix Warning: In HTML, <a> cannot be a descendant of <a>. This will cause a hydration error.
+- [ ] Remove unused fetchTransactions, fetchBudgets, fetchGoals, fetchAccounts
+- [ ] Merge formatCurrencyShort to formatCurrency
 
 ### 💳 Account/Wallet Management (HIGH PRIORITY)
 - [] **Account Overview**
   - [x] Integration dengan Google Sheets "Summary"
   - [x] Real-time balance display untuk semua account
   - [x] Account categorization (Wallet, ATM, Platform, etc.)
-  - [ ] Account balance tracking
+  - [x] Account balance tracking
+  - [x] Show decimal for Mandiri & BCA
+  - [ ] Show multiple fraction money for Wallet
+  - [ ] Show actual balance in home, data balance in accounts
 
 ### 🏠 Assets Management (HIGH PRIORITY)
 - [ ] **Assets Tracking**

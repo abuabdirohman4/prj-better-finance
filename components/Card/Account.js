@@ -1,5 +1,6 @@
 import { formatCurrency } from "@/utils/helper";
 import { accountLogos, accountColorSchemes } from "@/utils/constants";
+import Link from "next/link";
 
 const getAccountLogo = (accountName) => {
   const logoConfig = accountLogos[accountName];
@@ -48,9 +49,13 @@ export default function AccountCard({ account }) {
   const logo = getAccountLogo(account.name);
   const colorScheme = getAccountColorScheme(account.name);
   const isLowBalance = account.balance <= 0;
+  const isBankAccount = account.name === 'Mandiri' || account.name === 'BCA';
 
   return (
-    <div className={`relative bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 ${isLowBalance ? 'opacity-75' : ''}`}>
+    <Link
+      href={`/accounts/balancing?account=${encodeURIComponent(account.name)}`}
+      className={`block relative bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer ${isLowBalance ? 'opacity-75' : ''}`}
+    >
       {/* Card Content */}
       <div className="p-3">
         {/* Logo and Name */}
@@ -65,11 +70,15 @@ export default function AccountCard({ account }) {
       {/* Balance Bar */}
       <div className={`${colorScheme.accent} px-3 py-1.5 rounded-b-2xl`}>
         <div className="text-center">
-          <span className={`font-bold text-xs ${isLowBalance ? 'text-red-600' : colorScheme.text}`}>
-            {formatCurrency(account.balance)}
-          </span>
+          {isBankAccount ? (
+            formatCurrency(account.balance, 'superscript', `font-bold text-xs ${isLowBalance ? 'text-red-600' : colorScheme.text}`)
+          ) : (
+            <span className={`font-bold text-xs ${isLowBalance ? 'text-red-600' : colorScheme.text}`}>
+              {formatCurrency(account.balance)}
+            </span>
+          )}
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

@@ -17,7 +17,7 @@ export function formatRupiah(amount) {
   }
 }
 
-export function formatCurrency(amount, format = 'rupiah') {
+export function formatCurrency(amount, format = 'rupiah', className = '') {
   const absAmount = Math.abs(amount);
   
   switch (format) {
@@ -33,6 +33,32 @@ export function formatCurrency(amount, format = 'rupiah') {
         return `- ${formatRupiah(absAmount)}`;
       }
       return `+ ${formatRupiah(absAmount)}`;
+    case 'superscript':
+      // Return JSX for superscript format
+      if (amount || amount == 0) {
+        const parsedAmount = typeof amount === "string" ? parseFloat(amount) : amount;
+        
+        // Split into integer and decimal parts
+        const integerPart = Math.floor(Math.abs(parsedAmount));
+        const decimalPart = Math.round((Math.abs(parsedAmount) - integerPart) * 100);
+        
+        // Format integer part with thousand separators
+        const formattedInteger = integerPart.toLocaleString('id-ID');
+        
+        // Add sign if negative
+        const sign = parsedAmount < 0 ? '-' : '';
+        const decimalStr = decimalPart.toString().padStart(2, '0');
+        
+        return (
+          <span className={className}>
+            {sign}Rp {formattedInteger}
+            <sup className="text-[0.7em] leading-none">
+              {decimalStr}
+            </sup>
+          </span>
+        );
+      }
+      return <span className={className}>Rp 0</span>;
     default:
       return formatRupiah(amount);
   }
