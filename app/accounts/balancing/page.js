@@ -23,7 +23,7 @@ export default function AccountBalancing() {
   // Calculate difference - use realBalance input if available, otherwise use last reality check
   const systemDifference = realBalance 
     ? parseFloat(realBalance) - currentBalance 
-    : (currentBalancing > 0 ? currentBalance - currentBalancing : 0);
+    : (currentBalancing > 0 ? currentBalancing - currentBalance : 0);
 
   // Handle input formatting
   const handleInputChange = (e) => {
@@ -172,35 +172,34 @@ export default function AccountBalancing() {
       </div>
 
       <div className="max-w-md mx-auto px-4 py-6 pb-24 space-y-6">
-        {/* Current Balance Card */}
+        {/* Calculation Balance Card */}
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Current Amount</h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Calculation Balance</h2>
           {isLoading ? (
             <div className="animate-pulse">
               <div className="h-8 bg-gray-200 rounded w-32 mb-2"></div>
               <div className="h-4 bg-gray-200 rounded w-24"></div>
             </div>
           ) : (
-            <div className="space-y-4">
-              <div>
-                <div className="text-3xl font-bold text-gray-900 mb-2">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Current Balance:</span>
+                <span className="font-bold text-lg text-gray-900">
                   {accountName === 'Mandiri' || accountName === 'BCA' 
                     ? formatCurrency(currentBalance, 'superscript') 
                     : formatCurrency(currentBalance)}
-                </div>
+                </span>
               </div>
-              
+
               {/* Last Reality Check */}
               {currentBalancing > 0 && (
-                <div className="border-t pt-4">
-                  <div>
-                    <div className="text-xl font-bold text-blue-600 mb-1">
-                      {accountName === 'Mandiri' || accountName === 'BCA' 
-                        ? formatCurrency(currentBalancing, 'superscript') 
-                        : formatCurrency(currentBalancing)}
-                    </div>
-                    <p className="text-sm text-gray-600">Last reality check</p>
-                  </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Reality Balance:</span>
+                  <span className="font-bold text-lg text-blue-600">
+                    {accountName === 'Mandiri' || accountName === 'BCA' 
+                      ? formatCurrency(currentBalancing, 'superscript') 
+                      : formatCurrency(currentBalancing)}
+                  </span>
                 </div>
               )}
               
@@ -252,8 +251,6 @@ export default function AccountBalancing() {
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
               />
             </div>
-
-
 
             <button
               onClick={handleUpdate}
