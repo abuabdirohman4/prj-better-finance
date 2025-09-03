@@ -68,6 +68,65 @@ export const useTransactions = (sheetName) => {
   };
 };
 
+// Custom hook for fetching account data
+export const useAccounts = () => {
+  const { data, error, isLoading, mutate } = useSWR(
+    'accounts-summary',
+    async () => {
+      try {
+        const csvData = await googleSheetsService.fetchSheet("Summary");
+        
+        // Parse CSV data
+        const Papa = (await import('papaparse')).default;
+        const result = Papa.parse(csvData, {
+          header: true,
+          skipEmptyLines: true,
+          transformHeader: (header) => {
+            const cleanHeader = header.replace(/"/g, '').trim();
+            return cleanHeader;
+          },
+          transform: (value) => {
+            let cleanValue = value.replace(/"/g, '').trim();
+            if (cleanValue === '  - ' || cleanValue === ' - ' || cleanValue === '') {
+              cleanValue = '0';
+            }
+            return cleanValue;
+          }
+        });
+
+        // Filter and format data
+        const parsedData = result.data
+          .filter(row => row['Name'] && row['Name'].trim() !== '')
+          .map(row => ({
+            name: row['Name'].trim(),
+            value: parseFloat(row['Value']) || 0,
+            balance: parseFloat(row['Value']) || 0
+          }));
+        
+        return parsedData;
+      } catch (error) {
+        console.error('❌ Error fetching account data:', error);
+        return [];
+      }
+    },
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true,
+      dedupingInterval: 30000, // 30 seconds
+      errorRetryCount: 2,
+      fetcher: undefined // Use inline fetcher instead
+    }
+  );
+
+  return {
+    data,
+    error,
+    isLoading,
+    mutate,
+    isError: !!error,
+  };
+};
+
 // Custom hook for fetching budget data
 export const useBudgets = (month) => {
   const { data, error, isLoading, mutate } = useSWR(

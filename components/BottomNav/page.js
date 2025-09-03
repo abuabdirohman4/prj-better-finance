@@ -115,6 +115,32 @@ export default function BottomNav() {
               Goals
             </span>
           </Link>
+
+          {/* Accounts */}
+          <Link
+            href="/accounts"
+            className={`flex flex-col items-center justify-center w-20 h-12 rounded-xl transition-all duration-200 ${
+              isActive('/accounts') 
+                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg scale-105' 
+                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+            }`}
+          >
+            <svg
+              className={`w-5 h-5 mb-1 ${
+                isActive('/accounts') ? 'text-white' : 'text-gray-500'
+              }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+            </svg>
+            <span className={`text-xs font-medium ${
+              isActive('/accounts') ? 'text-white' : 'text-gray-600'
+            }`}>
+              Accounts
+            </span>
+          </Link>
         </div>
       </div>
     </div>
