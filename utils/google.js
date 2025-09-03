@@ -101,7 +101,7 @@ export const googleSheetsService = {
 				}
 			});
 			
-			console.log(`✅ Updated ${sheetName}!${range} to ${value}`);
+
 			return true;
 		} catch (error) {
 			console.error('❌ Error updating cell:', error);
@@ -127,7 +127,7 @@ export const googleSheetsService = {
 				}
 			});
 			
-			console.log(`✅ Batch updated ${updates.length} cells`);
+
 			return true;
 		} catch (error) {
 			console.error('❌ Error batch updating:', error);
@@ -149,7 +149,7 @@ export const googleSheetsService = {
 				}
 			});
 			
-			console.log(`✅ Created data in ${sheetName}!${range}`);
+
 			return true;
 		} catch (error) {
 			console.error('❌ Error creating data:', error);
@@ -172,7 +172,7 @@ export const googleSheetsService = {
 				}
 			});
 			
-			console.log(`✅ Appended new row to ${sheetName}`);
+
 			return true;
 		} catch (error) {
 			console.error('❌ Error appending data:', error);
@@ -190,7 +190,6 @@ export const googleSheetsService = {
 				range: `${sheetName}!${range}`,
 			});
 			
-			console.log(`✅ Cleared ${sheetName}!${range}`);
 			return true;
 		} catch (error) {
 			console.error('❌ Error clearing range:', error);
