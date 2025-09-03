@@ -185,8 +185,6 @@ export function getTotalExpensesWithTransfers(groupedTransactions) {
   // Initialize total expenses
   let total = 0;
 
-  console.log('groupedTransactions', groupedTransactions)
-
   // Check if groupedTransactions is an array (ungrouped) or object (grouped)
   if (Array.isArray(groupedTransactions)) {
     // If it's an array, process directly
@@ -214,7 +212,6 @@ export function getTotalExpensesWithTransfers(groupedTransactions) {
       }
     });
   } else if (typeof groupedTransactions === 'object' && groupedTransactions !== null) {
-    console.log('masuk else if')
     // If it's an object with grouped data
     Object.keys(groupedTransactions).forEach((date) => {
       // Check if the date key has an array value
