@@ -21,7 +21,7 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
   - [x] Account categorization (Wallet, ATM, Platform, etc.)
   - [x] Account balance tracking
   - [x] Show decimal for Mandiri & BCA
-  - [ ] Show multiple fraction money for Wallet
+  - [x] Show multiple fraction money for Wallet
   - [ ] Show actual balance in home, data balance in accounts
 
 ### 🏠 Assets Management (HIGH PRIORITY)

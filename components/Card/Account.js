@@ -51,9 +51,17 @@ export default function AccountCard({ account }) {
   const isLowBalance = account.balance <= 0;
   const isBankAccount = account.name === 'Mandiri' || account.name === 'BCA';
 
+  // Determine the correct link based on account type
+  const getAccountLink = () => {
+    if (account.name === 'Wallet') {
+      return '/accounts/wallet-fractions';
+    }
+    return `/accounts/balancing?account=${encodeURIComponent(account.name)}`;
+  };
+
   return (
     <Link
-      href={`/accounts/balancing?account=${encodeURIComponent(account.name)}`}
+      href={getAccountLink()}
       className={`block relative bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer ${isLowBalance ? 'opacity-75' : ''}`}
     >
       {/* Card Content */}
