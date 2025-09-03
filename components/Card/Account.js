@@ -55,7 +55,7 @@ export default function AccountCard({ account }) {
       <div className="p-3">
         {/* Logo and Name */}
         <div className="flex flex-col items-center">
-          <div className={`${logo.color} mb-1`}>
+          <div className={`${logo.color} mt-2 mb-1`}>
             {logo.icon}
           </div>
           <h3 className="font-bold text-gray-900 text-sm text-center">{account.name}</h3>
