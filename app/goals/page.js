@@ -3,35 +3,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useGoals } from "@/utils/hooks";
 import Goal from "@/components/Card/Goal";
-import { groupGoalsByType } from "./data";
-import { formatCurrency, formatCurrencyShort, getBudgetColors } from "@/utils/helper";
-
-// Custom colors for goals progress
-const getGoalColors = (progress) => {
-  if (progress < 50) {
-    return {
-      progress: 'bg-red-500',
-      text: 'text-red-600',
-      status: 'Behind',
-      statusBg: 'bg-red-100 text-red-600'
-    };
-  } else if (progress < 80) {
-    return {
-      progress: 'bg-yellow-500',
-      text: 'text-yellow-600',
-      status: 'On Track',
-      statusBg: 'bg-yellow-100 text-yellow-600'
-    };
-  } else {
-    return {
-      progress: 'bg-green-500',
-      text: 'text-green-600',
-      status: 'Ahead',
-      statusBg: 'bg-green-100 text-green-600'
-    };
-  }
-};
 import Cookies from 'js-cookie';
+import { formatCurrency, formatCurrencyShort, getGoalColors } from "@/utils/helper";
 
 export default function Goals() {
   // Use SWR hook for data fetching

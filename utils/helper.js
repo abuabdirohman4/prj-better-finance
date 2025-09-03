@@ -222,3 +222,28 @@ export function getBudgetColors(percent) {
     statusBg: 'bg-gray-100 text-gray-700'
   };
 };
+
+export function getGoalColors(progress) {
+  if (progress < 50) {
+    return {
+      progress: 'bg-red-500',
+      text: 'text-red-600',
+      status: 'Behind',
+      statusBg: 'bg-red-100 text-red-600'
+    };
+  } else if (progress < 80) {
+    return {
+      progress: 'bg-yellow-500',
+      text: 'text-yellow-600',
+      status: 'On Track',
+      statusBg: 'bg-yellow-100 text-yellow-600'
+    };
+  } else {
+    return {
+      progress: 'bg-green-500',
+      text: 'text-green-600',
+      status: 'Ahead',
+      statusBg: 'bg-green-100 text-green-600'
+    };
+  }
+};

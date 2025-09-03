@@ -143,8 +143,6 @@ export const useGoals = () => {
           return hasType;
         });
         
-
-        
         return parsedData;
       } catch (error) {
         console.error('❌ Error fetching goals data:', error);

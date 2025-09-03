@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
+import Link from "next/link";
 import { categories, months } from "@/utils/constants";
 import { useTransactions, useBudgets } from "@/utils/hooks";
 import { processBudgetData } from "./data";
@@ -29,7 +30,11 @@ export default function Budgets() {
     giving: true
   });
 
-  // Load collapse state from cookies when component mounts
+  // State to control hidden budgets and categories
+  const [hiddenBudgets, setHiddenBudgets] = useState({});
+  const [hiddenCategories, setHiddenCategories] = useState({});
+
+  // Load collapse state and hidden state from cookies when component mounts
   useEffect(() => {
     const savedCollapseState = Cookies.get('budget-collapse-state');
     if (savedCollapseState) {
@@ -41,6 +46,26 @@ export default function Budgets() {
         }));
       } catch (error) {
         console.error('Error parsing collapse state from cookies:', error);
+      }
+    }
+
+    const savedHiddenBudgets = Cookies.get('budget-hidden-state');
+    if (savedHiddenBudgets) {
+      try {
+        const parsedHiddenBudgets = JSON.parse(savedHiddenBudgets);
+        setHiddenBudgets(parsedHiddenBudgets);
+      } catch (error) {
+        console.error('Error parsing hidden budgets state from cookies:', error);
+      }
+    }
+
+    const savedHiddenCategories = Cookies.get('budget-category-hidden-state');
+    if (savedHiddenCategories) {
+      try {
+        const parsedHiddenCategories = JSON.parse(savedHiddenCategories);
+        setHiddenCategories(parsedHiddenCategories);
+      } catch (error) {
+        console.error('Error parsing hidden categories state from cookies:', error);
       }
     }
   }, []);
@@ -56,6 +81,39 @@ export default function Budgets() {
     
     // Save to cookies
     Cookies.set('budget-collapse-state', JSON.stringify(newState), { 
+      expires: 365,
+      sameSite: 'strict'
+    });
+  };
+
+  // Function to toggle hide/show individual budget item
+  const toggleBudgetVisibility = (categoryKey, subCategory) => {
+    const budgetId = `${categoryKey}-${subCategory}`;
+    const newHiddenBudgets = {
+      ...hiddenBudgets,
+      [budgetId]: !hiddenBudgets[budgetId]
+    };
+    
+    setHiddenBudgets(newHiddenBudgets);
+    
+    // Save to cookies
+    Cookies.set('budget-hidden-state', JSON.stringify(newHiddenBudgets), { 
+      expires: 365,
+      sameSite: 'strict'
+    });
+  };
+
+  // Function to toggle hide/show entire category
+  const toggleCategoryVisibility = (categoryKey) => {
+    const newHiddenCategories = {
+      ...hiddenCategories,
+      [categoryKey]: !hiddenCategories[categoryKey]
+    };
+    
+    setHiddenCategories(newHiddenCategories);
+    
+    // Save to cookies
+    Cookies.set('budget-category-hidden-state', JSON.stringify(newHiddenCategories), { 
       expires: 365,
       sameSite: 'strict'
     });
@@ -196,15 +254,58 @@ export default function Budgets() {
     return result;
   })() : null;
 
-  // Calculate totals per category with clearer concept
+  // Calculate totals per category with clearer concept (excluding hidden items)
   const calculateCategoryTotals = (groupedBudgetData) => {
     if (!groupedBudgetData) return {};
     
     const categoryTotals = {};
     
     Object.entries(groupedBudgetData).forEach(([categoryKey, categoryData]) => {
-      const totalBudget = Object.values(categoryData).reduce((sum, item) => sum + Math.abs(item.budget), 0);
-      const totalSpent = Object.values(categoryData).reduce((sum, item) => sum + Math.abs(item.actual), 0);
+      // Skip hidden categories
+      if (hiddenCategories[categoryKey]) {
+        categoryTotals[categoryKey] = {
+          budget: 0,
+          spent: 0,
+          remaining: 0,
+          percentageUsed: 0
+        };
+        return;
+      }
+
+      // Calculate totals excluding hidden budget items
+      const visibleItems = Object.entries(categoryData).filter(([subCategory, _]) => {
+        const budgetId = `${categoryKey}-${subCategory}`;
+        return !hiddenBudgets[budgetId];
+      });
+
+      const totalBudget = visibleItems.reduce((sum, [_, item]) => sum + Math.abs(item.budget), 0);
+      const totalSpent = visibleItems.reduce((sum, [_, item]) => sum + Math.abs(item.actual), 0);
+      const totalRemaining = totalBudget - totalSpent;
+      const percentageUsed = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
+      
+      categoryTotals[categoryKey] = {
+        budget: totalBudget,
+        spent: totalSpent,
+        remaining: totalRemaining,
+        percentageUsed: percentageUsed
+      };
+    });
+    
+    return categoryTotals;
+  };
+
+  // Calculate totals per category based on ALL data (not affected by hide/unhide)
+  const calculateCategoryTotalsAll = (groupedBudgetData) => {
+    if (!groupedBudgetData) return {};
+    
+    const categoryTotals = {};
+    
+    Object.entries(groupedBudgetData).forEach(([categoryKey, categoryData]) => {
+      // Calculate totals including ALL items (visible and hidden)
+      const allItems = Object.entries(categoryData);
+
+      const totalBudget = allItems.reduce((sum, [_, item]) => sum + Math.abs(item.budget), 0);
+      const totalSpent = allItems.reduce((sum, [_, item]) => sum + Math.abs(item.actual), 0);
       const totalRemaining = totalBudget - totalSpent;
       const percentageUsed = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
       
@@ -220,21 +321,56 @@ export default function Budgets() {
   };
 
   const categoryTotals = calculateCategoryTotals(groupedBudgetData);
+  const categoryTotalsAll = calculateCategoryTotalsAll(groupedBudgetData);
 
-  // Calculate totals from grouped data
+  // Calculate totals from grouped data (excluding hidden items)
   const totalBudgetFromSheet = groupedBudgetData ? 
-    Object.values(groupedBudgetData).reduce((sum, categoryData) => 
-      Object.values(categoryData).reduce((catSum, item) => catSum + Math.abs(item.budget), 0) + sum, 0
-    ) : 0;
+    Object.entries(groupedBudgetData).reduce((sum, [categoryKey, categoryData]) => {
+      // Skip hidden categories
+      if (hiddenCategories[categoryKey]) return sum;
+      
+      return sum + Object.entries(categoryData).reduce((catSum, [subCategory, item]) => {
+        const budgetId = `${categoryKey}-${subCategory}`;
+        // Skip hidden budget items
+        if (hiddenBudgets[budgetId]) return catSum;
+        return catSum + Math.abs(item.budget);
+      }, 0);
+    }, 0) : 0;
   
   const totalActualFromSheet = groupedBudgetData ? 
-    Object.values(groupedBudgetData).reduce((sum, categoryData) => 
-      Object.values(categoryData).reduce((catSum, item) => catSum + Math.abs(item.actual), 0) + sum, 0
-    ) : 0;
+    Object.entries(groupedBudgetData).reduce((sum, [categoryKey, categoryData]) => {
+      // Skip hidden categories
+      if (hiddenCategories[categoryKey]) return sum;
+      
+      return sum + Object.entries(categoryData).reduce((catSum, [subCategory, item]) => {
+        const budgetId = `${categoryKey}-${subCategory}`;
+        // Skip hidden budget items
+        if (hiddenBudgets[budgetId]) return catSum;
+        return catSum + Math.abs(item.actual);
+      }, 0);
+    }, 0) : 0;
 
   // Calculate percentage and colors based on data from sheet
   const percentageFromSheet = totalBudgetFromSheet !== 0 ? Math.abs(totalActualFromSheet / totalBudgetFromSheet * 100) : 0;
   const colors = getBudgetColors(percentageFromSheet);
+
+  // Calculate totals from ALL data (not affected by hide/unhide)
+  const totalBudgetFromSheetAll = groupedBudgetData ? 
+    Object.entries(groupedBudgetData).reduce((sum, [categoryKey, categoryData]) => {
+      return sum + Object.entries(categoryData).reduce((catSum, [subCategory, item]) => {
+        return catSum + Math.abs(item.budget);
+      }, 0);
+    }, 0) : 0;
+  
+  const totalActualFromSheetAll = groupedBudgetData ? 
+    Object.entries(groupedBudgetData).reduce((sum, [categoryKey, categoryData]) => {
+      return sum + Object.entries(categoryData).reduce((catSum, [subCategory, item]) => {
+        return catSum + Math.abs(item.actual);
+      }, 0);
+    }, 0) : 0;
+
+  // Calculate percentage based on ALL data (not affected by hide/unhide)
+  const percentageFromSheetAll = totalBudgetFromSheetAll !== 0 ? Math.abs(totalActualFromSheetAll / totalBudgetFromSheetAll * 100) : 0;
 
   // Loading state
   const isLoading = isTransactionLoading || isBudgetLoading;
@@ -272,25 +408,39 @@ export default function Budgets() {
               <p className="text-blue-100 text-sm">Track your spending limits</p>
             </div>
 
-            {/* Month Selector */}
-            <div className="relative">
-              <select
-                id="month"
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(e.target.value)}
-                className="appearance-none bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 pr-10 cursor-pointer hover:bg-white/30 transition-all duration-200"
+            {/* Settings and Month Selector */}
+            <div className="flex items-center space-x-3">
+              <Link 
+                href="/settings"
+                className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors duration-200"
+                title="Settings"
               >
-                {months.map((month) => (
-                  <option key={month} value={month} className="text-gray-800 bg-white">
-                    {month}
-                  </option>
-                ))}
-              </select>
-              {/* Custom dropdown arrow */}
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
+              </Link>
+              
+              {/* Month Selector */}
+              <div className="relative">
+                <select
+                  id="month"
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                  className="appearance-none bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 pr-10 cursor-pointer hover:bg-white/30 transition-all duration-200"
+                >
+                  {months.map((month) => (
+                    <option key={month} value={month} className="text-gray-800 bg-white">
+                      {month}
+                    </option>
+                  ))}
+                </select>
+                {/* Custom dropdown arrow */}
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
               </div>
             </div>
           </div>
@@ -332,12 +482,12 @@ export default function Budgets() {
               <div className="flex items-center gap-3 mb-2">
                 <div className="flex-1 bg-gray-200 rounded-full h-3">
                   <div
-                    className={`h-3 rounded-full transition-all duration-200 ease-out md:duration-500 ${colors.progress}`}
-                    style={{ width: `${Math.min(percentageFromSheet, 100)}%` }}
+                    className={`h-3 rounded-full transition-all duration-200 ease-out md:duration-500 ${getBudgetColors(percentageFromSheetAll).progress}`}
+                    style={{ width: `${Math.min(percentageFromSheetAll, 100)}%` }}
                   ></div>
                 </div>
-                <span className={`text-sm font-semibold ${colors.text}`}>
-                  {percentageFromSheet.toFixed(0)}%
+                <span className={`text-sm font-semibold ${getBudgetColors(percentageFromSheetAll).text}`}>
+                  {percentageFromSheetAll.toFixed(0)}%
                 </span>
               </div>
             </div>
@@ -386,6 +536,9 @@ export default function Budgets() {
                   const totals = categoryTotals[categoryKey];
                   if (!totals || Object.keys(categoryData).length === 0) return null;
 
+                  // Skip hidden categories
+                  if (hiddenCategories[categoryKey]) return null;
+
                   return (
                     <div key={categoryKey} className="border border-gray-200 rounded-xl overflow-hidden">
                       {/* Category Header */}
@@ -416,7 +569,7 @@ export default function Budgets() {
                             </div>
                           </div>
                           
-                          {/* Right: Budget Summary + Arrow */}
+                          {/* Right: Budget Summary + Hide Button + Arrow */}
                           <div className="flex items-center space-x-3">
                             {/* Budget Summary */}
                             <div className="text-right">
@@ -424,6 +577,20 @@ export default function Budgets() {
                                 {formatCurrencyShort(totals.spent)} / {formatCurrencyShort(totals.budget)}
                               </p>
                             </div>
+                            
+                            {/* Hide Category Button */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleCategoryVisibility(categoryKey);
+                              }}
+                              className="p-1 rounded-full hover:bg-gray-200 transition-colors duration-200"
+                              title="Hide this category"
+                            >
+                              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                              </svg>
+                            </button>
                             
                             {/* Arrow icon */}
                             <div className="flex-shrink-0">
@@ -445,12 +612,12 @@ export default function Budgets() {
                         <div className="flex items-center gap-3 mb-2">
                           <div className="flex-1 bg-gray-200 rounded-full h-2">
                             <div 
-                              className={`h-2 rounded-full transition-all duration-200 ease-out md:duration-300 ${getBudgetColors(totals.percentageUsed).progress}`}
-                              style={{ width: `${Math.min(totals.percentageUsed, 100)}%` }}
+                              className={`h-2 rounded-full transition-all duration-200 ease-out md:duration-300 ${getBudgetColors(categoryTotalsAll[categoryKey]?.percentageUsed || 0).progress}`}
+                              style={{ width: `${Math.min(categoryTotalsAll[categoryKey]?.percentageUsed || 0, 100)}%` }}
                             ></div>
                           </div>
-                          <span className={`text-sm font-medium ${getBudgetColors(totals.percentageUsed).text}`}>
-                            {totals.percentageUsed.toFixed(0)}%
+                          <span className={`text-sm font-medium ${getBudgetColors(categoryTotalsAll[categoryKey]?.percentageUsed || 0).text}`}>
+                            {(categoryTotalsAll[categoryKey]?.percentageUsed || 0).toFixed(0)}%
                           </span>
                         </div>
                       </div>
@@ -467,6 +634,11 @@ export default function Budgets() {
                             : 'transform translate-y-0 opacity-100'
                         }`}>
                           {Object.entries(categoryData).map(([subCategory, data]) => {
+                            const budgetId = `${categoryKey}-${subCategory}`;
+                            
+                            // Skip hidden budget items
+                            if (hiddenBudgets[budgetId]) return null;
+                            
                             const subBudget = Math.abs(data.budget);
                             const subSpent = Math.abs(data.actual);
                             const subPercentageUsed = subBudget > 0 ? (subSpent / subBudget) * 100 : 0;
@@ -523,10 +695,21 @@ export default function Budgets() {
                                       {toProperCase(subCategory)}
                                     </h6>
                                   </div>
-                                  <div className="text-right">
-                                    <p className="text-xs text-gray-600">
-                                      {formatCurrencyShort(subSpent)} / {formatCurrencyShort(subBudget)}
-                                    </p>
+                                  <div className="flex items-center space-x-2">
+                                    <div className="text-right">
+                                      <p className="text-xs text-gray-600">
+                                        {formatCurrencyShort(subSpent)} / {formatCurrencyShort(subBudget)}
+                                      </p>
+                                    </div>
+                                    <button
+                                      onClick={() => toggleBudgetVisibility(categoryKey, subCategory)}
+                                      className="p-1 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                                      title="Hide this budget item"
+                                    >
+                                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                                      </svg>
+                                    </button>
                                   </div>
                                 </div>
                                 
