@@ -25,7 +25,7 @@ export default function WalletFractions() {
         console.log('🔄 Starting to fetch wallet fractions...');
         setIsLoadingFractions(true);
         
-        const url = '/api/wallet-fractions';
+        const url = '/api/accounts/wallet-fractions';
         console.log('📡 Fetching from URL:', url);
         
         const response = await fetch(url);
@@ -100,7 +100,7 @@ export default function WalletFractions() {
     setResult(null);
 
     try {
-      const url = '/api/wallet-fractions';
+      const url = '/api/accounts/wallet-fractions';
       const requestBody = {
         fractions: fractions.map(f => ({
           fraction: f.fraction,
@@ -111,13 +111,27 @@ export default function WalletFractions() {
       console.log('📡 PUT request to:', url);
       console.log('📦 Request body:', requestBody);
       
-      const response = await fetch(url, {
+      // Try PUT first, fallback to POST if needed
+      let response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestBody),
       });
+
+      // If PUT fails with 405, try POST as fallback
+      if (!response.ok && response.status === 405) {
+        console.log('🔄 PUT failed with 405, trying POST as fallback...');
+        response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        });
+        console.log('📊 POST fallback response status:', response.status);
+      }
 
       console.log('📊 Response status:', response.status);
       console.log('📊 Response statusText:', response.statusText);

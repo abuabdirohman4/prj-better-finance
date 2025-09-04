@@ -1,9 +1,9 @@
 import { googleSheetsService } from '@/utils/google';
 
-// GET /api/wallet-fractions - Get wallet fractions data
+// GET /api/accounts/wallet-fractions - Get wallet fractions data
 export async function GET() {
   try {
-    console.log('GET /api/wallet-fractions called');
+    console.log('GET /api/accounts/wallet-fractions called');
     
     const csvData = await googleSheetsService.read("Wallet");
     
@@ -53,10 +53,13 @@ export async function GET() {
   }
 }
 
-// PUT /api/wallet-fractions - Update wallet fractions count
+// PUT /api/accounts/wallet-fractions - Update wallet fractions count
 export async function PUT(request) {
   try {
-    console.log('PUT /api/wallet-fractions called');
+    console.log('🚀 PUT /api/accounts/wallet-fractions called - VERSION 2.0');
+    console.log('📊 Request method:', request.method);
+    console.log('📊 Request URL:', request.url);
+    console.log('📊 Request headers:', Object.fromEntries(request.headers.entries()));
     
     // Check if request body exists
     if (!request.body) {
@@ -132,6 +135,12 @@ export async function PUT(request) {
     
     console.log(`Update results: ${successful.length} successful, ${failed.length} failed`);
     
+    const headers = new Headers();
+    headers.set('Content-Type', 'application/json');
+    headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    headers.set('Last-Modified', new Date().toUTCString());
+    headers.set('ETag', `"${Date.now()}"`);
+
     return Response.json({
       success: true,
       message: `Successfully updated ${successful.length} fractions`,
@@ -140,7 +149,7 @@ export async function PUT(request) {
         failed: failed.length,
         results: results
       }
-    });
+    }, { headers });
     
   } catch (error) {
     console.error('❌ Error updating wallet fractions:', error);
@@ -157,3 +166,24 @@ export async function PUT(request) {
   }
 }
 
+// POST /api/accounts/wallet-fractions - Fallback for PUT method
+export async function POST(request) {
+  console.log('🔄 POST /api/accounts/wallet-fractions called (fallback for PUT)');
+  return PUT(request);
+}
+
+// OPTIONS /api/accounts/wallet-fractions - Handle CORS preflight
+export async function OPTIONS() {
+  console.log('🔄 OPTIONS /api/accounts/wallet-fractions called (CORS preflight)');
+  
+  const headers = new Headers();
+  headers.set('Access-Control-Allow-Origin', '*');
+  headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
+  headers.set('Access-Control-Allow-Headers', 'Content-Type');
+  headers.set('Access-Control-Max-Age', '86400');
+  
+  return new Response(null, { 
+    status: 200, 
+    headers 
+  });
+}
