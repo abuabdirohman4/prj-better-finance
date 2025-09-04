@@ -36,7 +36,7 @@ export async function GET(request) {
     });
     
     const headers = {
-      'Cache-Control': forceRefresh ? 'no-cache, no-store, must-revalidate' : 'public, max-age=60, stale-while-revalidate=120',
+      'Cache-Control': forceRefresh ? 'no-cache, no-store, must-revalidate' : 'public, max-age=10, stale-while-revalidate=20',
       'Last-Modified': new Date().toUTCString(),
       'ETag': `"${Date.now()}"`
     };

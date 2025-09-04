@@ -31,9 +31,9 @@ export const useTransactions = (sheetName) => {
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
-      dedupingInterval: 10000, // 10 seconds
+      dedupingInterval: 5000, // 5 seconds
       errorRetryCount: 2,
-      refreshInterval: 10000, // Auto-refresh every 10 seconds
+      refreshInterval: 15000, // Auto-refresh every 15 seconds
       fetcher: undefined // Use inline fetcher instead
     }
   );
@@ -124,9 +124,9 @@ export const useBudgets = (month) => {
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
-      dedupingInterval: 10000, // 10 seconds
+      dedupingInterval: 5000, // 5 seconds
       errorRetryCount: 2,
-      refreshInterval: 10000, // Auto-refresh every 10 seconds
+      refreshInterval: 15000, // Auto-refresh every 15 seconds
       fetcher: undefined // Use inline fetcher instead
     }
   );
@@ -169,9 +169,9 @@ export const useGoals = () => {
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
-      dedupingInterval: 10000, // 10 seconds
+      dedupingInterval: 5000, // 5 seconds
       errorRetryCount: 2,
-      refreshInterval: 10000, // Auto-refresh every 10 seconds
+      refreshInterval: 15000, // Auto-refresh every 15 seconds
       fetcher: undefined // Use inline fetcher instead
     }
   );
