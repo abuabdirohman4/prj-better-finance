@@ -45,7 +45,6 @@ function AccountBalancingContent() {
   const [displayValue, setDisplayValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
-  const [refreshing, setRefreshing] = useState(false);
 
   // Find the specified account
   const account = accountData?.find(acc => acc.name === accountName);
@@ -191,23 +190,14 @@ function AccountBalancingContent() {
         return;
       }
       
-      // Force refresh account data with cache busting
-      setRefreshing(true);
-      await mutate();
+      setResult({ 
+        success: true, 
+        data,
+        difference: parseFloat(realBalance) - currentBalance
+      });
       
-      // Additional delay to ensure Google Sheets cache is cleared
-      setTimeout(async () => {
-        // Force refresh with cache busting
-        await mutate();
-        setRefreshing(false);
-        
-        // Show success message after refresh is complete
-        setResult({ 
-          success: true, 
-          data,
-          difference: parseFloat(realBalance) - currentBalance
-        });
-      }, 3000);
+      // Simple refresh account data
+      mutate();
       
     } catch (error) {
       console.error('Fetch Error:', error);
@@ -322,14 +312,14 @@ function AccountBalancingContent() {
 
             <button
               onClick={handleUpdate}
-              disabled={loading || refreshing || !realBalance}
+              disabled={loading || !realBalance}
               className="w-full bg-blue-600 text-white py-3 px-4 rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center justify-center space-x-2"
             >
-              {(loading || refreshing) && (
+              {loading && (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               )}
               <span>
-                {loading ? "Updating..." : refreshing ? "Refreshing..." : `Update ${accountName}`}
+                {loading ? "Updating..." : `Update ${accountName}`}
               </span>
             </button>
           </div>
