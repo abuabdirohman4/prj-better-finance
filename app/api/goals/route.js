@@ -35,17 +35,16 @@ export async function GET(request) {
       return hasType;
     });
     
+    const headers = {
+      'Cache-Control': forceRefresh ? 'no-cache, no-store, must-revalidate' : 'public, max-age=60, stale-while-revalidate=120',
+      'Last-Modified': new Date().toUTCString(),
+      'ETag': `"${Date.now()}"`
+    };
+
     return Response.json({
       success: true,
       data: parsedData
-    }, {
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
-        'Last-Modified': new Date().toUTCString()
-      }
-    });
+    }, { headers });
     
   } catch (error) {
     console.error('❌ Error fetching goals:', error);
@@ -54,7 +53,12 @@ export async function GET(request) {
         error: 'Failed to fetch goals data',
         details: error.message 
       },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+      }
     );
   }
 }

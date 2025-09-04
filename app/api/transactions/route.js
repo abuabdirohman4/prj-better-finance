@@ -49,17 +49,16 @@ export async function GET(request) {
 
     const sortedData = parsedData.sort().reverse();
     
+    const headers = {
+      'Cache-Control': forceRefresh ? 'no-cache, no-store, must-revalidate' : 'public, max-age=30, stale-while-revalidate=60',
+      'Last-Modified': new Date().toUTCString(),
+      'ETag': `"${Date.now()}"`
+    };
+
     return Response.json({
       success: true,
       data: sortedData
-    }, {
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
-        'Last-Modified': new Date().toUTCString()
-      }
-    });
+    }, { headers });
     
   } catch (error) {
     console.error('❌ Error fetching transactions:', error);
@@ -68,7 +67,12 @@ export async function GET(request) {
         error: 'Failed to fetch transactions data',
         details: error.message 
       },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+      }
     );
   }
 }

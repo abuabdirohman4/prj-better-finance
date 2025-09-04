@@ -21,6 +21,12 @@ export async function GET(request) {
       googleSheetsService.read("SpendingTF", 'csv', forceRefresh)
     ]);
 
+    const headers = {
+      'Cache-Control': forceRefresh ? 'no-cache, no-store, must-revalidate' : 'public, max-age=60, stale-while-revalidate=120',
+      'Last-Modified': new Date().toUTCString(),
+      'ETag': `"${Date.now()}"`
+    };
+
     return Response.json({
       success: true,
       data: {
@@ -30,14 +36,7 @@ export async function GET(request) {
         spendingTFData,
         month
       }
-    }, {
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
-        'Last-Modified': new Date().toUTCString()
-      }
-    });
+    }, { headers });
     
   } catch (error) {
     console.error('❌ Error fetching budgets:', error);
@@ -46,7 +45,12 @@ export async function GET(request) {
         error: 'Failed to fetch budgets data',
         details: error.message 
       },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+      }
     );
   }
 }

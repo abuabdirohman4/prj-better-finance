@@ -37,18 +37,16 @@ export async function GET(request) {
         balancing: parseFloat(row['Balancing']) || 0
       }));
     
+    const headers = {
+      'Cache-Control': forceRefresh ? 'no-cache, no-store, must-revalidate' : 'public, max-age=30, stale-while-revalidate=60',
+      'Last-Modified': new Date().toUTCString(),
+      'ETag': `"${Date.now()}"`
+    };
+
     return Response.json({
       success: true,
       data: accounts
-    }, {
-      headers: {
-        'Cache-Control': forceRefresh ? 'no-cache, no-store, must-revalidate' : 'public, max-age=30, stale-while-revalidate=60',
-        'Pragma': 'no-cache',
-        'Expires': '0',
-        'Last-Modified': new Date().toUTCString(),
-        'ETag': `"${Date.now()}"`
-      }
-    });
+    }, { headers });
     
   } catch (error) {
     console.error('❌ Error fetching accounts:', error);
@@ -57,7 +55,12 @@ export async function GET(request) {
         error: 'Failed to fetch accounts data',
         details: error.message 
       },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+      }
     );
   }
 }
