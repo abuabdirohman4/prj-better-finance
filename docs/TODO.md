@@ -28,7 +28,7 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
 - [] **Issue Tracker**
   - [x] Error update balancing in production
   - [ ] When delete/backspace balancing in the middle number, cursor will move to the end
-  - [ ] Make button as component
+  - [x] Make button as component
 
 ### 🏠 Assets Management (HIGH PRIORITY)
 - [ ] **Assets Tracking**

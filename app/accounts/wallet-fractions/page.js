@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAccounts } from "@/utils/hooks";
 import { formatCurrency } from "@/utils/helper";
+import Button from "@/components/Button";
 
 export default function WalletFractions() {
   const router = useRouter();
@@ -263,13 +264,15 @@ export default function WalletFractions() {
         </div>
 
         {/* Update Button */}
-        <button
+        <Button
           onClick={handleUpdate}
-          disabled={loading || isLoadingFractions}
-          className="w-full bg-blue-600 text-white py-3 px-4 rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+          disabled={isLoadingFractions}
+          loading={loading}
+          variant="primary"
+          size="md"
         >
-          {loading ? "Updating..." : "Update Wallet"}
-        </button>
+          Update Wallet
+        </Button>
 
         {/* Results */}
         {result && (

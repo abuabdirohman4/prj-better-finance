@@ -3,6 +3,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAccounts } from "@/utils/hooks";
 import { formatCurrency } from "@/utils/helper";
+import Button from "@/components/Button";
 
 export default function AccountBalancing() {
   return (
@@ -310,18 +311,15 @@ function AccountBalancingContent() {
               />
             </div>
 
-            <button
+            <Button
               onClick={handleUpdate}
-              disabled={loading || !realBalance}
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center justify-center space-x-2"
+              disabled={!realBalance}
+              loading={loading}
+              variant="primary"
+              size="md"
             >
-              {loading && (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              )}
-              <span>
-                {loading ? "Updating..." : `Update ${accountName}`}
-              </span>
-            </button>
+              {`Update ${accountName}`}
+            </Button>
           </div>
         </div>
 
