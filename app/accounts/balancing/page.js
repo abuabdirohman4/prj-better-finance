@@ -160,21 +160,47 @@ function AccountBalancingContent() {
         }),
       });
 
-      const data = await response.json();
-      
-      if (response.ok) {
-        setResult({ 
-          success: true, 
-          data,
-          difference: parseFloat(realBalance) - currentBalance
-        });
-        // Refresh account data
-        mutate();
-      } else {
-        setResult({ success: false, error: data.error });
+      // Check if response is ok and has content
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { error: `HTTP ${response.status}: ${response.statusText}` };
+        }
+        setResult({ success: false, error: errorData.error || 'Request failed' });
+        return;
       }
+
+      // Check if response has content before parsing JSON
+      const responseText = await response.text();
+      if (!responseText.trim()) {
+        setResult({ success: false, error: 'Empty response from server' });
+        return;
+      }
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('JSON Parse Error:', parseError);
+        console.error('Response Text:', responseText);
+        setResult({ success: false, error: 'Invalid response format from server' });
+        return;
+      }
+      
+      setResult({ 
+        success: true, 
+        data,
+        difference: parseFloat(realBalance) - currentBalance
+      });
+      // Refresh account data
+      mutate();
+      
     } catch (error) {
-      setResult({ success: false, error: error.message });
+      console.error('Fetch Error:', error);
+      setResult({ success: false, error: error.message || 'Network error occurred' });
     } finally {
       setLoading(false);
     }

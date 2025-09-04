@@ -9,10 +9,11 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
 
 ### 💳 BUG ISSUE
 - [ ] Budget value decrease when categories/budget item hide
-- [ ] Fix Warning: Extra attributes from the server: data-new-gr-c-s-check-loaded, data-gr-ext-installed
-- [ ] Fix Warning: In HTML, <a> cannot be a descendant of <a>. This will cause a hydration error.
+- [x] Fix Warning: Extra attributes from the server: data-new-gr-c-s-check-loaded, data-gr-ext-installed
+- [x] Fix Warning: In HTML, <a> cannot be a descendant of <a>. This will cause a hydration error.
 - [ ] Remove unused fetchTransactions, fetchBudgets, fetchGoals, fetchAccounts
 - [ ] Merge formatCurrencyShort to formatCurrency
+- [ ] Floating "Clear Cache" in web
 
 ### 💳 Account/Wallet Management (HIGH PRIORITY)
 - [] **Account Overview**
@@ -23,6 +24,10 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
   - [x] Show decimal for Mandiri & BCA
   - [x] Show multiple fraction money for Wallet
   - [ ] Show actual balance in home, data balance in accounts
+
+- [] **Issue Tracker**
+  - [ ] Error update balancing in production
+  - [ ] When delete/backspace balancing in the middle number, cursor will move to the end
 
 ### 🏠 Assets Management (HIGH PRIORITY)
 - [ ] **Assets Tracking**
