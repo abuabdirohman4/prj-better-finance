@@ -43,19 +43,23 @@ export default function ClearCache() {
     }
   };
 
-  // Only show in development
-  if (process.env.NODE_ENV !== 'development') {
-    return null;
-  }
-
   return (
-    <button
-      onClick={clearCache}
-      disabled={isClearing}
-      className="fixed bottom-20 right-4 bg-red-500 text-white px-3 py-2 rounded-lg text-xs font-medium hover:bg-red-600 disabled:opacity-50 z-50"
-      title="Clear PWA Cache (Dev Only)"
-    >
-      {isClearing ? 'Clearing...' : 'Clear Cache'}
-    </button>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+        <div className="flex-1">
+          <h3 className="text-sm font-medium text-gray-900 mb-1">Clear PWA Cache</h3>
+          <p className="text-xs text-gray-600">
+            Clear all cached data and unregister service worker. This will force the app to reload fresh data.
+          </p>
+        </div>
+        <button
+          onClick={clearCache}
+          disabled={isClearing}
+          className="ml-4 px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+        >
+          {isClearing ? 'Clearing...' : 'Clear Cache'}
+        </button>
+      </div>
+    </div>
   );
 }

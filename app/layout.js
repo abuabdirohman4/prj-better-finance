@@ -3,7 +3,6 @@ import "../styles/globals.css";
 import BottomNav from "@/components/BottomNav/page";
 import PWAComponents from "@/components/PWA";
 import SplashScreen from "@/components/PWA/SplashScreen";
-import ClearCache from "@/components/PWA/ClearCache";
 import { SWRConfig } from 'swr';
 import { swrConfig } from '@/configs';
 
@@ -71,7 +70,6 @@ export default function RootLayout({ children }) {
           <SplashScreen />
           {children}
           <BottomNav />
-          <ClearCache />
         </SWRConfig>
       </body>
     </html>

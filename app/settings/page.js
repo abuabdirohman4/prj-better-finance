@@ -7,6 +7,7 @@ import { getDefaultSheetName } from "@/utils/google";
 import { processBudgetData } from "@/app/budgets/data";
 import Cookies from 'js-cookie';
 import Link from 'next/link';
+import ClearCache from '@/components/PWA/ClearCache';
 
 export default function Settings() {
   const { data: goalsData, isLoading, error } = useGoals();
@@ -771,6 +772,20 @@ export default function Settings() {
               </div>
             </div>
           )}
+        </div>
+
+        {/* PWA Settings Section */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mt-6">
+          <div className="p-6 border-b border-gray-100">
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">PWA Settings</h2>
+            <p className="text-sm text-gray-600">
+              Manage Progressive Web App cache and service worker settings.
+            </p>
+          </div>
+
+          <div className="p-6 pt-0">
+            <ClearCache />
+          </div>
         </div>
       </div>
     </main>
