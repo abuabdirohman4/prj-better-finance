@@ -3,7 +3,6 @@ import { googleSheetsService } from '@/utils/google';
 // GET /api/accounts/wallet-fractions - Get wallet fractions data
 export async function GET() {
   try {
-    console.log('GET /api/accounts/wallet-fractions called');
     
     const csvData = await googleSheetsService.read("Wallet");
     
@@ -34,7 +33,6 @@ export async function GET() {
       }))
       .sort((a, b) => b.fraction - a.fraction); // Sort by fraction value descending
     
-    console.log(`Successfully fetched ${fractions.length} fractions`);
     
     return Response.json({
       success: true,
@@ -56,14 +54,8 @@ export async function GET() {
 // PUT /api/accounts/wallet-fractions - Update wallet fractions count
 export async function PUT(request) {
   try {
-    console.log('🚀 PUT /api/accounts/wallet-fractions called - VERSION 2.0');
-    console.log('📊 Request method:', request.method);
-    console.log('📊 Request URL:', request.url);
-    console.log('📊 Request headers:', Object.fromEntries(request.headers.entries()));
-    
     // Check if request body exists
     if (!request.body) {
-      console.log('No request body provided');
       return Response.json(
         { error: 'Request body is required' },
         { status: 400 }
@@ -91,7 +83,6 @@ export async function PUT(request) {
 
     // Check if googleSheetsService is available
     if (!googleSheetsService || !googleSheetsService.updateByValue) {
-      console.error('❌ googleSheetsService.updateByValue is not available');
       return Response.json(
         { error: 'Google Sheets service is not available' },
         { status: 500 }
@@ -101,8 +92,6 @@ export async function PUT(request) {
     // Update each fraction count in the Wallet sheet
     const updatePromises = fractions.map(async (fraction) => {
       try {
-        console.log(`Updating fraction ${fraction.fraction} with count ${fraction.count}`);
-        
         // Find the row with this fraction value and update the Count column
         await googleSheetsService.updateByValue(
           "Wallet", 
@@ -116,15 +105,13 @@ export async function PUT(request) {
           }
         );
         
-        console.log(`✅ Successfully updated fraction ${fraction.fraction}`);
         return { success: true, fraction: fraction.fraction };
       } catch (error) {
-        console.error(`❌ Error updating fraction ${fraction.fraction}:`, error);
+        console.error(`Error updating fraction ${fraction.fraction}:`, error);
         return { 
           success: false, 
           fraction: fraction.fraction, 
-          error: error.message,
-          stack: error.stack
+          error: error.message
         };
       }
     });
@@ -132,8 +119,6 @@ export async function PUT(request) {
     const results = await Promise.all(updatePromises);
     const successful = results.filter(r => r.success);
     const failed = results.filter(r => !r.success);
-    
-    console.log(`Update results: ${successful.length} successful, ${failed.length} failed`);
     
     const headers = new Headers();
     headers.set('Content-Type', 'application/json');
@@ -152,14 +137,12 @@ export async function PUT(request) {
     }, { headers });
     
   } catch (error) {
-    console.error('❌ Error updating wallet fractions:', error);
-    console.error('Error stack:', error.stack);
+    console.error('Error updating wallet fractions:', error);
     
     return Response.json(
       { 
         error: 'Failed to update wallet fractions',
-        details: error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        details: error.message
       },
       { status: 500 }
     );
@@ -168,14 +151,11 @@ export async function PUT(request) {
 
 // POST /api/accounts/wallet-fractions - Fallback for PUT method
 export async function POST(request) {
-  console.log('🔄 POST /api/accounts/wallet-fractions called (fallback for PUT)');
   return PUT(request);
 }
 
 // OPTIONS /api/accounts/wallet-fractions - Handle CORS preflight
 export async function OPTIONS() {
-  console.log('🔄 OPTIONS /api/accounts/wallet-fractions called (CORS preflight)');
-  
   const headers = new Headers();
   headers.set('Access-Control-Allow-Origin', '*');
   headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
