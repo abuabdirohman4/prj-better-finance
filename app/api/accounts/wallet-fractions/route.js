@@ -27,21 +27,18 @@ export async function GET() {
     // Filter and format data - only get rows with Fraction values
     const fractions = result.data
       .filter(row => row['Fraction'] && row['Fraction'].trim() !== '')
-      .map((row, index) => ({
+      .map(row => ({
         fraction: parseInt(row['Fraction']) || 0,
         count: parseInt(row['Count']) || 0,
-        type: parseInt(row['Fraction']) === 1000 ? (index === 7 ? 'coin' : 'paper') : null, // Distinguish 1000 paper vs coin
-        id: `${row['Fraction']}_${index}` // Unique ID for each row
+        type: row['Type'] || 'paper', // Use Type column from sheet
+        id: `${row['Fraction']}_${row['Type'] || 'paper'}` // Unique ID based on fraction and type
       }))
       .sort((a, b) => {
-        // Sort by fraction value descending, then by type (paper first for 1000)
+        // Sort by fraction value descending, then by type (paper first)
         if (a.fraction !== b.fraction) {
           return b.fraction - a.fraction;
         }
-        if (a.fraction === 1000) {
-          return a.type === 'paper' ? -1 : 1;
-        }
-        return 0;
+        return a.type === 'paper' ? -1 : 1;
       });
     
     
@@ -84,9 +81,9 @@ export async function PUT(request) {
 
     // Validate each fraction
     for (const fraction of fractions) {
-      if (typeof fraction.fraction === 'undefined' || typeof fraction.count === 'undefined') {
+      if (typeof fraction.fraction === 'undefined' || typeof fraction.count === 'undefined' || !fraction.type) {
         return Response.json(
-          { error: 'Each fraction must have fraction and count properties' },
+          { error: 'Each fraction must have fraction, count, and type properties' },
           { status: 400 }
         );
       }
@@ -103,41 +100,33 @@ export async function PUT(request) {
     // Update each fraction count in the Wallet sheet
     const updatePromises = fractions.map(async (fraction) => {
       try {
-        console.log(`🔄 Updating fraction ${fraction.fraction} (${fraction.type || 'normal'}) with count ${fraction.count}`);
+        // Get all data to find the correct row
+        const walletData = await googleSheetsService.getAll("Wallet");
         
-        // For 1000 denominations, we need to find the specific row
-        let searchValue = fraction.fraction.toString();
-        if (fraction.fraction === 1000 && fraction.type) {
-          // For 1000, we need to find the specific row based on type
-          // This is a bit tricky since both have same fraction value
-          // We'll use the row position to distinguish
-          searchValue = fraction.fraction.toString();
+        // Find the row index that matches both fraction and type
+        let targetRowIndex = -1;
+        for (let i = 1; i < walletData.length; i++) { // Skip header row
+          const row = walletData[i];
+          if (row[0] === fraction.fraction.toString() && row[1] === fraction.type) {
+            targetRowIndex = i;
+            break;
+          }
         }
         
-        // Find the row with this fraction value and update the Count column
-        const result = await googleSheetsService.updateByValue(
+        if (targetRowIndex === -1) {
+          throw new Error(`Row not found for fraction ${fraction.fraction} with type ${fraction.type}`);
+        }
+        
+        // Update the specific row
+        const result = await googleSheetsService.update(
           "Wallet", 
-          "A", // Column A contains Fraction values
-          searchValue, 
-          "B", // Column B contains Count values
-          fraction.count,
-          {
-            caseSensitive: false,
-            exactMatch: true
-          }
+          `C${targetRowIndex + 1}`, // Column C, row number (1-based)
+          fraction.count
         );
         
-        console.log(`✅ Successfully updated fraction ${fraction.fraction} (${fraction.type || 'normal'}):`, result);
         return { success: true, fraction: fraction.fraction, type: fraction.type };
       } catch (error) {
-        console.error(`❌ Error updating fraction ${fraction.fraction} (${fraction.type || 'normal'}):`, error);
-        console.error('Error details:', {
-          message: error.message,
-          stack: error.stack,
-          fraction: fraction.fraction,
-          type: fraction.type,
-          count: fraction.count
-        });
+        console.error(`Error updating fraction ${fraction.fraction} (${fraction.type}):`, error);
         return { 
           success: false, 
           fraction: fraction.fraction, 
@@ -151,16 +140,13 @@ export async function PUT(request) {
     const successful = results.filter(r => r.success);
     const failed = results.filter(r => !r.success);
     
-    console.log(`📊 Update results: ${successful.length} successful, ${failed.length} failed`);
-    console.log('📊 Detailed results:', results);
-    
     const headers = new Headers();
     headers.set('Content-Type', 'application/json');
     headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     headers.set('Last-Modified', new Date().toUTCString());
     headers.set('ETag', `"${Date.now()}"`);
 
-    const response = {
+    return Response.json({
       success: true,
       message: `Successfully updated ${successful.length} fractions`,
       data: {
@@ -168,11 +154,7 @@ export async function PUT(request) {
         failed: failed.length,
         results: results
       }
-    };
-    
-    console.log('📤 Sending response:', response);
-    
-    return Response.json(response, { headers });
+    }, { headers });
     
   } catch (error) {
     console.error('Error updating wallet fractions:', error);

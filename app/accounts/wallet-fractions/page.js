@@ -77,7 +77,8 @@ export default function WalletFractions() {
         body: JSON.stringify({
           fractions: fractions.map(f => ({
             fraction: f.fraction,
-            count: parseInt(f.count) || 0
+            count: parseInt(f.count) || 0,
+            type: f.type
           }))
         }),
       });
@@ -121,6 +122,15 @@ export default function WalletFractions() {
         });
         // Refresh account data
         mutate();
+        
+        // Refresh wallet fractions data to show updated values
+        const refreshResponse = await fetch('/api/accounts/wallet-fractions');
+        if (refreshResponse.ok) {
+          const refreshData = await refreshResponse.json();
+          if (refreshData.success) {
+            setFractions(refreshData.data || []);
+          }
+        }
       } else {
         setResult({ 
           success: false, 
@@ -235,12 +245,7 @@ export default function WalletFractions() {
                   <div className="flex flex-col items-center space-y-2">
                     <div className="w-16 h-6 bg-green-100 rounded flex items-center justify-center">
                       <span className="text-green-700 font-bold text-xs">
-                        {formatCurrency(fraction.fraction).replace('Rp ', '')}
-                        {fraction.type && (
-                          <span className="text-xs text-gray-500 ml-1">
-                            ({fraction.type})
-                          </span>
-                        )}
+                        {fraction.fraction.toLocaleString('id-ID')}
                       </span>
                     </div>
                     <input
