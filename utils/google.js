@@ -22,7 +22,7 @@ if (typeof window === 'undefined') {
 // Google Sheets service - CRUD operations
 export const googleSheetsService = {
 	// READ operations
-	read: async (sheetName, format = 'csv') => {
+	read: async (sheetName, format = 'csv', forceRefresh = false) => {
 		const sheetId = process.env.NEXT_PUBLIC_GOOGLE_SHEET_ID;
 		
 		if (!sheetId) {
@@ -30,10 +30,21 @@ export const googleSheetsService = {
 		}
 		
 		const encodedSheetName = encodeURIComponent(sheetName);
-		const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:${format}&sheet=${encodedSheetName}`;
+		let sheetURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:${format}&sheet=${encodedSheetName}`;
+		
+		// Add cache busting parameter if force refresh is requested
+		if (forceRefresh) {
+			sheetURL += `&t=${Date.now()}`;
+		}
 		
 		try {
-			const response = await axios.get(sheetURL);
+			const response = await axios.get(sheetURL, {
+				headers: {
+					'Cache-Control': 'no-cache, no-store, must-revalidate',
+					'Pragma': 'no-cache',
+					'Expires': '0'
+				}
+			});
 			return response.data;
 		} catch (error) {
 			console.error('❌ Error reading Google Sheet:', error);

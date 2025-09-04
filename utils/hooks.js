@@ -76,7 +76,7 @@ export const useAccounts = () => {
     async () => {
       try {
         // Add cache busting parameter to prevent caching
-        const cacheBuster = `?t=${Date.now()}`;
+        const cacheBuster = `?t=${Date.now()}&force=true`;
         const response = await fetch(`/api/accounts${cacheBuster}`, {
           headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -99,7 +99,7 @@ export const useAccounts = () => {
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
-      dedupingInterval: 10000, // 10 seconds
+      dedupingInterval: 5000, // Reduced to 5 seconds for faster updates
       errorRetryCount: 2,
       refreshInterval: 10000, // Auto-refresh every 10 seconds
       fetcher: undefined // Use inline fetcher instead

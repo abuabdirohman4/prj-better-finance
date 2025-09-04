@@ -45,6 +45,7 @@ function AccountBalancingContent() {
   const [displayValue, setDisplayValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Find the specified account
   const account = accountData?.find(acc => acc.name === accountName);
@@ -195,8 +196,22 @@ function AccountBalancingContent() {
         data,
         difference: parseFloat(realBalance) - currentBalance
       });
-      // Refresh account data
-      mutate();
+      
+      // Force refresh account data with cache busting
+      setRefreshing(true);
+      await mutate();
+      
+      // Additional delay to ensure Google Sheets cache is cleared
+      setTimeout(async () => {
+        // Force refresh with cache busting
+        await mutate();
+      }, 2000);
+      
+      // One more refresh after 5 seconds to ensure data is fully updated
+      setTimeout(async () => {
+        await mutate();
+        setRefreshing(false);
+      }, 5000);
       
     } catch (error) {
       console.error('Fetch Error:', error);
@@ -252,11 +267,16 @@ function AccountBalancingContent() {
               {currentBalancing > 0 && (
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Reality Balance:</span>
-                  <span className="font-bold text-lg text-blue-600">
-                    {accountName === 'Mandiri' || accountName === 'BCA' 
-                      ? formatCurrency(currentBalancing, 'superscript') 
-                      : formatCurrency(currentBalancing)}
-                  </span>
+                  <div className="flex items-center space-x-2">
+                    <span className="font-bold text-lg text-blue-600">
+                      {accountName === 'Mandiri' || accountName === 'BCA' 
+                        ? formatCurrency(currentBalancing, 'superscript') 
+                        : formatCurrency(currentBalancing)}
+                    </span>
+                    {refreshing && (
+                      <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    )}
+                  </div>
                 </div>
               )}
               
@@ -339,6 +359,11 @@ function AccountBalancingContent() {
                 <p className="text-sm text-green-700">
                   Difference: {result.difference > 0 ? '+' : ''}{formatCurrency(result.difference)}
                 </p>
+                {refreshing && (
+                  <p className="text-xs text-blue-600 mt-2">
+                    🔄 Refreshing data to show updated reality balance...
+                  </p>
+                )}
               </div>
             )}
             {!result.success && (

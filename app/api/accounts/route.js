@@ -1,9 +1,13 @@
 import { googleSheetsService } from '@/utils/google';
 
 // GET /api/accounts - Get all accounts data
-export async function GET() {
+export async function GET(request) {
   try {
-    const csvData = await googleSheetsService.read("Summary");
+    // Add cache busting for Google Sheets
+    const url = new URL(request.url);
+    const forceRefresh = url.searchParams.get('force') === 'true';
+    
+    const csvData = await googleSheetsService.read("Summary", 'csv', forceRefresh);
     
     // Parse CSV data
     const Papa = (await import('papaparse')).default;
