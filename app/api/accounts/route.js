@@ -42,10 +42,11 @@ export async function GET(request) {
       data: accounts
     }, {
       headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Cache-Control': forceRefresh ? 'no-cache, no-store, must-revalidate' : 'public, max-age=30, stale-while-revalidate=60',
         'Pragma': 'no-cache',
         'Expires': '0',
-        'Last-Modified': new Date().toUTCString()
+        'Last-Modified': new Date().toUTCString(),
+        'ETag': `"${Date.now()}"`
       }
     });
     

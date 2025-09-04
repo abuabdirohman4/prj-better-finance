@@ -1,6 +1,4 @@
 import useSWR from 'swr';
-import { googleSheetsService } from './google';
-import Papa from 'papaparse';
 
 // Custom hook for fetching transaction data
 export const useTransactions = (sheetName) => {
@@ -10,41 +8,21 @@ export const useTransactions = (sheetName) => {
       if (!sheetName) return null;
       
       try {
-        const csvData = await googleSheetsService.read(sheetName);
-        
-        // Parse CSV data
-        const result = Papa.parse(csvData, {
-          header: true,
-          skipEmptyLines: true,
-          transformHeader: (header) => {
-            const cleanHeader = header.replace(/"/g, '');
-            const words = cleanHeader.split(' ');
-            if (words.length >= 2 && words[0] === words[1]) {
-              return words[0];
-            }
-            if (cleanHeader.includes('Category or Account')) {
-              return 'Category or Account';
-            }
-            return cleanHeader;
-          },
-          transform: (value) => {
-            let cleanValue = value.replace(/"/g, '');
-            if (cleanValue === '  - ' || cleanValue === ' - ') {
-              cleanValue = '0';
-            }
-            return cleanValue;
+        const cacheBuster = `?sheet=${encodeURIComponent(sheetName)}&t=${Date.now()}&force=true`;
+        const response = await fetch(`/api/transactions${cacheBuster}`, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
           }
         });
-
-        // Filter and sort data
-        const parsedData = result.data.filter(row => {
-          return row['Date'] && row['Date'].trim() !== '' && 
-                 row['Transaction'] && row['Transaction'].trim() !== '';
-        });
-
-        const sortedData = parsedData.sort().reverse();
+        const result = await response.json();
         
-        return sortedData;
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to fetch transactions');
+        }
+        
+        return result.data;
       } catch (error) {
         console.error('❌ Error fetching transaction data:', error);
         return [];
@@ -122,20 +100,26 @@ export const useBudgets = (month) => {
     async () => {
       if (!month) return null;
       
-      const [spendingData, earningData, transferData, spendingTFData] = await Promise.all([
-        googleSheetsService.read("Spending"),
-        googleSheetsService.read("Earning"),
-        googleSheetsService.read("Transfer"),
-        googleSheetsService.read("SpendingTF")
-      ]);
-
-      return {
-        spendingData,
-        earningData,
-        transferData,
-        spendingTFData,
-        month
-      };
+      try {
+        const cacheBuster = `?month=${encodeURIComponent(month)}&t=${Date.now()}&force=true`;
+        const response = await fetch(`/api/budgets${cacheBuster}`, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
+        const result = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to fetch budgets');
+        }
+        
+        return result.data;
+      } catch (error) {
+        console.error('❌ Error fetching budget data:', error);
+        return null;
+      }
     },
     {
       revalidateOnFocus: true,
@@ -162,35 +146,21 @@ export const useGoals = () => {
     'goals',
     async () => {
       try {
-        const csvData = await googleSheetsService.read("Goals");
-        
-        // Parse CSV data
-        const result = Papa.parse(csvData, {
-          header: true,
-          skipEmptyLines: true,
-          transformHeader: (header) => {
-            const cleanHeader = header.replace(/"/g, '');
-            return cleanHeader;
-          },
-          transform: (value) => {
-            let cleanValue = value.replace(/"/g, '');
-            if (cleanValue === '  - ' || cleanValue === ' - ') {
-              cleanValue = '0';
-            }
-            return cleanValue;
+        const cacheBuster = `?t=${Date.now()}&force=true`;
+        const response = await fetch(`/api/goals${cacheBuster}`, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
           }
         });
-
-        // Filter data - handle column names with spaces
-        const parsedData = result.data.filter(row => {
-          // Check for Type field (with possible spaces)
-          const typeValue = row['Type'] || row[' Type '] || row['Type '] || row[' Type'];
-          const hasType = typeValue && typeValue.trim() !== '';
-          
-          return hasType;
-        });
+        const result = await response.json();
         
-        return parsedData;
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to fetch goals');
+        }
+        
+        return result.data;
       } catch (error) {
         console.error('❌ Error fetching goals data:', error);
         return [];

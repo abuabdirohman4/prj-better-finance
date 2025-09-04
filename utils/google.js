@@ -23,10 +23,10 @@ if (typeof window === 'undefined') {
 export const googleSheetsService = {
 	// READ operations
 	read: async (sheetName, format = 'csv', forceRefresh = false) => {
-		const sheetId = process.env.NEXT_PUBLIC_GOOGLE_SHEET_ID;
+		const sheetId = process.env.GOOGLE_SHEET_ID;
 		
 		if (!sheetId) {
-			throw new Error('NEXT_PUBLIC_GOOGLE_SHEET_ID is not defined');
+			throw new Error('GOOGLE_SHEET_ID is not defined');
 		}
 		
 		const encodedSheetName = encodeURIComponent(sheetName);
@@ -38,13 +38,7 @@ export const googleSheetsService = {
 		}
 		
 		try {
-			const response = await axios.get(sheetURL, {
-				headers: {
-					'Cache-Control': 'no-cache, no-store, must-revalidate',
-					'Pragma': 'no-cache',
-					'Expires': '0'
-				}
-			});
+			const response = await axios.get(sheetURL);
 			return response.data;
 		} catch (error) {
 			console.error('❌ Error reading Google Sheet:', error);

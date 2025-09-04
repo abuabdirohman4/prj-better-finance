@@ -205,13 +205,8 @@ function AccountBalancingContent() {
       setTimeout(async () => {
         // Force refresh with cache busting
         await mutate();
-      }, 2000);
-      
-      // One more refresh after 5 seconds to ensure data is fully updated
-      setTimeout(async () => {
-        await mutate();
         setRefreshing(false);
-      }, 5000);
+      }, 3000);
       
     } catch (error) {
       console.error('Fetch Error:', error);
