@@ -1,10 +1,41 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAccounts } from "@/utils/hooks";
 import { formatCurrency } from "@/utils/helper";
 
 export default function AccountBalancing() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+        <div className="bg-white shadow-sm border-b border-gray-100">
+          <div className="max-w-md mx-auto px-4 py-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
+              <div className="flex-1">
+                <div className="h-6 bg-gray-200 rounded w-32 mb-2 animate-pulse"></div>
+                <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="max-w-md mx-auto px-4 py-6 pb-24 space-y-6">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <div className="h-6 bg-gray-200 rounded w-40 mb-4 animate-pulse"></div>
+            <div className="space-y-3">
+              <div className="h-8 bg-gray-200 rounded w-full animate-pulse"></div>
+              <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+    }>
+      <AccountBalancingContent />
+    </Suspense>
+  );
+}
+
+function AccountBalancingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const accountName = searchParams.get('account') || 'Wallet';

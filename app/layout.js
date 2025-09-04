@@ -12,7 +12,6 @@ export const metadata = {
   title: "Better Finance",
   description: "A smart financial app to help you manage your money better",
   manifest: "/manifest.json",
-  themeColor: "#2563eb",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   appleWebApp: {
     capable: true,
