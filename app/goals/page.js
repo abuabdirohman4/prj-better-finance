@@ -12,8 +12,8 @@ export default function Goals() {
 
   // State to control collapse for each goal type with default hide all
   const [collapsedTypes, setCollapsedTypes] = useState({
-    Saving: false,
-    Investing: false
+    Saving: true,
+    Investing: true
   });
 
   // State to control hidden goals
