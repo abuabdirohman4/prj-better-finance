@@ -22,19 +22,53 @@ export default function WalletFractions() {
   useEffect(() => {
     const fetchWalletFractions = async () => {
       try {
+        console.log('🔄 Starting to fetch wallet fractions...');
         setIsLoadingFractions(true);
-        const response = await fetch('/api/accounts/wallet-fractions');
-        const data = await response.json();
         
-        if (response.ok) {
+        const url = '/api/wallet-fractions';
+        console.log('📡 Fetching from URL:', url);
+        
+        const response = await fetch(url);
+        console.log('📊 Response status:', response.status);
+        console.log('📊 Response statusText:', response.statusText);
+        console.log('📊 Response headers:', Object.fromEntries(response.headers.entries()));
+        
+        if (!response.ok) {
+          console.error('❌ Response not OK:', response.status, response.statusText);
+          const errorText = await response.text();
+          console.error('❌ Error response body:', errorText);
+          return;
+        }
+        
+        const responseText = await response.text();
+        console.log('📄 Raw response text:', responseText);
+        
+        let data;
+        try {
+          data = JSON.parse(responseText);
+          console.log('✅ Parsed JSON data:', data);
+        } catch (parseError) {
+          console.error('❌ JSON parse error:', parseError);
+          console.error('❌ Raw response that failed to parse:', responseText);
+          return;
+        }
+        
+        if (data.success) {
+          console.log('✅ Successfully fetched fractions:', data.data);
           setFractions(data.data || []);
         } else {
-          console.error('Error fetching wallet fractions:', data.error);
+          console.error('❌ API returned error:', data.error);
         }
       } catch (error) {
-        console.error('Error fetching wallet fractions:', error);
+        console.error('❌ Network or other error:', error);
+        console.error('❌ Error details:', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
       } finally {
         setIsLoadingFractions(false);
+        console.log('🏁 Finished fetching wallet fractions');
       }
     };
 
@@ -59,32 +93,51 @@ export default function WalletFractions() {
 
   // Handle update fractions
   const handleUpdate = async () => {
+    console.log('🚀 Starting wallet fractions update...');
+    console.log('📊 Fractions to update:', fractions);
+    
     setLoading(true);
     setResult(null);
 
     try {
-      const response = await fetch('/api/accounts/wallet-fractions', {
+      const url = '/api/wallet-fractions';
+      const requestBody = {
+        fractions: fractions.map(f => ({
+          fraction: f.fraction,
+          count: parseInt(f.count) || 0
+        }))
+      };
+      
+      console.log('📡 PUT request to:', url);
+      console.log('📦 Request body:', requestBody);
+      
+      const response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          fractions: fractions.map(f => ({
-            fraction: f.fraction,
-            count: parseInt(f.count) || 0
-          }))
-        }),
+        body: JSON.stringify(requestBody),
       });
+
+      console.log('📊 Response status:', response.status);
+      console.log('📊 Response statusText:', response.statusText);
+      console.log('📊 Response headers:', Object.fromEntries(response.headers.entries()));
 
       // Check if response is ok before trying to parse JSON
       if (!response.ok) {
+        console.error('❌ Response not OK:', response.status, response.statusText);
         let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        
         try {
-          const errorData = await response.json();
+          const responseText = await response.text();
+          console.error('❌ Error response text:', responseText);
+          const errorData = JSON.parse(responseText);
           errorMessage = errorData.error || errorData.details || errorMessage;
+          console.error('❌ Parsed error data:', errorData);
         } catch (parseError) {
-          console.error('Failed to parse error response:', parseError);
+          console.error('❌ Failed to parse error response:', parseError);
         }
+        
         setResult({ success: false, error: errorMessage });
         return;
       }
@@ -93,20 +146,25 @@ export default function WalletFractions() {
       let data;
       try {
         const responseText = await response.text();
+        console.log('📄 Raw response text:', responseText);
+        
         if (!responseText) {
           throw new Error('Empty response from server');
         }
         data = JSON.parse(responseText);
+        console.log('✅ Parsed response data:', data);
       } catch (parseError) {
-        console.error('Failed to parse JSON response:', parseError);
+        console.error('❌ Failed to parse JSON response:', parseError);
+        console.error('❌ Raw response that failed to parse:', responseText);
         setResult({ 
           success: false, 
-          error: 'Invalid response from server. Please try again.' 
+          error: 'Invalid response format from server' 
         });
         return;
       }
       
       if (data.success) {
+        console.log('✅ Update successful:', data);
         setResult({ 
           success: true, 
           data,
@@ -114,21 +172,29 @@ export default function WalletFractions() {
           difference: calculateTotal() - walletBalance
         });
         // Refresh account data
+        console.log('🔄 Refreshing account data...');
         mutate();
       } else {
+        console.error('❌ API returned error:', data.error);
         setResult({ 
           success: false, 
           error: data.error || data.details || 'Unknown error occurred' 
         });
       }
     } catch (error) {
-      console.error('Network or other error:', error);
+      console.error('❌ Network or other error:', error);
+      console.error('❌ Error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
       setResult({ 
         success: false, 
         error: `Network error: ${error.message}` 
       });
     } finally {
       setLoading(false);
+      console.log('🏁 Finished wallet fractions update');
     }
   };
 

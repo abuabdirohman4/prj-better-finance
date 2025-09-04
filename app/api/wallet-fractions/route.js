@@ -1,8 +1,10 @@
 import { googleSheetsService } from '@/utils/google';
 
-// GET /api/accounts/wallet-fractions - Get wallet fractions data
+// GET /api/wallet-fractions - Get wallet fractions data
 export async function GET() {
   try {
+    console.log('GET /api/wallet-fractions called');
+    
     const csvData = await googleSheetsService.read("Wallet");
     
     // Parse CSV data
@@ -32,6 +34,8 @@ export async function GET() {
       }))
       .sort((a, b) => b.fraction - a.fraction); // Sort by fraction value descending
     
+    console.log(`Successfully fetched ${fractions.length} fractions`);
+    
     return Response.json({
       success: true,
       data: fractions
@@ -49,11 +53,14 @@ export async function GET() {
   }
 }
 
-// PUT /api/accounts/wallet-fractions - Update wallet fractions count
+// PUT /api/wallet-fractions - Update wallet fractions count
 export async function PUT(request) {
   try {
+    console.log('PUT /api/wallet-fractions called');
+    
     // Check if request body exists
     if (!request.body) {
+      console.log('No request body provided');
       return Response.json(
         { error: 'Request body is required' },
         { status: 400 }
@@ -149,3 +156,4 @@ export async function PUT(request) {
     );
   }
 }
+
