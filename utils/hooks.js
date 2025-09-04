@@ -75,7 +75,15 @@ export const useAccounts = () => {
     'accounts',
     async () => {
       try {
-        const response = await fetch('/api/accounts');
+        // Add cache busting parameter to prevent caching
+        const cacheBuster = `?t=${Date.now()}`;
+        const response = await fetch(`/api/accounts${cacheBuster}`, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
         const result = await response.json();
         
         if (!response.ok) {
