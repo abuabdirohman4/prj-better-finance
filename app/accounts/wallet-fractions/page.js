@@ -23,7 +23,7 @@ export default function WalletFractions() {
     const fetchWalletFractions = async () => {
       try {
         setIsLoadingFractions(true);
-        const response = await fetch('/api/wallet/fractions');
+        const response = await fetch('/api/accounts/wallet-fractions');
         const data = await response.json();
         
         if (response.ok) {
@@ -63,7 +63,7 @@ export default function WalletFractions() {
     setResult(null);
 
     try {
-      const response = await fetch('/api/wallet/fractions', {
+      const response = await fetch('/api/accounts/wallet-fractions', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -76,9 +76,37 @@ export default function WalletFractions() {
         }),
       });
 
-      const data = await response.json();
+      // Check if response is ok before trying to parse JSON
+      if (!response.ok) {
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.details || errorMessage;
+        } catch (parseError) {
+          console.error('Failed to parse error response:', parseError);
+        }
+        setResult({ success: false, error: errorMessage });
+        return;
+      }
+
+      // Try to parse JSON response
+      let data;
+      try {
+        const responseText = await response.text();
+        if (!responseText) {
+          throw new Error('Empty response from server');
+        }
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Failed to parse JSON response:', parseError);
+        setResult({ 
+          success: false, 
+          error: 'Invalid response from server. Please try again.' 
+        });
+        return;
+      }
       
-      if (response.ok) {
+      if (data.success) {
         setResult({ 
           success: true, 
           data,
@@ -88,10 +116,17 @@ export default function WalletFractions() {
         // Refresh account data
         mutate();
       } else {
-        setResult({ success: false, error: data.error });
+        setResult({ 
+          success: false, 
+          error: data.error || data.details || 'Unknown error occurred' 
+        });
       }
     } catch (error) {
-      setResult({ success: false, error: error.message });
+      console.error('Network or other error:', error);
+      setResult({ 
+        success: false, 
+        error: `Network error: ${error.message}` 
+      });
     } finally {
       setLoading(false);
     }

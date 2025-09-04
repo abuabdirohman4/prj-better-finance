@@ -49,14 +49,13 @@ export async function PUT(request) {
       }
     };
 
-    return Response.json(successResponse, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      }
-    });
+    const headers = new Headers();
+    headers.set('Content-Type', 'application/json');
+    headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    headers.set('Last-Modified', new Date().toUTCString());
+    headers.set('ETag', `"${Date.now()}"`);
+    
+    return Response.json(successResponse, { headers });
     
   } catch (error) {
     console.error('❌ Error updating account balancing:', error);
@@ -67,14 +66,15 @@ export async function PUT(request) {
       timestamp: new Date().toISOString()
     };
 
+    const errorHeaders = new Headers();
+    errorHeaders.set('Content-Type', 'application/json');
+    errorHeaders.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    errorHeaders.set('Last-Modified', new Date().toUTCString());
+    errorHeaders.set('ETag', `"${Date.now()}"`);
+    
     return Response.json(errorResponse, {
       status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      }
+      headers: errorHeaders
     });
   }
 }

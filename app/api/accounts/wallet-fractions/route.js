@@ -1,6 +1,6 @@
 import { googleSheetsService } from '@/utils/google';
 
-// GET /api/wallet/fractions - Get wallet fractions data
+// GET /api/accounts/wallet-fractions - Get wallet fractions data
 export async function GET() {
   try {
     const csvData = await googleSheetsService.read("Wallet");
@@ -49,21 +49,50 @@ export async function GET() {
   }
 }
 
-// PUT /api/wallet/fractions - Update wallet fractions count
+// PUT /api/accounts/wallet-fractions - Update wallet fractions count
 export async function PUT(request) {
   try {
+    // Check if request body exists
+    if (!request.body) {
+      return Response.json(
+        { error: 'Request body is required' },
+        { status: 400 }
+      );
+    }
+
     const { fractions } = await request.json();
     
     if (!fractions || !Array.isArray(fractions)) {
       return Response.json(
-        { error: 'Fractions data is required' },
+        { error: 'Fractions data is required and must be an array' },
         { status: 400 }
+      );
+    }
+
+    // Validate each fraction
+    for (const fraction of fractions) {
+      if (typeof fraction.fraction === 'undefined' || typeof fraction.count === 'undefined') {
+        return Response.json(
+          { error: 'Each fraction must have fraction and count properties' },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Check if googleSheetsService is available
+    if (!googleSheetsService || !googleSheetsService.updateByValue) {
+      console.error('❌ googleSheetsService.updateByValue is not available');
+      return Response.json(
+        { error: 'Google Sheets service is not available' },
+        { status: 500 }
       );
     }
 
     // Update each fraction count in the Wallet sheet
     const updatePromises = fractions.map(async (fraction) => {
       try {
+        console.log(`Updating fraction ${fraction.fraction} with count ${fraction.count}`);
+        
         // Find the row with this fraction value and update the Count column
         await googleSheetsService.updateByValue(
           "Wallet", 
@@ -73,19 +102,28 @@ export async function PUT(request) {
           fraction.count,
           {
             caseSensitive: false,
-            exactMatch: true
+            exactMatch: false
           }
         );
+        
+        console.log(`✅ Successfully updated fraction ${fraction.fraction}`);
         return { success: true, fraction: fraction.fraction };
       } catch (error) {
-        console.error(`Error updating fraction ${fraction.fraction}:`, error);
-        return { success: false, fraction: fraction.fraction, error: error.message };
+        console.error(`❌ Error updating fraction ${fraction.fraction}:`, error);
+        return { 
+          success: false, 
+          fraction: fraction.fraction, 
+          error: error.message,
+          stack: error.stack
+        };
       }
     });
 
     const results = await Promise.all(updatePromises);
     const successful = results.filter(r => r.success);
     const failed = results.filter(r => !r.success);
+    
+    console.log(`Update results: ${successful.length} successful, ${failed.length} failed`);
     
     return Response.json({
       success: true,
@@ -99,10 +137,13 @@ export async function PUT(request) {
     
   } catch (error) {
     console.error('❌ Error updating wallet fractions:', error);
+    console.error('Error stack:', error.stack);
+    
     return Response.json(
       { 
         error: 'Failed to update wallet fractions',
-        details: error.message
+        details: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       },
       { status: 500 }
     );
