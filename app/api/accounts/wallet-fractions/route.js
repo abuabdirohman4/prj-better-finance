@@ -27,11 +27,22 @@ export async function GET() {
     // Filter and format data - only get rows with Fraction values
     const fractions = result.data
       .filter(row => row['Fraction'] && row['Fraction'].trim() !== '')
-      .map(row => ({
+      .map((row, index) => ({
         fraction: parseInt(row['Fraction']) || 0,
-        count: parseInt(row['Count']) || 0
+        count: parseInt(row['Count']) || 0,
+        type: parseInt(row['Fraction']) === 1000 ? (index === 7 ? 'coin' : 'paper') : null, // Distinguish 1000 paper vs coin
+        id: `${row['Fraction']}_${index}` // Unique ID for each row
       }))
-      .sort((a, b) => b.fraction - a.fraction); // Sort by fraction value descending
+      .sort((a, b) => {
+        // Sort by fraction value descending, then by type (paper first for 1000)
+        if (a.fraction !== b.fraction) {
+          return b.fraction - a.fraction;
+        }
+        if (a.fraction === 1000) {
+          return a.type === 'paper' ? -1 : 1;
+        }
+        return 0;
+      });
     
     
     return Response.json({
@@ -92,38 +103,45 @@ export async function PUT(request) {
     // Update each fraction count in the Wallet sheet
     const updatePromises = fractions.map(async (fraction) => {
       try {
-        console.log(`🔄 Updating fraction ${fraction.fraction} with count ${fraction.count}`);
+        console.log(`🔄 Updating fraction ${fraction.fraction} (${fraction.type || 'normal'}) with count ${fraction.count}`);
         
-        // First, let's check what data we have in the Wallet sheet
-        const walletData = await googleSheetsService.getAll("Wallet");
-        console.log('📊 Wallet sheet data:', walletData);
+        // For 1000 denominations, we need to find the specific row
+        let searchValue = fraction.fraction.toString();
+        if (fraction.fraction === 1000 && fraction.type) {
+          // For 1000, we need to find the specific row based on type
+          // This is a bit tricky since both have same fraction value
+          // We'll use the row position to distinguish
+          searchValue = fraction.fraction.toString();
+        }
         
         // Find the row with this fraction value and update the Count column
         const result = await googleSheetsService.updateByValue(
           "Wallet", 
           "A", // Column A contains Fraction values
-          fraction.fraction.toString(), 
+          searchValue, 
           "B", // Column B contains Count values
           fraction.count,
           {
             caseSensitive: false,
-            exactMatch: true // Changed to exactMatch: true for better precision
+            exactMatch: true
           }
         );
         
-        console.log(`✅ Successfully updated fraction ${fraction.fraction}:`, result);
-        return { success: true, fraction: fraction.fraction };
+        console.log(`✅ Successfully updated fraction ${fraction.fraction} (${fraction.type || 'normal'}):`, result);
+        return { success: true, fraction: fraction.fraction, type: fraction.type };
       } catch (error) {
-        console.error(`❌ Error updating fraction ${fraction.fraction}:`, error);
+        console.error(`❌ Error updating fraction ${fraction.fraction} (${fraction.type || 'normal'}):`, error);
         console.error('Error details:', {
           message: error.message,
           stack: error.stack,
           fraction: fraction.fraction,
+          type: fraction.type,
           count: fraction.count
         });
         return { 
           success: false, 
           fraction: fraction.fraction, 
+          type: fraction.type,
           error: error.message
         };
       }

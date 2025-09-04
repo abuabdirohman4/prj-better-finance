@@ -231,11 +231,16 @@ export default function WalletFractions() {
           ) : (
             <div className="grid grid-cols-3 gap-3">
               {fractions.map((fraction, index) => (
-                <div key={index} className="p-3 bg-gray-50 rounded-lg">
+                <div key={fraction.id || index} className="p-3 bg-gray-50 rounded-lg">
                   <div className="flex flex-col items-center space-y-2">
                     <div className="w-16 h-6 bg-green-100 rounded flex items-center justify-center">
                       <span className="text-green-700 font-bold text-xs">
                         {formatCurrency(fraction.fraction).replace('Rp ', '')}
+                        {fraction.type && (
+                          <span className="text-xs text-gray-500 ml-1">
+                            ({fraction.type})
+                          </span>
+                        )}
                       </span>
                     </div>
                     <input

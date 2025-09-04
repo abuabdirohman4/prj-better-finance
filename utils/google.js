@@ -209,6 +209,8 @@ export const googleSheetsService = {
 			const { caseSensitive = false, exactMatch = true } = options;
 			const sheetId = process.env.GOOGLE_SHEET_ID;
 			
+			console.log(`🔍 Finding row: ${sheetName}!${column}:${column}, searching for "${searchValue}"`);
+			
 			// Get all values in the specified column
 			const response = await sheets.spreadsheets.values.get({
 				spreadsheetId: sheetId,
@@ -216,6 +218,8 @@ export const googleSheetsService = {
 			});
 			
 			const rows = response.data.values || [];
+			console.log(`📊 Column ${column} data:`, rows);
+			
 			let rowIndex = -1;
 			
 			if (exactMatch) {
@@ -233,7 +237,9 @@ export const googleSheetsService = {
 				);
 			}
 			
-			return rowIndex !== -1 ? rowIndex + 1 : null; // Return 1-based row number
+			const result = rowIndex !== -1 ? rowIndex + 1 : null;
+			console.log(`🎯 Found row ${result} for value "${searchValue}"`);
+			return result; // Return 1-based row number
 		} catch (error) {
 			console.error('❌ Error finding row:', error);
 			throw error;
