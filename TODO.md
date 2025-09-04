@@ -13,7 +13,7 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
 - [x] Fix Warning: In HTML, <a> cannot be a descendant of <a>. This will cause a hydration error.
 - [ ] Remove unused fetchTransactions, fetchBudgets, fetchGoals, fetchAccounts
 - [ ] Merge formatCurrencyShort to formatCurrency
-- [ ] Floating "Clear Cache" in web
+- [x] Floating "Clear Cache" in web
 
 ### 💳 Account/Wallet Management (HIGH PRIORITY)
 - [] **Account Overview**
@@ -26,8 +26,9 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
   - [ ] Show actual balance in home, data balance in accounts
 
 - [] **Issue Tracker**
-  - [ ] Error update balancing in production
+  - [x] Error update balancing in production
   - [ ] When delete/backspace balancing in the middle number, cursor will move to the end
+  - [ ] Make button as component
 
 ### 🏠 Assets Management (HIGH PRIORITY)
 - [ ] **Assets Tracking**
