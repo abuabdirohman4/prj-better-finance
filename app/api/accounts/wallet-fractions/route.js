@@ -92,8 +92,14 @@ export async function PUT(request) {
     // Update each fraction count in the Wallet sheet
     const updatePromises = fractions.map(async (fraction) => {
       try {
+        console.log(`🔄 Updating fraction ${fraction.fraction} with count ${fraction.count}`);
+        
+        // First, let's check what data we have in the Wallet sheet
+        const walletData = await googleSheetsService.getAll("Wallet");
+        console.log('📊 Wallet sheet data:', walletData);
+        
         // Find the row with this fraction value and update the Count column
-        await googleSheetsService.updateByValue(
+        const result = await googleSheetsService.updateByValue(
           "Wallet", 
           "A", // Column A contains Fraction values
           fraction.fraction.toString(), 
@@ -101,13 +107,20 @@ export async function PUT(request) {
           fraction.count,
           {
             caseSensitive: false,
-            exactMatch: false
+            exactMatch: true // Changed to exactMatch: true for better precision
           }
         );
         
+        console.log(`✅ Successfully updated fraction ${fraction.fraction}:`, result);
         return { success: true, fraction: fraction.fraction };
       } catch (error) {
-        console.error(`Error updating fraction ${fraction.fraction}:`, error);
+        console.error(`❌ Error updating fraction ${fraction.fraction}:`, error);
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          fraction: fraction.fraction,
+          count: fraction.count
+        });
         return { 
           success: false, 
           fraction: fraction.fraction, 
@@ -120,13 +133,16 @@ export async function PUT(request) {
     const successful = results.filter(r => r.success);
     const failed = results.filter(r => !r.success);
     
+    console.log(`📊 Update results: ${successful.length} successful, ${failed.length} failed`);
+    console.log('📊 Detailed results:', results);
+    
     const headers = new Headers();
     headers.set('Content-Type', 'application/json');
     headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     headers.set('Last-Modified', new Date().toUTCString());
     headers.set('ETag', `"${Date.now()}"`);
 
-    return Response.json({
+    const response = {
       success: true,
       message: `Successfully updated ${successful.length} fractions`,
       data: {
@@ -134,7 +150,11 @@ export async function PUT(request) {
         failed: failed.length,
         results: results
       }
-    }, { headers });
+    };
+    
+    console.log('📤 Sending response:', response);
+    
+    return Response.json(response, { headers });
     
   } catch (error) {
     console.error('Error updating wallet fractions:', error);
