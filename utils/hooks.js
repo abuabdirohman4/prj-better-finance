@@ -51,10 +51,11 @@ export const useTransactions = (sheetName) => {
       }
     },
     {
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
       revalidateOnReconnect: true,
-      dedupingInterval: 30000, // 30 seconds
+      dedupingInterval: 10000, // 10 seconds
       errorRetryCount: 2,
+      refreshInterval: 10000, // Auto-refresh every 10 seconds
       fetcher: undefined // Use inline fetcher instead
     }
   );
@@ -88,10 +89,11 @@ export const useAccounts = () => {
       }
     },
     {
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
       revalidateOnReconnect: true,
-      dedupingInterval: 30000, // 30 seconds
+      dedupingInterval: 10000, // 10 seconds
       errorRetryCount: 2,
+      refreshInterval: 10000, // Auto-refresh every 10 seconds
       fetcher: undefined // Use inline fetcher instead
     }
   );
@@ -128,10 +130,11 @@ export const useBudgets = (month) => {
       };
     },
     {
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
       revalidateOnReconnect: true,
-      dedupingInterval: 60000, // 1 minute
+      dedupingInterval: 10000, // 10 seconds
       errorRetryCount: 2,
+      refreshInterval: 10000, // Auto-refresh every 10 seconds
       fetcher: undefined // Use inline fetcher instead
     }
   );
@@ -186,10 +189,11 @@ export const useGoals = () => {
       }
     },
     {
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
       revalidateOnReconnect: true,
-      dedupingInterval: 30000, // 30 seconds
+      dedupingInterval: 10000, // 10 seconds
       errorRetryCount: 2,
+      refreshInterval: 10000, // Auto-refresh every 10 seconds
       fetcher: undefined // Use inline fetcher instead
     }
   );
