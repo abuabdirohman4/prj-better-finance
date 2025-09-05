@@ -1,7 +1,7 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useTransactions, useBudgets } from "@/utils/hooks";
-import { formatCurrency, formatCurrencyShort, getCashValue, getCurrentWeek, getBudgetColors } from "@/utils/helper";
+import { formatCurrency, getCashValue, getCurrentWeek, getBudgetColors } from "@/utils/helper";
 import { months } from "@/utils/constants";
 import { getDefaultSheetName } from "@/utils/google";
 import { processBudgetData } from "@/app/budgets/data";
@@ -27,9 +27,38 @@ export default function WeeklyBudget() {
   }, [budgetRawData, selectedMonth]);
 
   // Get current week info
-  const currentDate = new Date();
+  const currentDate = useMemo(() => new Date(), []);
   const currentWeek = getCurrentWeek(currentDate);
-  const daysLeftInWeek = getDaysLeftInWeek(currentDate);
+
+  // Calculate weeks in selected month
+  const weeksInMonth = useMemo(() => {
+    return getWeeksInMonth(selectedMonth);
+  }, [selectedMonth]);
+
+  // Get week info for selected week
+  const selectedWeekInfo = useMemo(() => {
+    return getWeekInfo(selectedMonth, selectedWeek);
+  }, [selectedMonth, selectedWeek]);
+
+  // Get current week number for the selected month
+  const currentWeekNumber = useMemo(() => {
+    // Check if current date is in the selected month
+    const currentMonthIndex = months.indexOf(selectedMonth);
+    if (currentDate.getMonth() !== currentMonthIndex) {
+      return 1; // If not in the selected month, default to week 1
+    }
+    
+    // Use existing getCurrentWeek function
+    const currentWeekInfo = getCurrentWeek(currentDate);
+    return currentWeekInfo.week;
+  }, [selectedMonth, currentDate]);
+
+  // Auto-select current week when month changes or component loads
+  useEffect(() => {
+    if (currentWeekNumber > 0 && currentWeekNumber <= weeksInMonth) {
+      setSelectedWeek(currentWeekNumber);
+    }
+  }, [currentWeekNumber, weeksInMonth]);
 
   // Calculate weekly budgets and spending
   const weeklyData = useMemo(() => {
@@ -44,7 +73,7 @@ export default function WeeklyBudget() {
       const weeklyBudget = monthlyBudget / 4; // Divide by 4 weeks
 
       // Calculate spending for this week
-      const weekSpending = calculateWeekSpending(transactionData, category.key, currentWeek);
+      const weekSpending = calculateWeekSpending(transactionData, category.key, selectedWeekInfo);
       const remaining = Math.abs(weeklyBudget) - weekSpending;
       const percentage = Math.abs(weeklyBudget) > 0 ? (weekSpending / Math.abs(weeklyBudget)) * 100 : 0;
 
@@ -64,7 +93,7 @@ export default function WeeklyBudget() {
         colors
       };
     });
-  }, [budgetData, transactionData, currentWeek]);
+  }, [budgetData, transactionData, selectedWeekInfo]);
 
   const totalWeeklyBudget = weeklyData.reduce((sum, item) => sum + Math.abs(item.weeklyBudget), 0);
   const totalWeekSpending = weeklyData.reduce((sum, item) => sum + item.weekSpending, 0);
@@ -115,9 +144,37 @@ export default function WeeklyBudget() {
         </div>
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-4">
+          {/* Page Title */}
             <div>
               <h1 className="text-2xl font-bold text-white mb-1">Weekly Budget</h1>
               <p className="text-orange-100 text-sm">{currentWeek.month} {currentWeek.year}</p>
+              {/* <p className="text-orange-100 text-sm"></p>
+                Week {selectedWeek} of {selectedWeekInfo.month} {selectedWeekInfo.year}
+              </p> */}
+            </div>
+            {/* Settings and Week Selector */}
+            <div className="flex items-center space-x-3">
+              {/* Week Selector */}
+              <div className="relative">
+                <select
+                  id="week"
+                  value={selectedWeek}
+                  onChange={(e) => setSelectedWeek(parseInt(e.target.value))}
+                  className="appearance-none bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 pr-10 cursor-pointer hover:bg-white/30 transition-all duration-200"
+                >
+                  {Array.from({ length: weeksInMonth }, (_, i) => i + 1).map((week) => (
+                    <option key={week} value={week} className="text-gray-800 bg-white">
+                      Week {week}
+                    </option>
+                  ))}
+                </select>
+                {/* Custom dropdown arrow */}
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -217,11 +274,87 @@ export default function WeeklyBudget() {
 }
 
 // Helper functions
-function getDaysLeftInWeek(date) {
-  const dayOfWeek = date.getDay();
-  // Sunday = 0, Monday = 1, ..., Saturday = 6
-  // Days left in week (including today)
-  return dayOfWeek === 0 ? 1 : 8 - dayOfWeek;
+function getWeeksInMonth(monthName) {
+  // Get the current year and month index
+  const currentYear = new Date().getFullYear();
+  const monthIndex = months.indexOf(monthName);
+  
+  if (monthIndex === -1) return 4; // Default to 4 weeks if month not found
+  
+  // Create date for the first day of the month
+  const firstDayOfMonth = new Date(currentYear, monthIndex, 1);
+  const lastDayOfMonth = new Date(currentYear, monthIndex + 1, 0);
+  
+  // Find the first Monday of the month
+  const firstMonday = new Date(firstDayOfMonth);
+  const firstDayOfWeek = firstDayOfMonth.getDay();
+  // Fix: If it's already Monday (1), don't add days. If it's Sunday (0), add 1 day.
+  // For other days, calculate days to next Monday
+  const daysToFirstMonday = firstDayOfWeek === 0 ? 1 : firstDayOfWeek === 1 ? 0 : 8 - firstDayOfWeek;
+  if (daysToFirstMonday > 0) {
+    firstMonday.setDate(firstDayOfMonth.getDate() + daysToFirstMonday);
+  }
+  
+  // If the first Monday is not in the current month, use the first day of month
+  if (firstMonday.getMonth() !== monthIndex) {
+    firstMonday.setTime(firstDayOfMonth.getTime());
+  }
+  
+  // Calculate the number of weeks
+  const daysInMonth = lastDayOfMonth.getDate();
+  const firstMondayDate = firstMonday.getDate();
+  const remainingDays = daysInMonth - firstMondayDate + 1;
+  const weeks = Math.ceil(remainingDays / 7);
+  
+  return Math.max(weeks, 1); // At least 1 week
+}
+
+function getWeekInfo(monthName, weekNumber) {
+  // Get the current year and month index
+  const currentYear = new Date().getFullYear();
+  const monthIndex = months.indexOf(monthName);
+  
+  if (monthIndex === -1) {
+    // Fallback to current month
+    const now = new Date();
+    return getCurrentWeek(now);
+  }
+  
+  // Create date for the first day of the month
+  const firstDayOfMonth = new Date(currentYear, monthIndex, 1);
+  
+  // Find the first Monday of the month
+  const firstMonday = new Date(firstDayOfMonth);
+  const firstDayOfWeek = firstDayOfMonth.getDay();
+  // Fix: If it's already Monday (1), don't add days. If it's Sunday (0), add 1 day.
+  // For other days, calculate days to next Monday
+  const daysToFirstMonday = firstDayOfWeek === 0 ? 1 : firstDayOfWeek === 1 ? 0 : 8 - firstDayOfWeek;
+  if (daysToFirstMonday > 0) {
+    firstMonday.setDate(firstDayOfMonth.getDate() + daysToFirstMonday);
+  }
+  
+  // If the first Monday is not in the current month, use the first day of month
+  if (firstMonday.getMonth() !== monthIndex) {
+    firstMonday.setTime(firstDayOfMonth.getTime());
+  }
+  
+  // Calculate the start date for the selected week
+  const weekStartDate = new Date(firstMonday);
+  weekStartDate.setDate(firstMonday.getDate() + (weekNumber - 1) * 7);
+  weekStartDate.setHours(0, 0, 0, 0);
+  
+  // Calculate the end date for the selected week
+  const weekEndDate = new Date(weekStartDate);
+  weekEndDate.setDate(weekStartDate.getDate() + 6);
+  weekEndDate.setHours(23, 59, 59, 999);
+  
+  return {
+    week: weekNumber,
+    month: monthName,
+    year: currentYear,
+    startDate: weekStartDate,
+    endDate: weekEndDate
+  };
 }
 
 function calculateWeekSpending(transactions, category, currentWeek) {
@@ -259,3 +392,4 @@ function calculateWeekSpending(transactions, category, currentWeek) {
 
   return total;
 }
+
