@@ -13,13 +13,15 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
 - [x] Fix Warning: In HTML, <a> cannot be a descendant of <a>. This will cause a hydration error.
 - [ ] Remove unused fetchTransactions, fetchBudgets, fetchGoals, fetchAccounts
 - [ ] Merge formatCurrencyShort to formatCurrency
+- [ ] (Balancing) When delete/backspace balancing in the middle number, cursor will move to the end
 - [x] Floating "Clear Cache" in web
 
 ### 💳 LIST IDEA
 - [ ] Remove Transactions & Accounts in bottom navbar, access from home
+- [ ] Change transactions to be like Livin' andiri
 
 ### 💳 Account/Wallet Management (HIGH PRIORITY)
-- [] **Account Overview**
+- [x] **Account Overview**
   - [x] Integration dengan Google Sheets "Summary"
   - [x] Real-time balance display untuk semua account
   - [x] Account categorization (Wallet, ATM, Platform, etc.)
@@ -28,10 +30,17 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
   - [x] Show multiple fraction money for Wallet
   - [x] Show actual balance in home, data balance in accounts
 
-- [] **Issue Tracker**
+- [x] **Issue Tracker**
   - [x] Error update balancing in production
-  - [ ] When delete/backspace balancing in the middle number, cursor will move to the end
   - [x] Make button as component
+
+### 📈 Weekly Budget Tracking - Eating Category (HIGH PRIORITY)
+- [ ] **Weekly Budget System**
+  - [ ] Weekly budget calculation untuk kategori Eating
+  - [ ] Subcategory weekly budget breakdown
+  - [ ] Weekly spending progress tracking
+  - [ ] Remaining weekly budget display
+  - [ ] Weekly budget alerts dan notifications
 
 ### 🏠 Assets Management (HIGH PRIORITY)
 - [ ] **Assets Tracking**
@@ -47,12 +56,12 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
   <!-- - [ ] Investment performance monitoring -->
 
 ### ⚙️ Settings Consolidation (HIGH PRIORITY)
-- [ ] **Settings Management**
-  - [ ] Centralized settings access (single entry point)
-  - [ ] Remove duplicate settings buttons dari Budgets & Goals pages
-  - [ ] Settings page redesign
-  - [ ] User preferences management
-  - [ ] Settings access hanya di home atau bottom navbar
+- [x] **Settings Management**
+  - [x] Centralized settings access (single entry point)
+  - [x] Remove duplicate settings buttons dari Budgets & Goals pages
+  <!-- - [ ] Settings page redesign -->
+  <!-- - [ ] User preferences management -->
+  - [x] Settings access hanya di home atau bottom navbar
 
 ### 🧭 Navigation Redesign (HIGH PRIORITY)
 - [ ] **Bottom Navigation Upgrade**
@@ -60,14 +69,6 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
   - [ ] Central quick action button (QRIS scan or main feature)
   - [ ] Navigation structure planning untuk 7 halaman total
   - [ ] Settings access consolidation
-
-### 📈 Weekly Budget Tracking - Eating Category (HIGH PRIORITY)
-- [ ] **Weekly Budget System**
-  - [ ] Weekly budget calculation untuk kategori Eating
-  - [ ] Subcategory weekly budget breakdown
-  - [ ] Weekly spending progress tracking
-  - [ ] Remaining weekly budget display
-  - [ ] Weekly budget alerts dan notifications
 
 ### 🔍 Advanced Transaction Filtering (HIGH PRIORITY)
 - [ ] **Google Sheets-like Filtering**

@@ -371,3 +371,40 @@ export function getGoalColors(progress) {
     };
   }
 };
+
+export function getCurrentWeek(date) {
+  // Get start of week (Monday)
+  const startOfWeek = new Date(date);
+  const day = startOfWeek.getDay();
+  const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+  startOfWeek.setDate(diff);
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  // Get end of week (Sunday)
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+  endOfWeek.setHours(23, 59, 59, 999);
+
+  // Calculate week number within the month (1, 2, 3, 4)
+  const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+  const firstMondayOfMonth = new Date(firstDayOfMonth);
+  const firstDayOfWeek = firstDayOfMonth.getDay();
+  const daysToFirstMonday = firstDayOfWeek === 0 ? 1 : 8 - firstDayOfWeek;
+  firstMondayOfMonth.setDate(firstDayOfMonth.getDate() + daysToFirstMonday);
+  firstMondayOfMonth.setHours(0, 0, 0, 0);
+  
+  // If the first Monday is not in the current month, use the first day of month
+  if (firstMondayOfMonth.getMonth() !== date.getMonth()) {
+    firstMondayOfMonth.setTime(firstDayOfMonth.getTime());
+  }
+  
+  const weekNumber = Math.floor((startOfWeek - firstMondayOfMonth) / (7 * 24 * 60 * 60 * 1000)) + 1;
+  
+  return {
+    week: weekNumber,
+    month: date.toLocaleString('default', { month: 'long' }),
+    year: date.getFullYear(),
+    startDate: startOfWeek,
+    endDate: endOfWeek
+  };
+}

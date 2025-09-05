@@ -637,9 +637,9 @@ export default function Budgets() {
                             // Get appropriate icon based on subcategory
                             const getSubCategoryIcon = (category, subCat) => {
                               if (category === 'eating') {
-                                if (subCat.toLowerCase().includes('dining') || subCat.toLowerCase().includes('out')) return '🍔';
-                                if (subCat.toLowerCase().includes('food')) return '🍽️';
-                                if (subCat.toLowerCase().includes('grocery')) return '🛒';
+                                if (subCat.toLowerCase().includes('dining') || subCat.toLowerCase().includes('out')) return '🍽️';
+                                if (subCat.toLowerCase().includes('food')) return '🍕';
+                                if (subCat.toLowerCase().includes('groceries')) return '🛒';
                                 if (subCat.toLowerCase().includes('grab')) return '🚗';
                                 return '🍽️';
                               } else if (category === 'living') {
