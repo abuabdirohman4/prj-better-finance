@@ -19,6 +19,8 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
 ### 💳 LIST IDEA
 - [ ] Remove Transactions & Accounts in bottom navbar, access from home
 - [ ] Change transactions to be like Livin' andiri
+- [ ] Change count transactions per day to sum of spending per day
+- [ ] Change UI of budgets to have reamining like weekly budget
 
 ### 💳 Account/Wallet Management (HIGH PRIORITY)
 - [x] **Account Overview**

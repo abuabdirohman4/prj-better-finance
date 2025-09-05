@@ -335,7 +335,7 @@ export default function Settings() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Link 
-                href="/goals"
+                href="/"
                 className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
               >
                 <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -135,7 +135,15 @@ export default function Home() {
 
       {/* Top Accounts */}
       <div className="px-3 mb-8">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Top Used Accounts</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-800">Top Used Accounts</h3>
+          <Link
+            href="/accounts"
+            className="text-sm text-blue-600 hover:text-blue-700 font-medium mr-2"
+          >
+            View All
+          </Link>
+        </div>
         {accountsLoading ? (
           <div className="grid grid-cols-3 gap-3">
             {[1, 2, 3].map((i) => (
@@ -163,7 +171,7 @@ export default function Home() {
       <div className="px-3 pb-24">
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">Recent Activity</h3>
+            <h3 className="text-lg font-semibold text-gray-800">Recent Transactions</h3>
             <Link
               href="/transactions"
               className="text-sm text-blue-600 hover:text-blue-700 font-medium"
