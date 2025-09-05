@@ -1,7 +1,7 @@
 "use client";
 import { useState, useMemo } from "react";
 import { useTransactions, useBudgets } from "@/utils/hooks";
-import { formatCurrency, getCashValue, getCurrentWeek } from "@/utils/helper";
+import { formatCurrency, formatCurrencyShort, getCashValue, getCurrentWeek, getBudgetColors } from "@/utils/helper";
 import { months } from "@/utils/constants";
 import { getDefaultSheetName } from "@/utils/google";
 import { processBudgetData } from "@/app/budgets/data";
@@ -16,10 +16,9 @@ const EATING_CATEGORIES = [
 
 export default function WeeklyBudget() {
   const [selectedMonth, setSelectedMonth] = useState(getDefaultSheetName(months));
+  const [selectedWeek, setSelectedWeek] = useState(1);
   const { data: budgetRawData, isLoading: budgetLoading, error: budgetError } = useBudgets(selectedMonth);
   const { data: transactionData, isLoading: transactionLoading, error: transactionError } = useTransactions(selectedMonth);
-
-
 
   // Process budget data
   const budgetData = useMemo(() => {
@@ -50,13 +49,19 @@ export default function WeeklyBudget() {
       const percentage = Math.abs(weeklyBudget) > 0 ? (weekSpending / Math.abs(weeklyBudget)) * 100 : 0;
 
 
+      // const finalPercentage = Math.min(percentage, 100);
+      // const colors = getBudgetColors(finalPercentage);
+      const colors = getBudgetColors(percentage);
+
       return {
         ...category,
         monthlyBudget,
         weeklyBudget,
         weekSpending,
         remaining,
-        percentage: Math.min(percentage, 100)
+        // percentage: finalPercentage,
+        percentage,
+        colors
       };
     });
   }, [budgetData, transactionData, currentWeek]);
@@ -64,6 +69,8 @@ export default function WeeklyBudget() {
   const totalWeeklyBudget = weeklyData.reduce((sum, item) => sum + Math.abs(item.weeklyBudget), 0);
   const totalWeekSpending = weeklyData.reduce((sum, item) => sum + item.weekSpending, 0);
   const totalRemaining = totalWeeklyBudget - totalWeekSpending;
+  const totalPercentage = totalWeeklyBudget > 0 ? (totalWeekSpending / totalWeeklyBudget) * 100 : 0;
+  const totalColors = getBudgetColors(totalPercentage);
 
   if (budgetLoading || transactionLoading) {
     return (
@@ -110,29 +117,59 @@ export default function WeeklyBudget() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-white mb-1">Weekly Budget</h1>
-              <p className="text-orange-100 text-sm">Week {currentWeek.week + 1} ({currentWeek.month} {currentWeek.year})</p>
-            </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold text-white">
-                {formatCurrency(Math.abs(totalRemaining))}
-              </div>
-              <div className="text-orange-100 text-sm">Remaining</div>
+              <p className="text-orange-100 text-sm">{currentWeek.month} {currentWeek.year}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="px-4 pt-8 pb-24 space-y-4">
-        {/* Summary Cards */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <div className="text-sm text-gray-500 mb-1">Weekly Budget</div>
-            <div className="text-xl font-bold text-gray-900">{formatCurrency(Math.abs(totalWeeklyBudget))}</div>
+      <div className="px-3 pb-24 mt-6 space-y-4">
+
+        {/* Overall Progress */}
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+          {/* Header with Icon */}
+          <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-800">Overall Progress</h2>
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
           </div>
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <div className="text-sm text-gray-500 mb-1">Days Left</div>
-            <div className="text-xl font-bold text-gray-900">{daysLeftInWeek} days</div>
+
+          {/* Summary Stats */}
+          <div className="grid grid-cols-3 gap-4 mb-4">
+            <div className="col-span-2">
+              <p className="text-sm text-gray-600 mb-1">Spending / Budget</p>
+              <p className="text-lg font-bold text-gray-700">
+                {formatCurrency(Math.abs(totalWeekSpending))} / {formatCurrency(Math.abs(totalWeeklyBudget))}
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-gray-600 mb-1">Remaining</p>
+              <p className={`text-lg font-bold ${
+                totalRemaining >= 0 ? 'text-gray-700' : 'text-red-600'
+              }`}>
+              {/* <p className={`text-lg font-bold ${totalColors.text}`}></p> */}
+                {formatCurrency(totalRemaining)}
+              </p>
+            </div>
+          </div>
+
+          {/* Progress Bar with Percentage */}
+          <div className="flex items-center gap-3 mb-2">
+            <div className="flex-1 bg-gray-200 rounded-full h-3">
+              <div 
+                className={`h-3 rounded-full transition-all duration-200 ease-out ${totalColors.progress}`}
+                style={{ 
+                  width: `${Math.min(totalPercentage, 100)}%` 
+                }}
+              ></div>
+            </div>
+            <span className={`text-sm font-semibold ${totalColors.text}`}>
+              {totalPercentage.toFixed(0)}%
+            </span>
           </div>
         </div>
 
@@ -153,32 +190,23 @@ export default function WeeklyBudget() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className={`text-lg font-bold ${category.remaining >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <div className={`text-lg font-bold ${category.colors.text}`}>
                     {formatCurrency(category.remaining)}
                   </div>
                 </div>
               </div>
 
-              {/* Progress Bar */}
-              <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                <div 
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    category.percentage >= 100 ? 'bg-red-500' : 
-                    category.percentage >= 80 ? 'bg-yellow-500' : 'bg-green-500'
-                  }`}
-                  style={{ width: `${category.percentage}%` }}
-                ></div>
-              </div>
-
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>0%</span>
-                <span className={`font-medium ${
-                  category.percentage >= 100 ? 'text-red-600' : 
-                  category.percentage >= 80 ? 'text-yellow-600' : 'text-green-600'
-                }`}>
+              {/* Progress Bar with Percentage */}
+              <div className="flex items-center space-x-3">
+                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full transition-all duration-300 ${category.colors.progress}`}
+                    style={{ width: `${Math.min(category.percentage, 100)}%` }}
+                  ></div>
+                </div>
+                <div className={`text-sm font-medium ${category.colors.text}`}>
                   {category.percentage.toFixed(0)}%
-                </span>
-                <span>100%</span>
+                </div>
               </div>
             </div>
           ))}
