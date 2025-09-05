@@ -19,9 +19,10 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
 
 ### 💳 LIST IDEA
 - [x] Remove Transactions & Accounts in bottom navbar, access from home
-- [ ] Change transactions to be like Livin' andiri
+- [ ] Change transactions to be like Livin' Mandiri
 - [ ] Change count transactions per day to sum of spending per day
-- [ ] Change UI of budgets to have reamining like weekly budget
+- [ ] Change UI of budgets to have reamining like weekly budget & use long style currency
+- [ ] When typing digit, keyboard be only number
 
 ### 💳 Account/Wallet Management (HIGH PRIORITY)
 - [x] **Account Overview**
@@ -38,12 +39,12 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
   - [x] Make button as component
 
 ### 📈 Weekly Budget Tracking - Eating Category (HIGH PRIORITY)
-- [ ] **Weekly Budget System**
-  - [ ] Weekly budget calculation untuk kategori Eating
-  - [ ] Subcategory weekly budget breakdown
-  - [ ] Weekly spending progress tracking
-  - [ ] Remaining weekly budget display
-  - [ ] Weekly budget alerts dan notifications
+- [x] **Weekly Budget System**
+  - [x] Weekly budget calculation untuk kategori Eating
+  - [x] Subcategory weekly budget breakdown
+  - [x] Weekly spending progress tracking
+  - [x] Remaining weekly budget display
+  - [x] Implement Dynamic Weekly Budget with Monthly Pool
 
 ### 🏠 Assets Management (HIGH PRIORITY)
 - [ ] **Assets Tracking**
@@ -67,11 +68,11 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
   - [x] Settings access hanya di home atau bottom navbar
 
 ### 🧭 Navigation Redesign (HIGH PRIORITY)
-- [ ] **Bottom Navigation Upgrade**
-  - [ ] Redesigned bottom navigation (max 4 items + 1 center action)
-  - [ ] Central quick action button (QRIS scan or main feature)
-  - [ ] Navigation structure planning untuk 7 halaman total
-  - [ ] Settings access consolidation
+- [x] **Bottom Navigation Upgrade**
+  - [x] Redesigned bottom navigation (max 4 items + 1 center action)
+  <!-- - [ ] Central quick action button (QRIS scan or main feature) -->
+  - [x] Navigation structure planning untuk 7 halaman total
+  - [x] Settings access consolidation
 
 ### 🔍 Advanced Transaction Filtering (HIGH PRIORITY)
 - [ ] **Google Sheets-like Filtering**
