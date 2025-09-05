@@ -15,9 +15,10 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
 - [ ] Merge formatCurrencyShort to formatCurrency
 - [ ] (Balancing) When delete/backspace balancing in the middle number, cursor will move to the end
 - [x] Floating "Clear Cache" in web
+- [x] Add back button in page transactions & accounts
 
 ### 💳 LIST IDEA
-- [ ] Remove Transactions & Accounts in bottom navbar, access from home
+- [x] Remove Transactions & Accounts in bottom navbar, access from home
 - [ ] Change transactions to be like Livin' andiri
 - [ ] Change count transactions per day to sum of spending per day
 - [ ] Change UI of budgets to have reamining like weekly budget

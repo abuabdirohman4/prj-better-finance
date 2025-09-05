@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useAccounts } from "@/utils/hooks";
 import {
   formatCurrency,
@@ -24,9 +25,19 @@ export default function Accounts() {
           </svg>
         </div>
         <div className="relative z-10">
-          <div className="mb-4">
-            <h1 className="text-2xl font-bold text-white mb-1">Accounts</h1>
-            <p className="text-blue-100 text-sm">Manage your financial accounts</p>
+          <div className="flex items-center space-x-3 mb-4">
+            <Link 
+              href="/"
+              className="p-2 rounded-full hover:bg-white/20 transition-colors duration-200"
+            >
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold text-white mb-1">Accounts</h1>
+              <p className="text-blue-100 text-sm">Manage your financial accounts</p>
+            </div>
           </div>
         </div>
       </div>

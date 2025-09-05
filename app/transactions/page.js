@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { months } from "@/utils/constants";
 import { useTransactions } from "@/utils/hooks";
 import Transaction from "@/components/Card/Transaction";
@@ -42,9 +43,19 @@ export default function Transactions() {
         </div>
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-2xl font-bold text-white mb-1">Transactions</h1>
-              <p className="text-blue-100 text-sm">Track your financial activities</p>
+            <div className="flex items-center space-x-3">
+              <Link 
+                href="/"
+                className="p-2 rounded-full hover:bg-white/20 transition-colors duration-200"
+              >
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </Link>
+              <div>
+                <h1 className="text-2xl font-bold text-white mb-1">Transactions</h1>
+                <p className="text-blue-100 text-sm">Track your financial activities</p>
+              </div>
             </div>
             <div className="relative">
               <select
@@ -125,11 +136,11 @@ export default function Transactions() {
       {/* Transactions List */}
       <div className="px-3 pb-24">
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-6 pb-0 px-3 border-b border-gray-100">
             <h3 className="text-xl font-bold text-gray-900">Transaction</h3>
           </div>
           
-          <div className="p-6">
+          <div className="p-3">
             {isLoading ? (
               <div className="space-y-4">
                 {/* Skeleton for transactions */}
