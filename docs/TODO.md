@@ -15,6 +15,9 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
 - [ ] Merge formatCurrencyShort to formatCurrency
 - [x] Floating "Clear Cache" in web
 
+### 💳 LIST IDEA
+- [ ] Remove Transactions & Accounts in bottom navbar, access from home
+
 ### 💳 Account/Wallet Management (HIGH PRIORITY)
 - [] **Account Overview**
   - [x] Integration dengan Google Sheets "Summary"
@@ -23,7 +26,7 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
   - [x] Account balance tracking
   - [x] Show decimal for Mandiri & BCA
   - [x] Show multiple fraction money for Wallet
-  - [ ] Show actual balance in home, data balance in accounts
+  - [x] Show actual balance in home, data balance in accounts
 
 - [] **Issue Tracker**
   - [x] Error update balancing in production

@@ -5,7 +5,7 @@ import { useTransactions, useAccounts } from '@/utils/hooks';
 import { months } from '@/utils/constants';
 import { formatCurrency, getCashValue, getTotalCashGroupedByDate } from '@/utils/helper';
 import { getDefaultSheetName } from '@/utils/google';
-import AccountCard from '@/components/Card/Account';
+import { AccountWithComparison } from '@/components/Card';
 
 export default function Home() {
   const selectedMonth = getDefaultSheetName(months);
@@ -153,7 +153,7 @@ export default function Home() {
             {accountData && accountData
               .filter(account => ['Wallet', 'Mandiri', 'BCA'].includes(account.name))
               .map((account) => (
-                <AccountCard key={account.name} account={account} />
+                <AccountWithComparison key={account.name} account={account} />
               ))}
           </div>
         )}
