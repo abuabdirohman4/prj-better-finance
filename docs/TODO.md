@@ -8,11 +8,9 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
 ## 🚀 **PHASE 1: Priority Features (User Requested)**
 
 ### 💳 BUG ISSUE
-- [ ] Budget value decrease when categories/budget item hide
+- [x] Budget value decrease when categories/budget item hide
 - [x] Fix Warning: Extra attributes from the server: data-new-gr-c-s-check-loaded, data-gr-ext-installed
 - [x] Fix Warning: In HTML, <a> cannot be a descendant of <a>. This will cause a hydration error.
-- [ ] Remove unused fetchTransactions, fetchBudgets, fetchGoals, fetchAccounts
-- [ ] Merge formatCurrencyShort to formatCurrency
 - [ ] (Balancing) When delete/backspace balancing in the middle number, cursor will move to the end
 - [x] Floating "Clear Cache" in web
 - [x] Add back button in page transactions & accounts
@@ -21,8 +19,14 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
 - [x] Remove Transactions & Accounts in bottom navbar, access from home
 - [ ] Change transactions to be like Livin' Mandiri
 - [ ] Change count transactions per day to sum of spending per day
-- [ ] Change UI of budgets to have reamining like weekly budget & use long style currency
+- [ ] Change UI of budgets to have remaining & use long style currency like weekly budget 
 - [ ] When typing digit, keyboard be only number
+
+### REFACTORING
+- [ ] Merge formatCurrencyShort to formatCurrency
+- [ ] Remove unused fetchTransactions, fetchBudgets, fetchGoals, fetchAccounts
+- [ ] Remove unused code
+- [ ] Undestanding flow code & each function & code goals
 
 ### 💳 Account/Wallet Management (HIGH PRIORITY)
 - [x] **Account Overview**

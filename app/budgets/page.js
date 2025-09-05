@@ -1,15 +1,12 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
-import Link from "next/link";
+import { useState, useEffect, useMemo } from "react";
 import { categories, months } from "@/utils/constants";
 import { useTransactions, useBudgets } from "@/utils/hooks";
 import { processBudgetData } from "./data";
 import {
   formatCurrency,
   formatCurrencyShort,
-  getCashValue,
-  getTotalObjectValue,
   getBudgetColors,
   toProperCase,
 } from "@/utils/helper";
@@ -18,8 +15,6 @@ import Cookies from 'js-cookie';
 
 export default function Budgets() {
   const [selectedMonth, setSelectedMonth] = useState(getDefaultSheetName(months));
-  const [categorySpending, setCategorySpending] = useState([]);
-  const [totalSpending, setTotalSpending] = useState(0);
   
   // State to control collapse for each category with default hide all
   const [collapsedCategories, setCollapsedCategories] = useState({
@@ -123,25 +118,6 @@ export default function Budgets() {
   const { data: transactionData, isLoading: isTransactionLoading, error: transactionError } = useTransactions(selectedMonth);
   const { data: budgetRawData, isLoading: isBudgetLoading, error: budgetError } = useBudgets(selectedMonth);
 
-  // Process transaction data when it changes
-  useEffect(() => {
-    if (transactionData && Array.isArray(transactionData)) {
-      const totalSpendingCategory = sumCategory(
-        transactionData,
-        [
-          ...categories.eating,
-          ...categories.living,
-          ...categories.saving,
-          ...categories.investing,
-          ...categories.giving,
-        ],
-        "Spending"
-      );
-      setCategorySpending(totalSpendingCategory);
-      setTotalSpending(getTotalObjectValue(totalSpendingCategory));
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transactionData]);
 
   // Process budget data when it changes
   const budgetData = useMemo(() => {
@@ -149,61 +125,6 @@ export default function Budgets() {
     return processBudgetData(budgetRawData, selectedMonth);
   }, [budgetRawData, selectedMonth]);
 
-  const sumCategory = useCallback(
-    (transaction, categoryList, typeTransaction) => {
-      // Add type checking and error handling
-      if (!transaction || !Array.isArray(transaction)) {
-        console.warn('sumCategory: transaction is not an array:', transaction);
-        return {};
-      }
-
-      if (!categoryList || !Array.isArray(categoryList)) {
-        console.warn('sumCategory: categoryList is not an array:', categoryList);
-        return {};
-      }
-
-      const newSubCategorySpending = {};
-      const newCategorySpending = {};
-      
-      for (const category of categoryList) {
-        const transactionsInCategory = transaction.filter(
-          (item) =>
-            item && 
-            item["Category or Account"] === category &&
-            item.Transaction === typeTransaction
-        );
-        const totalAmount = transactionsInCategory.reduce(
-          (acc, item) => acc + getCashValue(item),
-          0
-        );
-        // Determine parent category
-        let parentCategory = "";
-        for (const item in categories) {
-          if (categories[item].includes(category)) {
-            parentCategory = item;
-          }
-        }
-        // Add total value to appropriate category
-        if (parentCategory) {
-          if (!newSubCategorySpending[parentCategory]) {
-            newSubCategorySpending[parentCategory] = {};
-          }
-          newSubCategorySpending[parentCategory][category] = totalAmount;
-        }
-      }
-
-      for (const category in categories) {
-        const totalAmount = Object.values(
-          newSubCategorySpending[category] || {}
-        ).reduce((acc, curr) => acc + curr, 0);
-        newCategorySpending[category] = totalAmount;
-      }
-
-      setCategorySpending(newCategorySpending);
-      return newCategorySpending;
-    },
-    []
-  );
 
   // Group budget data based on categories constants with case-insensitive matching
   // AND prevent duplication with category priority
@@ -254,45 +175,6 @@ export default function Budgets() {
     return result;
   })() : null;
 
-  // Calculate totals per category with clearer concept (excluding hidden items)
-  const calculateCategoryTotals = (groupedBudgetData) => {
-    if (!groupedBudgetData) return {};
-    
-    const categoryTotals = {};
-    
-    Object.entries(groupedBudgetData).forEach(([categoryKey, categoryData]) => {
-      // Skip hidden categories
-      if (hiddenCategories[categoryKey]) {
-        categoryTotals[categoryKey] = {
-          budget: 0,
-          spent: 0,
-          remaining: 0,
-          percentageUsed: 0
-        };
-        return;
-      }
-
-      // Calculate totals excluding hidden budget items
-      const visibleItems = Object.entries(categoryData).filter(([subCategory, _]) => {
-        const budgetId = `${categoryKey}-${subCategory}`;
-        return !hiddenBudgets[budgetId];
-      });
-
-      const totalBudget = visibleItems.reduce((sum, [_, item]) => sum + Math.abs(item.budget), 0);
-      const totalSpent = visibleItems.reduce((sum, [_, item]) => sum + Math.abs(item.actual), 0);
-      const totalRemaining = totalBudget - totalSpent;
-      const percentageUsed = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
-      
-      categoryTotals[categoryKey] = {
-        budget: totalBudget,
-        spent: totalSpent,
-        remaining: totalRemaining,
-        percentageUsed: percentageUsed
-      };
-    });
-    
-    return categoryTotals;
-  };
 
   // Calculate totals per category based on ALL data (not affected by hide/unhide)
   const calculateCategoryTotalsAll = (groupedBudgetData) => {
@@ -320,39 +202,8 @@ export default function Budgets() {
     return categoryTotals;
   };
 
-  const categoryTotals = calculateCategoryTotals(groupedBudgetData);
   const categoryTotalsAll = calculateCategoryTotalsAll(groupedBudgetData);
 
-  // Calculate totals from grouped data (excluding hidden items)
-  const totalBudgetFromSheet = groupedBudgetData ? 
-    Object.entries(groupedBudgetData).reduce((sum, [categoryKey, categoryData]) => {
-      // Skip hidden categories
-      if (hiddenCategories[categoryKey]) return sum;
-      
-      return sum + Object.entries(categoryData).reduce((catSum, [subCategory, item]) => {
-        const budgetId = `${categoryKey}-${subCategory}`;
-        // Skip hidden budget items
-        if (hiddenBudgets[budgetId]) return catSum;
-        return catSum + Math.abs(item.budget);
-      }, 0);
-    }, 0) : 0;
-  
-  const totalActualFromSheet = groupedBudgetData ? 
-    Object.entries(groupedBudgetData).reduce((sum, [categoryKey, categoryData]) => {
-      // Skip hidden categories
-      if (hiddenCategories[categoryKey]) return sum;
-      
-      return sum + Object.entries(categoryData).reduce((catSum, [subCategory, item]) => {
-        const budgetId = `${categoryKey}-${subCategory}`;
-        // Skip hidden budget items
-        if (hiddenBudgets[budgetId]) return catSum;
-        return catSum + Math.abs(item.actual);
-      }, 0);
-    }, 0) : 0;
-
-  // Calculate percentage and colors based on data from sheet
-  const percentageFromSheet = totalBudgetFromSheet !== 0 ? Math.abs(totalActualFromSheet / totalBudgetFromSheet * 100) : 0;
-  const colors = getBudgetColors(percentageFromSheet);
 
   // Calculate totals from ALL data (not affected by hide/unhide)
   const totalBudgetFromSheetAll = groupedBudgetData ? 
@@ -456,13 +307,13 @@ export default function Budgets() {
               <div className="text-center">
                 <p className="text-sm text-gray-600 mb-1">Total Budget</p>
                 <p className="text-lg font-bold">
-                  {formatCurrency(totalBudgetFromSheet, "brackets")}
+                  {formatCurrency(totalBudgetFromSheetAll, "brackets")}
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-sm text-gray-600 mb-1">Total Spent</p>
+                <p className="text-sm text-gray-600 mb-1">Total Spending</p>
                 <p className="text-lg font-bold text-red-600">
-                  {formatCurrency(totalActualFromSheet, "brackets")}
+                  {formatCurrency(totalActualFromSheetAll, "brackets")}
                 </p>
               </div>
             </div>
@@ -523,8 +374,8 @@ export default function Budgets() {
               <div className="space-y-4">
                 {/* Grouped Categories */}
                 {Object.entries(groupedBudgetData).map(([categoryKey, categoryData]) => {
-                  const totals = categoryTotals[categoryKey];
-                  if (!totals || Object.keys(categoryData).length === 0) return null;
+                  const totalsAll = categoryTotalsAll[categoryKey];
+                  if (!totalsAll || Object.keys(categoryData).length === 0) return null;
 
                   // Skip hidden categories
                   if (hiddenCategories[categoryKey]) return null;
@@ -564,7 +415,7 @@ export default function Budgets() {
                             {/* Budget Summary */}
                             <div className="text-right">
                               <p className="text-sm font-medium text-gray-900">
-                                {formatCurrencyShort(totals.spent)} / {formatCurrencyShort(totals.budget)}
+                                {formatCurrencyShort(totalsAll.spent)} / {formatCurrencyShort(totalsAll.budget)}
                               </p>
                             </div>
                             
