@@ -15,6 +15,7 @@ A comprehensive todo list for the development of the Better Finance application 
 - [x] Add back button in page transactions & accounts
 - [ ] (Balancing) When delete/backspace balancing in the middle number, cursor will move to the end
 - [ ] Update icon weekly & budget (make different)
+- [ ] View in samsung large
 
 ### 💳 LIST IDEA
 - [x] Remove Transactions & Accounts in bottom navbar, access from home
@@ -22,6 +23,7 @@ A comprehensive todo list for the development of the Better Finance application 
 - [ ] Change count transactions per day to sum of spending per day
 - [ ] Change UI of budgets to have remaining & use long style currency like weekly budget 
 - [ ] When typing digit, keyboard be only number
+- [ ] Add eye hide unhide in home for Assets
 
 ### 💳 REFACTORING
 - [ ] Merge formatCurrencyShort to formatCurrency
@@ -51,13 +53,14 @@ A comprehensive todo list for the development of the Better Finance application 
   - [x] Weekly spending progress tracking
   - [x] Remaining weekly budget display
   - [x] Implement Dynamic Weekly Budget with Monthly Pool Strategy based Days
+  - [x] Implement also for under spending
 
 ### 🏠 Assets Management (HIGH PRIORITY)
-- [ ] **Assets Tracking**
+- [x] **Assets Tracking**
   - [x] Dedicated Google Sheets integration untuk assets
   - [x] Asset categorization (Liquid & Non Liquid)
 
-- [ ] **Assets Features**
+- [x] **Assets Features**
   - [x] Asset allocation visualization
   - [x] Net worth calculation
 

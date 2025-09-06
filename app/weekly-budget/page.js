@@ -15,10 +15,10 @@ const EATING_CATEGORIES = [
 ];
 
 export default function WeeklyBudget() {
-  const [selectedMonth, setSelectedMonth] = useState(getDefaultSheetName(months));
+  const selectedMonth = getDefaultSheetName(months);
   const [selectedWeek, setSelectedWeek] = useState(1);
-  const { data: budgetRawData, isLoading: budgetLoading, error: budgetError } = useBudgets(selectedMonth);
-  const { data: transactionData, isLoading: transactionLoading, error: transactionError } = useTransactions(selectedMonth);
+  const { data: budgetRawData, isLoading: budgetLoading } = useBudgets(selectedMonth);
+  const { data: transactionData, isLoading: transactionLoading } = useTransactions(selectedMonth);
 
   // Process budget data
   const budgetData = useMemo(() => {
@@ -316,11 +316,16 @@ function calculateWeeklyBudgetWithPool(monthlyBudget, allWeeksInfo, currentWeek,
   }
   
   const overBudgets = [];
+  const underBudgets = [];
+  
   for (let i = 0; i < currentWeek; i++) {
     const weekOriginalBudget = originalWeeklyBudgets[i] || 0;
     const weekSpending = calculateWeekSpending(transactions, category, allWeeksInfo[i]);
     
     let weekPenalty = 0;
+    let weekBonus = 0;
+    
+    // Calculate penalties from previous weeks' overspending
     for (let j = 0; j < i; j++) {
       if (overBudgets[j] > 0) {
         const remainingDaysFromOverBudgetWeek = allWeeksInfo.slice(j + 1).reduce((total, weekInfo) => {
@@ -339,12 +344,37 @@ function calculateWeeklyBudgetWithPool(monthlyBudget, allWeeksInfo, currentWeek,
       }
     }
     
-    const weekAdjustedBudget = Math.max(0, weekOriginalBudget - weekPenalty);
+    // Calculate bonuses from previous weeks' underspending
+    for (let j = 0; j < i; j++) {
+      if (underBudgets[j] > 0) {
+        const remainingDaysFromUnderBudgetWeek = allWeeksInfo.slice(j + 1).reduce((total, weekInfo) => {
+          const timeDiff = weekInfo.endDate.getTime() - weekInfo.startDate.getTime();
+          const daysInWeek = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+          return total + daysInWeek;
+        }, 0);
+        
+        const bonusPerDayForThisWeek = remainingDaysFromUnderBudgetWeek > 0 ? underBudgets[j] / remainingDaysFromUnderBudgetWeek : 0;
+        
+        const timeDiff = allWeeksInfo[i].endDate.getTime() - allWeeksInfo[i].startDate.getTime();
+        const daysInWeek = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+        
+        const bonusAmountFromThisWeek = bonusPerDayForThisWeek * daysInWeek;
+        weekBonus += bonusAmountFromThisWeek;
+      }
+    }
+    
+    const weekAdjustedBudget = Math.max(0, weekOriginalBudget - weekPenalty + weekBonus);
     const weekOverBudget = Math.max(0, weekSpending - weekAdjustedBudget);
+    const weekUnderBudget = Math.max(0, weekAdjustedBudget - weekSpending);
+    
     overBudgets.push(weekOverBudget);
+    underBudgets.push(weekUnderBudget);
   }
   
+  // Calculate penalties and bonuses for current week
   let currentWeekPenalty = 0;
+  let currentWeekBonus = 0;
+  
   for (let i = 0; i < overBudgets.length - 1; i++) {
     if (overBudgets[i] > 0) {
       const remainingDaysFromOverBudgetWeek = allWeeksInfo.slice(i + 1).reduce((total, weekInfo) => {
@@ -362,9 +392,26 @@ function calculateWeeklyBudgetWithPool(monthlyBudget, allWeeksInfo, currentWeek,
       const penaltyAmountFromThisWeek = penaltyPerDayForThisWeek * daysInCurrentWeek;
       currentWeekPenalty += penaltyAmountFromThisWeek;
     }
+    
+    if (underBudgets[i] > 0) {
+      const remainingDaysFromUnderBudgetWeek = allWeeksInfo.slice(i + 1).reduce((total, weekInfo) => {
+        const timeDiff = weekInfo.endDate.getTime() - weekInfo.startDate.getTime();
+        const daysInWeek = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+        return total + daysInWeek;
+      }, 0);
+      
+      const bonusPerDayForThisWeek = remainingDaysFromUnderBudgetWeek > 0 ? underBudgets[i] / remainingDaysFromUnderBudgetWeek : 0;
+      
+      const currentWeekInfo = allWeeksInfo[currentWeek - 1];
+      const timeDiff = currentWeekInfo.endDate.getTime() - currentWeekInfo.startDate.getTime();
+      const daysInCurrentWeek = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+      
+      const bonusAmountFromThisWeek = bonusPerDayForThisWeek * daysInCurrentWeek;
+      currentWeekBonus += bonusAmountFromThisWeek;
+    }
   }
   
-  return Math.max(0, originalWeekBudget - currentWeekPenalty);
+  return Math.max(0, originalWeekBudget - currentWeekPenalty + currentWeekBonus);
 }
 
 function getWeeksInMonth(monthName) {
