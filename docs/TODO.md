@@ -22,7 +22,7 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
 - [ ] Change UI of budgets to have remaining & use long style currency like weekly budget 
 - [ ] When typing digit, keyboard be only number
 
-### REFACTORING
+### 💳 REFACTORING
 - [ ] Merge formatCurrencyShort to formatCurrency
 - [ ] Remove unused fetchTransactions, fetchBudgets, fetchGoals, fetchAccounts
 - [ ] Remove unused code
@@ -48,7 +48,7 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
   - [x] Subcategory weekly budget breakdown
   - [x] Weekly spending progress tracking
   - [x] Remaining weekly budget display
-  - [x] Implement Dynamic Weekly Budget with Monthly Pool
+  - [x] Implement Dynamic Weekly Budget with Monthly Pool Strategy based Days
 
 ### 🏠 Assets Management (HIGH PRIORITY)
 - [ ] **Assets Tracking**

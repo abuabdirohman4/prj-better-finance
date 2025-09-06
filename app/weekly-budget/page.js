@@ -84,7 +84,6 @@ export default function WeeklyBudget() {
         transactionData, 
         category.key
       );
-      
 
       // Calculate spending for this week
       const weekSpending = calculateWeekSpending(transactionData, category.key, selectedWeekInfo);
@@ -159,9 +158,6 @@ export default function WeeklyBudget() {
             <div>
               <h1 className="text-2xl font-bold text-white mb-1">Weekly Budget</h1>
               <p className="text-orange-100 text-sm">{currentWeek.month} {currentWeek.year}</p>
-              {/* <p className="text-orange-100 text-sm"></p>
-                Week {selectedWeek} of {selectedWeekInfo.month} {selectedWeekInfo.year}
-              </p> */}
             </div>
             {/* Settings and Week Selector */}
             <div className="flex items-center space-x-3">
@@ -219,7 +215,6 @@ export default function WeeklyBudget() {
               <p className={`text-lg font-bold ${
                 totalRemaining >= 0 ? 'text-gray-700' : 'text-red-600'
               }`}>
-              {/* <p className={`text-lg font-bold ${totalColors.text}`}></p> */}
                 {formatCurrency(totalRemaining)}
               </p>
             </div>
@@ -286,142 +281,156 @@ export default function WeeklyBudget() {
 
 // Helper functions
 function calculateWeeklyBudgetWithPool(monthlyBudget, allWeeksInfo, currentWeek, transactions, category) {
-  // console.log('category', category);
   if (!monthlyBudget || !allWeeksInfo || !transactions) {
     return 0;
   }
 
+  const monthlyBudgetAmount = Math.abs(monthlyBudget);
+  
   // Calculate total days in all weeks
   const totalDays = allWeeksInfo.reduce((total, weekInfo) => {
-    // Calculate days between start and end date (inclusive)
     const timeDiff = weekInfo.endDate.getTime() - weekInfo.startDate.getTime();
     const daysInWeek = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
     return total + daysInWeek;
   }, 0);
-  // console.log('monthlyBudget', monthlyBudget);
-  // console.log('totalDays', totalDays);
 
-  // Calculate budget per day
-  const budgetPerDay = Math.abs(monthlyBudget) / totalDays;
-  // console.log('budgetPerDay', budgetPerDay);
+  // Calculate initial budget per day
+  const initialBudgetPerDay = monthlyBudgetAmount / totalDays;
 
   // Calculate original budget for each week based on actual days
   const originalWeeklyBudgets = allWeeksInfo.map(weekInfo => {
-    // Calculate days between start and end date (inclusive)
     const timeDiff = weekInfo.endDate.getTime() - weekInfo.startDate.getTime();
     const daysInWeek = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
-    return budgetPerDay * daysInWeek;
-  });
-  // console.log('originalWeeklyBudgets', originalWeeklyBudgets);
-
-  // Calculate spending for each previous week
-  const weeklySpendings = allWeeksInfo.map((weekInfo, index) => {
-    if (index >= currentWeek - 1) return 0; // Only calculate for previous weeks
-    return calculateWeekSpending(transactions, category, weekInfo);
+    return initialBudgetPerDay * daysInWeek;
   });
 
-  // Calculate over/under budget for each previous week
-  const weeklyAdjustments = originalWeeklyBudgets.map((originalBudget, index) => {
-    if (index >= currentWeek - 1) return 0; // Only calculate for previous weeks
-    return originalBudget - weeklySpendings[index];
-  });
+  // If no transactions, return original budget for the week
+  if (!transactions || !Array.isArray(transactions) || transactions.length === 0) {
+    return originalWeeklyBudgets[currentWeek - 1] || 0;
+  }
 
-  // Calculate total adjustment (positive = under budget, negative = over budget)
-  const totalAdjustment = weeklyAdjustments.reduce((sum, adjustment) => sum + adjustment, 0);
-
-  // Calculate remaining weeks
-  const remainingWeeks = allWeeksInfo.length - (currentWeek - 1);
-
-  // Distribute adjustment to remaining weeks
-  const adjustmentPerRemainingWeek = remainingWeeks > 0 ? totalAdjustment / remainingWeeks : 0;
-
-  // Calculate final budget for current week
-  const originalBudget = originalWeeklyBudgets[currentWeek - 1] || 0;
-  const finalBudget = originalBudget + adjustmentPerRemainingWeek;
-
-  return finalBudget;
+  const originalWeekBudget = originalWeeklyBudgets[currentWeek - 1] || 0;
+  
+  if (currentWeek === 1) {
+    return originalWeekBudget;
+  }
+  
+  const overBudgets = [];
+  for (let i = 0; i < currentWeek; i++) {
+    const weekOriginalBudget = originalWeeklyBudgets[i] || 0;
+    const weekSpending = calculateWeekSpending(transactions, category, allWeeksInfo[i]);
+    
+    let weekPenalty = 0;
+    for (let j = 0; j < i; j++) {
+      if (overBudgets[j] > 0) {
+        const remainingDaysFromOverBudgetWeek = allWeeksInfo.slice(j + 1).reduce((total, weekInfo) => {
+          const timeDiff = weekInfo.endDate.getTime() - weekInfo.startDate.getTime();
+          const daysInWeek = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+          return total + daysInWeek;
+        }, 0);
+        
+        const penaltyPerDayForThisWeek = remainingDaysFromOverBudgetWeek > 0 ? overBudgets[j] / remainingDaysFromOverBudgetWeek : 0;
+        
+        const timeDiff = allWeeksInfo[i].endDate.getTime() - allWeeksInfo[i].startDate.getTime();
+        const daysInWeek = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+        
+        const penaltyAmountFromThisWeek = penaltyPerDayForThisWeek * daysInWeek;
+        weekPenalty += penaltyAmountFromThisWeek;
+      }
+    }
+    
+    const weekAdjustedBudget = Math.max(0, weekOriginalBudget - weekPenalty);
+    const weekOverBudget = Math.max(0, weekSpending - weekAdjustedBudget);
+    overBudgets.push(weekOverBudget);
+  }
+  
+  let currentWeekPenalty = 0;
+  for (let i = 0; i < overBudgets.length - 1; i++) {
+    if (overBudgets[i] > 0) {
+      const remainingDaysFromOverBudgetWeek = allWeeksInfo.slice(i + 1).reduce((total, weekInfo) => {
+        const timeDiff = weekInfo.endDate.getTime() - weekInfo.startDate.getTime();
+        const daysInWeek = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+        return total + daysInWeek;
+      }, 0);
+      
+      const penaltyPerDayForThisWeek = remainingDaysFromOverBudgetWeek > 0 ? overBudgets[i] / remainingDaysFromOverBudgetWeek : 0;
+      
+      const currentWeekInfo = allWeeksInfo[currentWeek - 1];
+      const timeDiff = currentWeekInfo.endDate.getTime() - currentWeekInfo.startDate.getTime();
+      const daysInCurrentWeek = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+      
+      const penaltyAmountFromThisWeek = penaltyPerDayForThisWeek * daysInCurrentWeek;
+      currentWeekPenalty += penaltyAmountFromThisWeek;
+    }
+  }
+  
+  return Math.max(0, originalWeekBudget - currentWeekPenalty);
 }
 
 function getWeeksInMonth(monthName) {
-  // Get the current year and month index
   const currentYear = new Date().getFullYear();
   const monthIndex = months.indexOf(monthName);
   
-  if (monthIndex === -1) return 4; // Default to 4 weeks if month not found
+  if (monthIndex === -1) return 4;
   
-  // Create date for the first day of the month
   const firstDayOfMonth = new Date(currentYear, monthIndex, 1);
   const lastDayOfMonth = new Date(currentYear, monthIndex + 1, 0);
   
-  // Find the first Monday of the month
   const firstMonday = new Date(firstDayOfMonth);
   const firstDayOfWeek = firstDayOfMonth.getDay();
   
-  // Calculate days to first Monday
   const daysToFirstMonday = firstDayOfWeek === 0 ? 1 : firstDayOfWeek === 1 ? 0 : 8 - firstDayOfWeek;
   if (daysToFirstMonday > 0) {
     firstMonday.setDate(firstDayOfMonth.getDate() + daysToFirstMonday);
   }
   
-  // If the first Monday is not in the current month, use the first day of month
   if (firstMonday.getMonth() !== monthIndex) {
     firstMonday.setTime(firstDayOfMonth.getTime());
   }
   
-  // Calculate weeks by counting Monday-to-Sunday cycles
   let weekCount = 0;
   let currentWeekStart = new Date(firstMonday);
   
-  // Count weeks that have at least one day in the current month
   while (currentWeekStart <= lastDayOfMonth) {
     weekCount++;
     currentWeekStart.setDate(currentWeekStart.getDate() + 7);
   }
   
-  return Math.max(weekCount, 1); // At least 1 week
+  return Math.max(weekCount, 1);
 }
 
 function getWeekInfo(monthName, weekNumber) {
-  // Get the current year and month index
   const currentYear = new Date().getFullYear();
   const monthIndex = months.indexOf(monthName);
   
   if (monthIndex === -1) {
-    // Fallback to current month
     const now = new Date();
     return getCurrentWeek(now);
   }
   
-  // Create date for the first day of the month
   const firstDayOfMonth = new Date(currentYear, monthIndex, 1);
   const lastDayOfMonth = new Date(currentYear, monthIndex + 1, 0);
   
-  // Find the first Monday of the month
   const firstMonday = new Date(firstDayOfMonth);
   const firstDayOfWeek = firstDayOfMonth.getDay();
   
-  // Calculate days to first Monday
   const daysToFirstMonday = firstDayOfWeek === 0 ? 1 : firstDayOfWeek === 1 ? 0 : 8 - firstDayOfWeek;
   if (daysToFirstMonday > 0) {
     firstMonday.setDate(firstDayOfMonth.getDate() + daysToFirstMonday);
   }
   
-  // If the first Monday is not in the current month, use the first day of month
   if (firstMonday.getMonth() !== monthIndex) {
     firstMonday.setTime(firstDayOfMonth.getTime());
   }
   
-  // Calculate the start date for the selected week
   const weekStartDate = new Date(firstMonday);
   weekStartDate.setDate(firstMonday.getDate() + (weekNumber - 1) * 7);
   weekStartDate.setHours(0, 0, 0, 0);
   
-  // Calculate the end date for the selected week (Sunday)
   const weekEndDate = new Date(weekStartDate);
   weekEndDate.setDate(weekStartDate.getDate() + 6);
   weekEndDate.setHours(23, 59, 59, 999);
   
-  // Ensure the week doesn't extend beyond the month
   if (weekEndDate > lastDayOfMonth) {
     weekEndDate.setTime(lastDayOfMonth.getTime());
     weekEndDate.setHours(23, 59, 59, 999);
@@ -442,33 +451,25 @@ function calculateWeekSpending(transactions, category, currentWeek) {
   }
 
   const filteredTransactions = transactions.filter(transaction => {
-    // Filter by category and spending type
     if (transaction.Transaction !== 'Spending') return false;
     if (transaction['Category or Account'].toLowerCase() !== category.toLowerCase()) return false;
     
-    // Parse date - handle DD/MM/YYYY format
     let transactionDate;
     if (transaction.Date.includes('/')) {
-      // DD/MM/YYYY format
       const [day, month, year] = transaction.Date.split('/');
       transactionDate = new Date(year, month - 1, day);
     } else {
-      // Try standard date parsing
       transactionDate = new Date(transaction.Date);
     }
     
     const weekStart = new Date(currentWeek.startDate);
     const weekEnd = new Date(currentWeek.endDate);
     
-    const isInWeek = transactionDate >= weekStart && transactionDate <= weekEnd;
-    return isInWeek;
+    return transactionDate >= weekStart && transactionDate <= weekEnd;
   });
 
-  const total = filteredTransactions.reduce((total, transaction) => {
+  return filteredTransactions.reduce((total, transaction) => {
     const amount = Math.abs(getCashValue(transaction));
     return total + amount;
   }, 0);
-
-  return total;
 }
-
