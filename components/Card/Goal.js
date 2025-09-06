@@ -19,7 +19,16 @@ export default function Goal({
   const percentage = goal['%'] || goal[' % '] || goal['% '] || goal[' %'];
   const retained = goal['Retained'] || goal[' Retained '] || goal['Retained '] || goal[' Retained'];
   const collected = goal['Collected'] || goal[' Collected '] || goal['Collected '] || goal[' Collected'];
-  const progressPercent = Math.min(parseFloat(percentage) || 0, 100);
+  
+  // Calculate progress percentage from collected and target values
+  // Data from Google Sheets is already in number format
+  const collectedValue = parseFloat(collected) || 0;
+  const targetValue = parseFloat(target) || 0;
+  const calculatedProgress = targetValue > 0 ? (collectedValue / targetValue) * 100 : 0;
+  
+  
+  // Use calculated progress if percentage column is not available or is 0
+  const progressPercent = Math.min(calculatedProgress || parseFloat(percentage) || 0, 100);
   const isCompleted = progressPercent >= 100;
   const isOverTarget = progressPercent > 100;
   

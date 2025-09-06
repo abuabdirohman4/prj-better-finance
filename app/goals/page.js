@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { useGoals } from "@/utils/hooks";
 import Goal from "@/components/Card/Goal";
 import Cookies from 'js-cookie';
