@@ -1,38 +1,25 @@
-import { formatCurrency, formatCurrencyShort, getBudgetColors } from "@/utils/helper";
+import { formatCurrencyShort } from "@/utils/helper";
 
 export default function Goal({
   goal,
   isHidden = false,
   onToggleVisibility = null,
 }) {
-  // Handle column names with spaces
   const name = goal['Saving'] || goal[' Saving '] || goal['Saving '] || goal[' Saving'];
   const account = goal['Account'] || goal[' Account '] || goal['Account '] || goal[' Account'];
   const time = goal['Time'] || goal[' Time '] || goal['Time '] || goal[' Time'];
-  
-  // Get the actual type (Sinking, Wishlist, Business, Emergency, Investment)
   const type = goal['Type'] || goal[' Type '] || goal['Type '] || goal[' Type'];
   const target = goal['Target'] || goal[' Target '] || goal['Target '] || goal[' Target'];
   const monthly = goal['Monthly'] || goal[' Monthly '] || goal['Monthly '] || goal[' Monthly'];
   const deadline = goal['Deadline'] || goal[' Deadline '] || goal['Deadline '] || goal[' Deadline'];
-  const progress = goal['Progress'] || goal[' Progress '] || goal['Progress '] || goal[' Progress'];
   const percentage = goal['%'] || goal[' % '] || goal['% '] || goal[' %'];
-  const retained = goal['Retained'] || goal[' Retained '] || goal['Retained '] || goal[' Retained'];
   const collected = goal['Collected'] || goal[' Collected '] || goal['Collected '] || goal[' Collected'];
   
-  // Calculate progress percentage from collected and target values
-  // Data from Google Sheets is already in number format
   const collectedValue = parseFloat(collected) || 0;
   const targetValue = parseFloat(target) || 0;
   const calculatedProgress = targetValue > 0 ? (collectedValue / targetValue) * 100 : 0;
-  
-  
-  // Use calculated progress if percentage column is not available or is 0
   const progressPercent = Math.min(calculatedProgress || parseFloat(percentage) || 0, 100);
-  const isCompleted = progressPercent >= 100;
-  const isOverTarget = progressPercent > 100;
   
-  // Custom colors for goals progress
   const getGoalColors = (progress) => {
     if (progress < 50) {
       return {
@@ -60,13 +47,9 @@ export default function Goal({
   
   const colors = getGoalColors(progressPercent);
 
-  // Get type icon - using emoji style like Budgets page
   const getTypeIcon = () => {
-    // Handle column names with spaces and trim
     const cleanType = type ? type.trim() : '';
     const goalName = name ? name.toLowerCase() : '';
-    
-    // For Sinking funds, determine icon based on goal name
     if (cleanType === 'Sinking') {
       if (goalName.includes('kontrakan') || goalName.includes('rent') || goalName.includes('rumah')) {
         return '🏠';
@@ -103,7 +86,6 @@ export default function Goal({
       } else if (goalName.includes('maintenance') || goalName.includes('perbaikan') || goalName.includes('service') || goalName.includes('servis')) {
         return '🔧';
       } else {
-        // Default sinking fund icon
         return '💰';
       }
     }
@@ -136,14 +118,11 @@ export default function Goal({
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center space-x-3">
-          {/* Goal Type Icon */}
-          <div className="w-8 h-8 flex items-center justify-center">
-            <span className="text-2xl">
-              {getTypeIcon()}
-            </span>
-          </div>
-          
-          {/* Goal Details */}
+        <div className="w-8 h-8 flex items-center justify-center">
+          <span className="text-2xl">
+            {getTypeIcon()}
+          </span>
+        </div>
           <div className="flex-1 min-w-0">
             <h4 className="text-sm font-semibold text-gray-900 truncate mb-1">
               {name}
@@ -159,7 +138,6 @@ export default function Goal({
           </div>
         </div>
 
-        {/* Collected/Target Amount and Visibility Indicator */}
         <div className="text-right flex items-center space-x-2">
           <div className="text-xs font-medium text-gray-900">
             {formatCurrencyShort(parseFloat(collected) || 0)} / {formatCurrencyShort(parseFloat(target) || 0)}
@@ -181,7 +159,6 @@ export default function Goal({
         </div>
       </div>
 
-      {/* Progress Bar */}
       <div className="mb-3">
         <div className="flex items-center gap-3 mb-1">
           <div className="flex-1 bg-gray-200 rounded-full h-2">
@@ -194,7 +171,6 @@ export default function Goal({
         </div>
       </div>
 
-      {/* Additional Info */}
       <div className="mt-3 pt-3 border-t border-gray-100">
         <div className="flex items-center justify-between text-xs text-gray-500">
           <div className="flex items-center space-x-4">

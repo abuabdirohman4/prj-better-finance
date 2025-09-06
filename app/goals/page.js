@@ -6,19 +6,13 @@ import Cookies from 'js-cookie';
 import { formatCurrency, formatCurrencyShort, getGoalColors } from "@/utils/helper";
 
 export default function Goals() {
-  // Use SWR hook for data fetching
   const { data: goalsData, isLoading, error } = useGoals();
-
-  // State to control collapse for each goal type with default hide all
   const [collapsedTypes, setCollapsedTypes] = useState({
     Saving: true,
     Investing: true
   });
-
-  // State to control hidden goals
   const [hiddenGoals, setHiddenGoals] = useState({});
 
-  // Load collapse state and hidden goals from cookies when component mounts
   useEffect(() => {
     const savedCollapseState = Cookies.get('goals-collapse-state');
     if (savedCollapseState) {
@@ -44,7 +38,6 @@ export default function Goals() {
     }
   }, []);
 
-  // Function to toggle collapse and save to cookies
   const toggleType = (typeKey) => {
     const newState = {
       ...collapsedTypes,
@@ -52,15 +45,12 @@ export default function Goals() {
     };
     
     setCollapsedTypes(newState);
-    
-    // Save to cookies
     Cookies.set('goals-collapse-state', JSON.stringify(newState), { 
       expires: 365,
       sameSite: 'strict'
     });
   };
 
-  // Function to toggle hide/show individual goal
   const toggleGoalVisibility = (goalId) => {
     const newHiddenGoals = {
       ...hiddenGoals,
@@ -68,15 +58,12 @@ export default function Goals() {
     };
     
     setHiddenGoals(newHiddenGoals);
-    
-    // Save to cookies
     Cookies.set('goals-hidden-state', JSON.stringify(newHiddenGoals), { 
       expires: 365,
       sameSite: 'strict'
     });
   };
 
-  // Group goals by new categories
   const groupedGoals = goalsData ? (() => {
     const groups = {
       Saving: [],
@@ -84,12 +71,10 @@ export default function Goals() {
     };
     
     goalsData.forEach((goal, index) => {
-      // Handle column names with spaces - check all possible variations
       const type = goal.Type || goal[' Type '] || goal['Type '] || goal[' Type'] || 
                    goal['Type'] || goal[' Type '] || goal['Type '] || goal[' Type'];
       const cleanType = type ? type.trim() : '';
       
-      // Map original types to new categories
       if (cleanType === 'Sinking' || cleanType === 'Wishlist') {
         groups.Saving.push(goal);
       } else if (cleanType === 'Business' || cleanType === 'Emergency' || cleanType === 'Investment') {
@@ -97,16 +82,13 @@ export default function Goals() {
       }
     });
     
-    // Remove empty groups
     return Object.fromEntries(
       Object.entries(groups).filter(([_, goals]) => goals.length > 0)
     );
   })() : {};
 
-  // Calculate totals for each type (including hidden goals for percentage calculation)
   const calculateTotals = (goals, category) => {
     return goals.reduce((totals, goal, index) => {
-      // Handle column names with spaces
       const collected = parseFloat(goal.Collected || goal[' Collected '] || goal['Collected '] || goal[' Collected']) || 0;
       const target = parseFloat(goal.Target || goal[' Target '] || goal['Target '] || goal[' Target']) || 0;
       const monthly = parseFloat(goal.Monthly || goal[' Monthly '] || goal['Monthly '] || goal[' Monthly']) || 0;
@@ -119,7 +101,6 @@ export default function Goals() {
     }, { totalCollected: 0, totalTarget: 0, totalMonthly: 0 });
   };
 
-  // Get section icon
   const getSectionIcon = (category) => {
     switch (category) {
       case 'Saving':
@@ -143,21 +124,8 @@ export default function Goals() {
     }
   };
 
-  // Get section color
-  const getSectionColor = (category) => {
-    switch (category) {
-      case 'Saving':
-        return 'text-blue-600';
-      case 'Investing':
-        return 'text-green-600';
-      default:
-        return 'text-gray-600';
-    }
-  };
-
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
-      {/* Header */}
       <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 px-3 pt-5 pb-4">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
@@ -176,10 +144,8 @@ export default function Goals() {
         </div>
       </div>
 
-      {/* Goals Summary Cards */}
       <div className="px-3 mt-6 mb-8">
         <div className="grid grid-cols-1 gap-4">
-          {/* Overall Goals Progress Card */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-800">Overall Goals Progress</h2>
@@ -190,7 +156,6 @@ export default function Goals() {
               </div>
             </div>
 
-            {/* Summary Stats */}
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center">
                 <p className="text-sm text-gray-600 mb-1">Total Collected</p>
@@ -206,9 +171,7 @@ export default function Goals() {
               </div>
             </div>
             
-            {/* Overall Progress Bar */}
             {goalsData && goalsData.length > 0 && (() => {
-              // Calculate overall progress using ALL goals (including hidden ones)
               const totalCollected = goalsData.reduce((sum, goal) => sum + (parseFloat(goal.Collected || goal[' Collected '] || goal['Collected '] || goal[' Collected']) || 0), 0);
               const totalTarget = goalsData.reduce((sum, goal) => sum + (parseFloat(goal.Target || goal[' Target '] || goal['Target '] || goal[' Target']) || 0), 0);
               const overallProgress = totalTarget > 0 ? (totalCollected / totalTarget) * 100 : 0;
@@ -236,7 +199,6 @@ export default function Goals() {
         </div>
       </div>
 
-      {/* Goals List */}
       <div className="px-3 pb-24">
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <div className="p-6 pb-0 border-b border-gray-100">
@@ -246,7 +208,6 @@ export default function Goals() {
           <div className="p-6">
             {isLoading ? (
               <div className="space-y-4">
-                {/* Skeleton for goals */}
                 {[1, 2, 3, 4].map((i) => (
                   <div key={i} className="animate-pulse">
                     <div className="flex items-center justify-between mb-3">
@@ -279,14 +240,11 @@ export default function Goals() {
 
                   return (
                     <div key={category} className="border border-gray-200 rounded-xl overflow-hidden">
-                      {/* Category Header */}
                       <div 
                         className="relative cursor-pointer p-4 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 transition-all duration-200"
                         onClick={() => toggleType(category)}
                       >
-                        {/* Category Info with Goals Summary and Arrow */}
                         <div className="flex items-center justify-between mb-3">
-                          {/* Left: Icon + Category Name */}
                           <div className="flex items-center">
                             <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 bg-gradient-to-r from-blue-500 to-blue-600`}>
                               <div className="text-white">
@@ -304,16 +262,13 @@ export default function Goals() {
                             </div>
                           </div>
                           
-                          {/* Right: Goals Summary + Arrow */}
                           <div className="flex items-center space-x-3">
-                            {/* Goals Summary */}
                             <div className="text-right">
                               <p className="text-sm font-medium text-gray-900">
                                 {formatCurrencyShort(totals.totalCollected)} / {formatCurrencyShort(totals.totalTarget)}
                               </p>
                             </div>
                             
-                            {/* Arrow icon */}
                             <div className="flex-shrink-0">
                               <svg 
                                 className={`w-5 h-5 text-gray-600 transition-all duration-200 ease-out md:duration-500 md:ease-in-out transform-gpu ${
@@ -329,7 +284,6 @@ export default function Goals() {
                           </div>
                         </div>
                         
-                        {/* Mini Progress Bar with Percentage */}
                         <div className="flex items-center gap-3 mb-2">
                           <div className="flex-1 bg-gray-200 rounded-full h-2">
                             <div 
@@ -343,7 +297,6 @@ export default function Goals() {
                         </div>
                       </div>
                       
-                      {/* Collapsible Goals */}
                       <div className={`overflow-hidden transition-all duration-500 ease-in-out md:duration-500 duration-200 ${
                         collapsedTypes[category] 
                           ? 'max-h-0 opacity-0 scale-95 transform-gpu md:scale-95 scale-100' 
@@ -356,12 +309,10 @@ export default function Goals() {
                         }`}>
                           {goals
                             .filter(goal => {
-                              // Create a unique ID for each goal
                               const goalId = `${category}-${goal['Saving'] || goal[' Saving '] || goal['Saving '] || goal[' Saving'] || goal['Investment'] || goal[' Investment '] || goal['Investment '] || goal[' Investment'] || index}`;
                               return !hiddenGoals[goalId];
                             })
                             .map((goal, index) => {
-                              // Create a unique ID for each goal
                               const goalId = `${category}-${goal['Saving'] || goal[' Saving '] || goal['Saving '] || goal[' Saving'] || goal['Investment'] || goal[' Investment '] || goal['Investment '] || goal[' Investment'] || index}`;
                               return (
                                 <Goal
@@ -388,8 +339,6 @@ export default function Goals() {
           </div>
         </div>
       </div>
-
-
     </main>
   );
 }
