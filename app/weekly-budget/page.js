@@ -157,7 +157,7 @@ export default function WeeklyBudget() {
           {/* Page Title */}
             <div>
               <h1 className="text-2xl font-bold text-white mb-1">Weekly Budget</h1>
-              <p className="text-orange-100 text-sm">{currentWeek.month} {currentWeek.year}</p>
+              <p className="text-white text-sm">{currentWeek.month} {currentWeek.year}</p>
             </div>
             {/* Settings and Week Selector */}
             <div className="flex items-center space-x-3">
