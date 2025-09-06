@@ -184,3 +184,48 @@ export const useGoals = () => {
     isError: !!error,
   };
 };
+
+// Custom hook for fetching assets data
+export const useAssets = () => {
+  const { data, error, isLoading, mutate } = useSWR(
+    'assets',
+    async () => {
+      try {
+        const cacheBuster = `?t=${Date.now()}&force=true`;
+        const response = await fetch(`/api/assets${cacheBuster}`, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
+        const result = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to fetch assets');
+        }
+        
+        return result.data;
+      } catch (error) {
+        console.error('❌ Error fetching assets data:', error);
+        return [];
+      }
+    },
+    {
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+      dedupingInterval: 5000, // 5 seconds
+      errorRetryCount: 2,
+      refreshInterval: 10000, // Auto-refresh every 10 seconds
+      fetcher: undefined // Use inline fetcher instead
+    }
+  );
+
+  return {
+    data,
+    error,
+    isLoading,
+    mutate,
+    isError: !!error,
+  };
+};

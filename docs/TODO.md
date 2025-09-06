@@ -1,19 +1,20 @@
 # 📋 Better Finance - Todo List
 
 ## 🎯 Overview
-Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial management) yang dibangun dengan Next.js, Tailwind CSS, dan integrasi Google Sheets.
+A comprehensive todo list for the development of the Better Finance application (financial management) built with Next.js, Tailwind CSS, and Google Sheets integration.
 
 ---
 
-## 🚀 **PHASE 1: Priority Features (User Requested)**
+## 🚀 **PHASE 1: Priority Features**
 
 ### 💳 BUG ISSUE
 - [x] Budget value decrease when categories/budget item hide
 - [x] Fix Warning: Extra attributes from the server: data-new-gr-c-s-check-loaded, data-gr-ext-installed
 - [x] Fix Warning: In HTML, <a> cannot be a descendant of <a>. This will cause a hydration error.
-- [ ] (Balancing) When delete/backspace balancing in the middle number, cursor will move to the end
 - [x] Floating "Clear Cache" in web
 - [x] Add back button in page transactions & accounts
+- [ ] (Balancing) When delete/backspace balancing in the middle number, cursor will move to the end
+- [ ] Update icon weekly & budget (make different)
 
 ### 💳 LIST IDEA
 - [x] Remove Transactions & Accounts in bottom navbar, access from home
@@ -27,6 +28,7 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
 - [ ] Remove unused fetchTransactions, fetchBudgets, fetchGoals, fetchAccounts
 - [ ] Remove unused code
 - [ ] Undestanding flow code & each function & code goals
+- [ ] Move file weekly-budget to budgets/weekly
 
 ### 💳 Account/Wallet Management (HIGH PRIORITY)
 - [x] **Account Overview**
@@ -52,29 +54,22 @@ Todo list komprehensif untuk pengembangan aplikasi Better Finance (financial man
 
 ### 🏠 Assets Management (HIGH PRIORITY)
 - [ ] **Assets Tracking**
-  - [ ] Dedicated Google Sheets integration untuk assets
-  - [ ] Asset categorization (Liquid, Investment, Property, etc.)
-  <!-- - [ ] Asset value tracking over time -->
-  <!-- - [ ] Asset performance analytics -->
+  - [x] Dedicated Google Sheets integration untuk assets
+  - [x] Asset categorization (Liquid & Non Liquid)
 
 - [ ] **Assets Features**
-  - [ ] Asset allocation visualization
-  - [ ] Net worth calculation
-  <!-- - [ ] Asset growth tracking -->
-  <!-- - [ ] Investment performance monitoring -->
+  - [x] Asset allocation visualization
+  - [x] Net worth calculation
 
 ### ⚙️ Settings Consolidation (HIGH PRIORITY)
 - [x] **Settings Management**
   - [x] Centralized settings access (single entry point)
   - [x] Remove duplicate settings buttons dari Budgets & Goals pages
-  <!-- - [ ] Settings page redesign -->
-  <!-- - [ ] User preferences management -->
   - [x] Settings access hanya di home atau bottom navbar
 
 ### 🧭 Navigation Redesign (HIGH PRIORITY)
 - [x] **Bottom Navigation Upgrade**
   - [x] Redesigned bottom navigation (max 4 items + 1 center action)
-  <!-- - [ ] Central quick action button (QRIS scan or main feature) -->
   - [x] Navigation structure planning untuk 7 halaman total
   - [x] Settings access consolidation
 

@@ -1,9 +1,8 @@
 "use client";
-import { useState } from 'react';
 import Link from 'next/link';
-import { useTransactions, useAccounts } from '@/utils/hooks';
+import { useTransactions, useAccounts, useAssets } from '@/utils/hooks';
 import { months } from '@/utils/constants';
-import { formatCurrency, getCashValue, getTotalCashGroupedByDate } from '@/utils/helper';
+import { formatCurrency, getCashValue, getTotalAssets } from '@/utils/helper';
 import { getDefaultSheetName } from '@/utils/google';
 import { AccountWithComparison } from '@/components/Card';
 
@@ -11,11 +10,8 @@ export default function Home() {
   const selectedMonth = getDefaultSheetName(months);
   const { data: transactionData, isLoading, error } = useTransactions(selectedMonth);
   const { data: accountData, isLoading: accountsLoading } = useAccounts();
-
-  // Calculate financial data with proper type checking
-  const spending = getTotalCashGroupedByDate(transactionData || [], "Spending");
-  const earning = getTotalCashGroupedByDate(transactionData || [], "Earning");
-  const balance = earning - spending;
+  const { data: assetData, isLoading: assetsLoading } = useAssets();
+  const totalAssets = getTotalAssets(assetData || []);
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
@@ -71,65 +67,26 @@ export default function Home() {
       {/* Financial Summary Cards */}
       <div className="px-3 mt-6 mb-8 pt-24">
         <div className="grid grid-cols-1 gap-4">
-          {/* Balance Card */}
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-800">Total Assets</h2>
-              <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-green-500 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                </svg>
-              </div>
-            </div>
-            <div className="text-3xl font-bold text-gray-900 mb-2">
-              {isLoading ? (
-                <div className="animate-pulse bg-gray-200 h-10 w-32 rounded"></div>
-              ) : (
-                formatCurrency(100000000)
-              )}
-            </div>
-          </div>
-
-          {/* Income & Expense Cards */}
-          {/* <div className="grid grid-cols-2 gap-4"> */}
-            {/* Income Card */}
-            {/* <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-2xl border border-green-200 p-4">
-              <div className="flex items-center mb-3">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
+          {/* Total Assets Card */}
+          <Link href="/assets" className="block">
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow duration-200 cursor-pointer">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-800">Total Assets</h2>
+                <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-green-500 rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                   </svg>
                 </div>
-                <span className="text-sm font-medium text-green-800">Income</span>
               </div>
-              <div className="text-xl font-bold text-green-900">
-                {isLoading ? (
-                  <div className="animate-pulse bg-green-200 h-6 w-20 rounded"></div>
+              <div className="text-3xl font-bold text-gray-900 mb-2">
+                {assetsLoading ? (
+                  <div className="animate-pulse bg-gray-200 h-10 w-32 rounded"></div>
                 ) : (
-                  formatCurrency(earning, "signs")
+                  formatCurrency(totalAssets)
                 )}
               </div>
-            </div> */}
-
-            {/* Expense Card */}
-            {/* <div className="bg-gradient-to-br from-red-50 to-rose-100 rounded-2xl border border-red-200 p-4">
-              <div className="flex items-center mb-3">
-                <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center mr-3">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" />
-                  </svg>
-                </div>
-                <span className="text-sm font-medium text-red-800">Expenses</span>
-              </div>
-              <div className="text-xl font-bold text-red-900">
-                {isLoading ? (
-                  <div className="animate-pulse bg-red-200 h-6 w-20 rounded"></div>
-                ) : (
-                  formatCurrency(spending, "signs")
-                )}
-              </div>
-            </div> */}
-          {/* </div> */}
+            </div>
+          </Link>
         </div>
       </div>
 

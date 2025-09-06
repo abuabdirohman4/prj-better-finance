@@ -279,6 +279,11 @@ export function getTotalBalance(accounts) {
   return accounts.reduce((total, account) => total + (account.balance || account.value || 0), 0);
 }
 
+export function getTotalAssets(assets) {
+  if (!Array.isArray(assets)) return 0;
+  return assets.reduce((total, asset) => total + (asset.balance || asset.value || 0), 0);
+}
+
 export function categorizeAccounts(accounts) {
   if (!Array.isArray(accounts)) return { wallet: [], atm: [], platform: [], other: [] };
   
