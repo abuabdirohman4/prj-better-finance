@@ -84,9 +84,10 @@ A comprehensive todo list for the development of the Better Finance application 
   - [x] Filter by category or account
   - [x] Filter by note content
   - [x] When no items, show not found
-  - [ ] Make Hide & show for filter
-  - [ ] Filter for all month
+  - [x] Make Hide & show for filter
   - [x] Sort ascending for accounts & category
+  - [ ] Filter for all month
+  - [ ] Click accounts to filter, click categories to filter
 
 ### 🤖 AI Integration - Google Gemini (HIGH PRIORITY)
 - [ ] **AI Financial Advisor**

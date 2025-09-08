@@ -21,7 +21,7 @@ export default function Transactions() {
   );
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [activeFilters, setActiveFilters] = useState({});
-  console.log('activeFilters', activeFilters);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Use SWR hook for data fetching (consistent with budgets page)
   const { data: transactionData, isLoading, error } = useTransactions(selectedMonth);
@@ -46,6 +46,15 @@ export default function Transactions() {
 
   const handleFilterChange = (filters) => {
     setActiveFilters(filters);
+  };
+
+  const toggleFilters = () => {
+    if (showFilters) {
+      // When hiding filters, clear all active filters
+      setFilteredTransactions([]);
+      setActiveFilters({});
+    }
+    setShowFilters(!showFilters);
   };
 
   return (
@@ -154,7 +163,7 @@ export default function Transactions() {
       </div>
 
       {/* Transaction Filter */}
-      {transactionData && transactionData.length > 0 && (
+      {transactionData && transactionData.length > 0 && showFilters && (
         <div className="px-3 mb-6">
           <TransactionFilter
             transactions={transactionData}
@@ -168,7 +177,20 @@ export default function Transactions() {
       <div className="px-3 pb-24">
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <div className="p-6 pb-3 px-3">
-            <h3 className="text-xl font-bold text-gray-900">Transaction</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-bold text-gray-900">Transaction</h3>
+              {transactionData && transactionData.length > 0 && (
+                <button
+                  onClick={toggleFilters}
+                  className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                  </svg>
+                  <span>{showFilters ? 'Hide Filters' : 'Show Filters'}</span>
+                </button>
+              )}
+            </div>
           </div>
           
           <div className="p-3">
