@@ -1,19 +1,27 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import FilterDropdown from "../FilterDropdown";
 
-const TransactionFilter = ({ transactions, onFilteredTransactions, onFilterChange }) => {
+const TransactionFilter = ({ transactions, onFilteredTransactions, onFilterChange, initialFilters = {} }) => {
+  // Normalize incoming initial category
+  const normalizedInitialCategory = Array.isArray(initialFilters.category)
+    ? initialFilters.category
+    : (initialFilters.category ? [initialFilters.category] : []);
+
   // Filter states
   const [filters, setFilters] = useState({
     transactionType: [],
     account: [],
-    category: [],
+    category: normalizedInitialCategory,
     note: "",
     dateRange: {
       start: "",
       end: ""
     }
   });
+
+  // Track last applied initial category to avoid loops
+  const lastAppliedInitialCategoryKey = useRef(null);
 
 
   // Extract unique values for filter options
@@ -107,6 +115,31 @@ const TransactionFilter = ({ transactions, onFilteredTransactions, onFilterChang
     return !hasMatchingNotes;
   }, [filters.note, transactions]);
 
+  // Apply initial filters when options are ready (run only when incoming changes)
+  useEffect(() => {
+    if (!initialFilters.category) return;
+
+    const incomingArray = Array.isArray(initialFilters.category)
+      ? initialFilters.category
+      : [initialFilters.category];
+
+    const key = incomingArray.map(v => v?.toString().toLowerCase()).join('|');
+    if (lastAppliedInitialCategoryKey.current === key) return; // already applied
+
+    // Map incoming values to the exact option values (case-insensitive)
+    const mapped = incomingArray.map(val => {
+      const lower = val?.toString().toLowerCase();
+      const match = filterOptions.categories.find(opt => opt.value?.toString().toLowerCase() === lower);
+      return match ? match.value : val;
+    });
+
+    setFilters(prev => ({
+      ...prev,
+      category: mapped
+    }));
+    lastAppliedInitialCategoryKey.current = key;
+  }, [initialFilters.category, filterOptions.categories]);
+
   // Update parent component when filtered transactions change
   useEffect(() => {
     onFilteredTransactions(filteredTransactions);
@@ -176,7 +209,7 @@ const TransactionFilter = ({ transactions, onFilteredTransactions, onFilterChang
       </div>
 
       {/* Filter Controls */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-2 gap-4 mb-4">
         {/* Transaction Type Filter */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">

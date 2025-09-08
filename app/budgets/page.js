@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { categories, months } from "@/utils/constants";
 import { useTransactions, useBudgets } from "@/utils/hooks";
 import { processBudgetData } from "./data";
@@ -14,6 +15,7 @@ import { getDefaultSheetName } from "@/utils/google";
 import Cookies from 'js-cookie';
 
 export default function Budgets() {
+  const router = useRouter();
   const [selectedMonth, setSelectedMonth] = useState(getDefaultSheetName(months));
   
   // State to control collapse for each category with default hide all
@@ -112,6 +114,12 @@ export default function Budgets() {
       expires: 365,
       sameSite: 'strict'
     });
+  };
+
+  // Function to navigate to transactions with category filter
+  const navigateToTransactionsWithFilter = (categoryName) => {
+    const encodedCategory = encodeURIComponent(categoryName);
+    router.push(`/transactions?category=${encodedCategory}`);
   };
 
   // Use SWR hooks for data fetching
@@ -535,7 +543,12 @@ export default function Budgets() {
                             };
                             
                             return (
-                              <div key={subCategory} className="bg-white rounded-lg border border-gray-200 p-3 shadow-sm">
+                              <div 
+                                key={subCategory} 
+                                className="bg-white rounded-lg border border-gray-200 p-3 shadow-sm cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+                                onClick={() => navigateToTransactionsWithFilter(subCategory)}
+                                title={`View ${subCategory} transactions`}
+                              >
                                 {/* Header with Icon and Title */}
                                 <div className="flex items-center justify-between mb-3">
                                   <div className="flex items-center">

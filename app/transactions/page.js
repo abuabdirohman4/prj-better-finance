@@ -1,5 +1,6 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { months } from "@/utils/constants";
 import { useTransactions } from "@/utils/hooks";
@@ -16,12 +17,23 @@ import { getDefaultSheetName } from "@/utils/google";
 import { groupTransactionsByDate } from "./data";
 
 export default function Transactions() {
+  const searchParams = useSearchParams();
   const [selectedMonth, setSelectedMonth] = useState(
     getDefaultSheetName(months)
   );
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [activeFilters, setActiveFilters] = useState({});
   const [showFilters, setShowFilters] = useState(false);
+
+  // Handle URL parameters for category filtering
+  useEffect(() => {
+    const categoryParam = searchParams.get('category');
+    if (categoryParam) {
+      const decodedCategory = decodeURIComponent(categoryParam);
+      setActiveFilters({ category: decodedCategory });
+      setShowFilters(true);
+    }
+  }, [searchParams]);
 
   // Use SWR hook for data fetching (consistent with budgets page)
   const { data: transactionData, isLoading, error } = useTransactions(selectedMonth);
@@ -169,6 +181,7 @@ export default function Transactions() {
             transactions={transactionData}
             onFilteredTransactions={handleFilteredTransactions}
             onFilterChange={handleFilterChange}
+            initialFilters={activeFilters}
           />
         </div>
       )}
@@ -178,7 +191,7 @@ export default function Transactions() {
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <div className="p-6 pb-3 px-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold text-gray-900">Transaction</h3>
+            <h3 className="text-xl font-bold text-gray-900">Transaction</h3>
               {transactionData && transactionData.length > 0 && (
                 <button
                   onClick={toggleFilters}

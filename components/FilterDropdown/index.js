@@ -48,8 +48,10 @@ const FilterDropdown = ({
     if (multiple) {
       if (value.length === 0) return placeholder;
       if (value.length === 1) {
-        const option = options.find(opt => opt.value === value[0]);
-        return option ? option.label : placeholder;
+        const selected = value[0];
+        const option = options.find(opt => opt.value === selected);
+        // Fall back to showing the selected raw value if option list not loaded yet
+        return option ? option.label : (selected || placeholder);
       }
       return `${value.length} selected`;
     }
@@ -72,14 +74,19 @@ const FilterDropdown = ({
         </div>
         <div className="flex items-center space-x-1">
           {value && value.length > 0 && (
-            <button
+            <span
+              role="button"
+              tabIndex={0}
               onClick={handleClear}
-              className="text-gray-400 hover:text-gray-600 p-1"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') handleClear(e);
+              }}
+              className="text-gray-400 hover:text-gray-600 p-1 rounded cursor-pointer"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </button>
+            </span>
           )}
           <svg 
             className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} 

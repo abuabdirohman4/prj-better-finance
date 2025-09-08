@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useTransactions, useBudgets } from "@/utils/hooks";
 import { formatCurrency, getCashValue, getCurrentWeek, getBudgetColors } from "@/utils/helper";
 import { months } from "@/utils/constants";
@@ -16,10 +17,17 @@ const EATING_CATEGORIES = [
 ];
 
 export default function WeeklyBudget() {
+  const router = useRouter();
   const selectedMonth = getDefaultSheetName(months);
   const [selectedWeek, setSelectedWeek] = useState(1);
   const { data: budgetRawData, isLoading: budgetLoading } = useBudgets(selectedMonth);
   const { data: transactionData, isLoading: transactionLoading } = useTransactions(selectedMonth);
+
+  // Function to navigate to transactions with category filter
+  const navigateToTransactionsWithFilter = (categoryName) => {
+    const encodedCategory = encodeURIComponent(categoryName);
+    router.push(`/transactions?category=${encodedCategory}`);
+  };
 
   // Process budget data
   const budgetData = useMemo(() => {
@@ -240,7 +248,12 @@ export default function WeeklyBudget() {
         {/* Category Cards */}
         <div className="space-y-3">
           {weeklyData.map((category) => (
-            <div key={category.key} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <div 
+              key={category.key} 
+              className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+              onClick={() => navigateToTransactionsWithFilter(category.key)}
+              title={`View ${category.name} transactions`}
+            >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center space-x-3">
                   <div className={`w-8 h-8 flex items-center justify-center text-white text-2xl`}>
