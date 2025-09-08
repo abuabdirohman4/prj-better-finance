@@ -20,6 +20,90 @@
   color-scheme: light only !important;
 }
 
+/* Samsung device scaling fixes */
+html {
+  /* Prevent zoom on Samsung devices */
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  
+  /* Force consistent font rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Samsung device detection and specific fixes */
+/* This will only apply to Samsung devices based on user agent detection */
+
+/* Samsung-specific styles - only applied when .samsung-device class is present */
+.samsung-device {
+  /* Samsung device specific viewport fixes */
+  font-size: 14px; /* Smaller base font size for Samsung mobile */
+}
+
+.samsung-device .max-w-md {
+  max-width: 100% !important;
+  margin: 0 !important;
+}
+
+/* Adjust text sizes for Samsung devices only */
+.samsung-device .text-2xl {
+  font-size: 1.4rem !important;
+  line-height: 1.2 !important;
+}
+
+.samsung-device .text-xl {
+  font-size: 1.2rem !important;
+  line-height: 1.2 !important;
+}
+
+.samsung-device .text-lg {
+  font-size: 1rem !important;
+  line-height: 1.2 !important;
+}
+
+.samsung-device .text-sm {
+  font-size: 0.8rem !important;
+  line-height: 1.2 !important;
+}
+
+.samsung-device .text-xs {
+  font-size: 0.7rem !important;
+  line-height: 1.2 !important;
+}
+
+/* Samsung Galaxy specific adjustments for smaller screens */
+@media screen and (max-width: 412px) {
+  .samsung-device {
+    font-size: 13px;
+  }
+  
+  .samsung-device .text-2xl {
+    font-size: 1.3rem !important;
+  }
+  
+  .samsung-device .text-xl {
+    font-size: 1.1rem !important;
+  }
+  
+  .samsung-device .text-lg {
+    font-size: 0.95rem !important;
+  }
+  
+  /* Reduce padding in cards for Samsung devices */
+  .samsung-device .p-6 {
+    padding: 1rem !important;
+  }
+  
+  .samsung-device .p-4 {
+    padding: 0.75rem !important;
+  }
+  
+  .samsung-device .p-3 {
+    padding: 0.5rem !important;
+  }
+}
+
 
 
 body {
@@ -158,5 +242,38 @@ body {
   
   .backdrop-blur-xl {
     backdrop-filter: blur(24px);
+  }
+  
+  /* Samsung device specific utilities */
+  .samsung-fix {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  
+  .samsung-text-sm {
+    font-size: 0.75rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .samsung-text-xs {
+    font-size: 0.65rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .samsung-p-sm {
+    padding: 0.5rem !important;
+  }
+  
+  .samsung-p-xs {
+    padding: 0.25rem !important;
+  }
+  
+  .samsung-mb-sm {
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .samsung-mb-xs {
+    margin-bottom: 0.25rem !important;
   }
 }

@@ -3,6 +3,7 @@ import "../styles/globals.css";
 import BottomNav from "@/components/BottomNav/page";
 import PWAComponents from "@/components/PWA";
 import SplashScreen from "@/components/PWA/SplashScreen";
+import DeviceDetector from "@/components/DeviceDetector";
 import { SWRConfig } from 'swr';
 import { swrConfig } from '@/configs';
 
@@ -58,14 +59,27 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#2563eb"
+  themeColor: "#2563eb",
+  // Samsung-specific viewport settings
+  viewportFit: "cover"
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="mx-auto max-w-md">
+      <head>
+        {/* Samsung-specific meta tags */}
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        {/* Prevent Samsung browser zoom */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+      </head>
       <body className={`${inter.className} bg-gray-50`}>
         <SWRConfig value={swrConfig}>
+          <DeviceDetector />
           <PWAComponents />
           <SplashScreen />
           {children}
