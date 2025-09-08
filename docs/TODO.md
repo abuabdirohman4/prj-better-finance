@@ -78,12 +78,15 @@ A comprehensive todo list for the development of the Better Finance application 
 
 ### 🔍 Advanced Transaction Filtering (HIGH PRIORITY)
 - [ ] **Google Sheets-like Filtering**
-  - [ ] Multi-criteria filtering (type, account, category, note, date)
-  - [ ] Filter by transaction type (Spending/Earning)
-  - [ ] Filter by account (Wallet, ATM, Platform, etc.)
-  - [ ] Filter by category or account
-  - [ ] Filter by note content
-  - [ ] Filter presets dan saved filters
+  - [x] Multi-criteria filtering (type, account, category, note, date)
+  - [x] Filter by transaction type (Spending/Earning)
+  - [x] Filter by account (Wallet, ATM, Platform, etc.)
+  - [x] Filter by category or account
+  - [x] Filter by note content
+  - [x] When no items, show not found
+  - [ ] Make Hide & show for filter
+  - [ ] Filter for all month
+  - [x] Sort ascending for accounts & category
 
 ### 🤖 AI Integration - Google Gemini (HIGH PRIORITY)
 - [ ] **AI Financial Advisor**
