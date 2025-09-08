@@ -16,7 +16,7 @@ A comprehensive todo list for the development of the Better Finance application 
 - [x] Current week automatically change based date
 - [x] When typing digit, keyboard be only number
 - [x] (Balancing) When delete/backspace balancing in the middle number, cursor will move to the end
-- [ ] Update icon weekly & budget (make different)
+- [x] Update icon weekly & budget (make different)
 - [ ] App view in samsung larger than xiaomi (make consistent)
 
 ### 💳 LIST IDEA
