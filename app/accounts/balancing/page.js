@@ -298,7 +298,7 @@ function AccountBalancingContent() {
               </div>
 
               {/* Last Reality Check */}
-              {currentBalancing > 0 && (
+              {currentBalancing > 0 ? (
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Reality Balance:</span>
                   <span className="font-bold text-lg text-blue-600">
@@ -307,38 +307,47 @@ function AccountBalancingContent() {
                       : formatCurrency(currentBalancing)}
                   </span>
                 </div>
+              ) : (
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Reality Balance:</span>
+                  <span className="text-sm text-gray-400 italic">
+                    Not yet recorded
+                  </span>
+                </div>
               )}
               
-              {/* Dynamic Difference Display */}
-              <div className="border-t pt-4">
-                <div className={`p-4 rounded-xl border ${
-                  systemDifference === 0 
-                    ? 'bg-green-50 border-green-200' 
-                    : systemDifference > 0 
-                      ? 'bg-blue-50 border-blue-200'
-                      : 'bg-red-50 border-red-200'
-                }`}>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">Difference:</span>
-                    <span className={`text-lg font-bold ${
-                      systemDifference === 0 
-                        ? 'text-green-600' 
-                        : systemDifference > 0 
-                          ? 'text-blue-600'
-                          : 'text-red-600'
-                    }`}>
-                      {systemDifference === 0 ? 'Perfect Match!' : 
-                       systemDifference > 0 ? `+${formatCurrency(systemDifference)}` : 
-                       formatCurrency(systemDifference)}
-                    </span>
+              {/* Dynamic Difference Display - Only show if there's reality balance data */}
+              {currentBalancing > 0 && (
+                <div className="border-t pt-4">
+                  <div className={`p-4 rounded-xl border ${
+                    systemDifference === 0 
+                      ? 'bg-green-50 border-green-200' 
+                      : systemDifference > 0 
+                        ? 'bg-blue-50 border-blue-200'
+                        : 'bg-red-50 border-red-200'
+                  }`}>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">Difference:</span>
+                      <span className={`text-lg font-bold ${
+                        systemDifference === 0 
+                          ? 'text-green-600' 
+                          : systemDifference > 0 
+                            ? 'text-blue-600'
+                            : 'text-red-600'
+                      }`}>
+                        {systemDifference === 0 ? 'Perfect Match!' : 
+                         systemDifference > 0 ? `+${formatCurrency(systemDifference)}` : 
+                         formatCurrency(systemDifference)}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-600 mt-1">
+                      {systemDifference === 0 ? 'Your records are accurate!' :
+                       systemDifference > 0 ? 'You have more money than recorded' :
+                       'You have less money than recorded'}
+                    </p>
                   </div>
-                  <p className="text-xs text-gray-600 mt-1">
-                    {systemDifference === 0 ? 'Your records are accurate!' :
-                     systemDifference > 0 ? 'You have more money than recorded' :
-                     'You have less money than recorded'}
-                  </p>
                 </div>
-              </div>
+              )}
             </div>
           )}
         </div>
