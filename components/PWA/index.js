@@ -30,7 +30,7 @@ export default function PWAComponents() {
       setDeferredPrompt(e);
       // Only show install prompt on mobile devices
       if (isMobile) {
-        setShowInstallPrompt(true);
+        setShowInstallPrompt(false);
       }
     };
 

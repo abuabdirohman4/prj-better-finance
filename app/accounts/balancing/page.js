@@ -46,6 +46,7 @@ function AccountBalancingContent() {
   const [displayValue, setDisplayValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [cursorPosition, setCursorPosition] = useState(0);
 
   // Find the specified account
   const account = accountData?.find(acc => acc.name === accountName);
@@ -57,9 +58,43 @@ function AccountBalancingContent() {
     ? parseFloat(realBalance) - currentBalance 
     : (currentBalancing > 0 ? currentBalancing - currentBalance : 0);
 
+  // Initialize display value with existing reality balance
+  useEffect(() => {
+    if (currentBalancing > 0 && !realBalance) {
+      const isBankAccount = accountName === 'Mandiri' || accountName === 'BCA';
+      
+      if (isBankAccount) {
+        // For bank accounts, format with decimal places
+        const displayVal = currentBalancing.toLocaleString('id-ID', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+        setDisplayValue(displayVal);
+        setRealBalance(currentBalancing.toString());
+      } else {
+        // For non-bank accounts, integer only
+        const displayVal = Math.round(currentBalancing).toLocaleString('id-ID');
+        setDisplayValue(displayVal);
+        setRealBalance(Math.round(currentBalancing).toString());
+      }
+    }
+  }, [currentBalancing, accountName, realBalance]);
+
+  // Set cursor position after display value changes
+  useEffect(() => {
+    const input = document.querySelector('input[type="tel"]');
+    if (input && cursorPosition !== null) {
+      // Use setTimeout to ensure the DOM has updated
+      setTimeout(() => {
+        input.setSelectionRange(cursorPosition, cursorPosition);
+      }, 0);
+    }
+  }, [displayValue, cursorPosition]);
+
   // Handle input formatting
   const handleInputChange = (e) => {
     const value = e.target.value;
+    const cursorPos = e.target.selectionStart;
     const isBankAccount = accountName === 'Mandiri' || accountName === 'BCA';
     
     if (isBankAccount) {
@@ -70,6 +105,7 @@ function AccountBalancingContent() {
       if (cleanValue === '') {
         setRealBalance('');
         setDisplayValue('');
+        setCursorPosition(0);
       } else {
         // Smart logic: handle both thousand separators and decimal separators
         let normalizedValue = cleanValue;
@@ -113,16 +149,21 @@ function AccountBalancingContent() {
           setRealBalance(normalizedValue);
           
           // Format display
+          let displayVal;
           if (isDecimal) {
             const [integerPart, decimalPart] = normalizedValue.split('.');
             const formattedInteger = Number(integerPart).toLocaleString('id-ID');
-            const displayVal = decimalPart ? `${formattedInteger},${decimalPart}` : `${formattedInteger},`;
-            setDisplayValue(displayVal);
+            displayVal = decimalPart ? `${formattedInteger},${decimalPart}` : `${formattedInteger},`;
           } else {
             const number = Number(normalizedValue);
-            const displayVal = number.toLocaleString('id-ID');
-            setDisplayValue(displayVal);
+            displayVal = number.toLocaleString('id-ID');
           }
+          
+          setDisplayValue(displayVal);
+          
+          // Calculate new cursor position
+          const newCursorPos = Math.min(cursorPos, displayVal.length);
+          setCursorPosition(newCursorPos);
         }
       }
     } else {
@@ -132,10 +173,16 @@ function AccountBalancingContent() {
       if (numericValue === '') {
         setRealBalance('');
         setDisplayValue('');
+        setCursorPosition(0);
       } else {
         const number = Number(numericValue);
+        const displayVal = number.toLocaleString('id-ID');
         setRealBalance(number.toString());
-        setDisplayValue(number.toLocaleString('id-ID'));
+        setDisplayValue(displayVal);
+        
+        // Calculate new cursor position
+        const newCursorPos = Math.min(cursorPos, displayVal.length);
+        setCursorPosition(newCursorPos);
       }
     }
   };
