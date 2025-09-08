@@ -17,23 +17,23 @@ A comprehensive todo list for the development of the Better Finance application 
 - [x] When typing digit, keyboard be only number
 - [x] (Balancing) When delete/backspace balancing in the middle number, cursor will move to the end
 - [x] Update icon weekly & budget (make different)
-- [ ] App view in samsung larger than xiaomi (make consistent)
+- [] App view in samsung larger than xiaomi (make consistent)
 
 ### 💳 LIST IDEA
 - [x] Remove Transactions & Accounts in bottom navbar, access from home
 <!-- - [ ] Change transactions to be like Livin' Mandiri -->
-- [ ] Change count transactions per day to sum of spending per day
-- [ ] Change UI of budgets to have remaining & use long style currency like weekly budget 
+<!-- - [ ] Change count transactions per day to sum of spending per day -->
+- [x] Change UI of budgets to have remaining & use long style currency like weekly budget 
 - [ ] Add eye hide unhide in home for Assets
 - [ ] Filter for all month
 - [ ] Click accounts to filter, click categories to filter
 
 ### 💳 REFACTORING
+- [x] Move file weekly-budget to budgets/weekly
 - [ ] Merge formatCurrencyShort to formatCurrency
 - [ ] Remove unused fetchTransactions, fetchBudgets, fetchGoals, fetchAccounts
 - [ ] Remove unused code
 - [ ] Undestanding flow code & each function & code goals
-- [x] Move file weekly-budget to budgets/weekly
 
 ### 💳 Account/Wallet Management (HIGH PRIORITY)
 - [x] **Account Overview**

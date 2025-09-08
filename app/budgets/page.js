@@ -305,17 +305,25 @@ export default function Budgets() {
             </div>
 
             {/* Summary Stats */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="text-center">
-                <p className="text-sm text-gray-600 mb-1">Total Budget</p>
-                <p className="text-lg font-bold">
-                  {formatCurrency(totalBudgetFromSheetAll, "brackets")}
+                <p className="text-sm text-gray-600 mb-1">Budget</p>
+                <p className="text-lg font-bold text-gray-700">
+                  {formatCurrencyShort(totalBudgetFromSheetAll)}
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-sm text-gray-600 mb-1">Total Spending</p>
-                <p className="text-lg font-bold text-red-600">
-                  {formatCurrency(totalActualFromSheetAll, "brackets")}
+                <p className="text-sm text-gray-600 mb-1">Spending</p>
+                <p className="text-lg font-bold text-gray-700">
+                  {formatCurrencyShort(totalActualFromSheetAll)}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm text-gray-600 mb-1">Remaining</p>
+                <p className={`text-lg font-bold ${
+                  (totalBudgetFromSheetAll - totalActualFromSheetAll) >= 0 ? 'text-gray-700' : 'text-red-600'
+                }`}>
+                  {formatCurrencyShort(totalBudgetFromSheetAll - totalActualFromSheetAll)}
                 </p>
               </div>
             </div>
@@ -407,17 +415,19 @@ export default function Budgets() {
                                 {categoryKey}
                               </h4>
                               <p className="text-sm text-gray-600">
-                                {Object.keys(categoryData).length} Items
+                                {formatCurrencyShort(totalsAll.spent)} / {formatCurrencyShort(totalsAll.budget)}
                               </p>
                             </div>
                           </div>
                           
-                          {/* Right: Budget Summary + Hide Button + Arrow */}
+                          {/* Right: Remaining Budget + Hide Button + Arrow */}
                           <div className="flex items-center space-x-3">
-                            {/* Budget Summary */}
+                            {/* Remaining Budget */}
                             <div className="text-right">
-                              <p className="text-sm font-medium text-gray-900">
-                                {formatCurrencyShort(totalsAll.spent)} / {formatCurrencyShort(totalsAll.budget)}
+                              <p className={`text-lg font-bold ${
+                                totalsAll.remaining >= 0 ? 'text-gray-700' : 'text-red-600'
+                              }`}>
+                                {formatCurrencyShort(totalsAll.remaining)}
                               </p>
                             </div>
                             
@@ -534,14 +544,21 @@ export default function Budgets() {
                                         {getSubCategoryIcon(categoryKey, subCategory)}
                                       </span>
                                     </div>
-                                    <h6 className="font-medium text-gray-900 text-sm">
-                                      {toProperCase(subCategory)}
-                                    </h6>
+                                    <div>
+                                      <h6 className="font-medium text-gray-900 text-sm">
+                                        {toProperCase(subCategory)}
+                                      </h6>
+                                      <p className="text-xs text-gray-600">
+                                        {formatCurrency(subSpent)} / {formatCurrency(subBudget)}
+                                      </p>
+                                    </div>
                                   </div>
                                   <div className="flex items-center space-x-2">
                                     <div className="text-right">
-                                      <p className="text-xs text-gray-600">
-                                        {formatCurrencyShort(subSpent)} / {formatCurrencyShort(subBudget)}
+                                      <p className={`text-sm font-bold ${
+                                        (subBudget - subSpent) >= 0 ? 'text-gray-700' : 'text-red-600'
+                                      }`}>
+                                        {formatCurrency(subBudget - subSpent)}
                                       </p>
                                     </div>
                                     <button
