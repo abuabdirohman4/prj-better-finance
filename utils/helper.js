@@ -394,7 +394,8 @@ export function getCurrentWeek(date) {
   const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
   const firstMondayOfMonth = new Date(firstDayOfMonth);
   const firstDayOfWeek = firstDayOfMonth.getDay();
-  const daysToFirstMonday = firstDayOfWeek === 0 ? 1 : 8 - firstDayOfWeek;
+  // Correctly compute days to first Monday: Sun(0)->1, Mon(1)->0, Tue(2)->6, ..., Sat(6)->2
+  const daysToFirstMonday = firstDayOfWeek === 0 ? 1 : firstDayOfWeek === 1 ? 0 : 8 - firstDayOfWeek;
   firstMondayOfMonth.setDate(firstDayOfMonth.getDate() + daysToFirstMonday);
   firstMondayOfMonth.setHours(0, 0, 0, 0);
   
