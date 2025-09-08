@@ -250,7 +250,8 @@ export default function WalletFractions() {
                       </span>
                     </div>
                     <input
-                      type="text"
+                      type="tel"
+                      inputMode="numeric"
                       value={fraction.count}
                       onChange={(e) => handleCountChange(index, e.target.value)}
                       placeholder="0"

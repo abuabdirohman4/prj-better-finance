@@ -13,17 +13,17 @@ A comprehensive todo list for the development of the Better Finance application 
 - [x] Fix Warning: In HTML, <a> cannot be a descendant of <a>. This will cause a hydration error.
 - [x] Floating "Clear Cache" in web
 - [x] Add back button in page transactions & accounts
-- [ ] Current week automatically change based date
+- [x] Current week automatically change based date
+- [x] When typing digit, keyboard be only number
 - [ ] (Balancing) When delete/backspace balancing in the middle number, cursor will move to the end
 - [ ] Update icon weekly & budget (make different)
 - [ ] App view in samsung larger than xiaomi (make consistent)
 
 ### 💳 LIST IDEA
 - [x] Remove Transactions & Accounts in bottom navbar, access from home
-- [ ] Change transactions to be like Livin' Mandiri
+<!-- - [ ] Change transactions to be like Livin' Mandiri -->
 - [ ] Change count transactions per day to sum of spending per day
 - [ ] Change UI of budgets to have remaining & use long style currency like weekly budget 
-- [ ] When typing digit, keyboard be only number
 - [ ] Add eye hide unhide in home for Assets
 - [ ] Filter for all month
 - [ ] Click accounts to filter, click categories to filter

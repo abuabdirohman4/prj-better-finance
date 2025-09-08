@@ -303,7 +303,8 @@ function AccountBalancingContent() {
           <div className="space-y-4">
             <div>
               <input
-                type="text"
+                type="tel"
+                inputMode="numeric"
                 value={displayValue}
                 onChange={handleInputChange}
                 placeholder={`Enter your actual ${accountName.toLowerCase()} balance`}
