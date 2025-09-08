@@ -40,16 +40,16 @@ export default function BottomNav() {
 
           {/* Weekly Budget */}
           <Link
-            href="/weekly-budget"
+            href="/budgets/weekly"
             className={`flex flex-col items-center justify-center w-20 h-12 rounded-xl transition-all duration-200 ${
-              isActive('/weekly-budget') 
+              isActive('/budgets/weekly') 
                 ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg scale-105' 
                 : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
             }`}
           >
             <svg
               className={`w-5 h-5 mb-1 ${
-                isActive('/weekly-budget') ? 'text-white' : 'text-gray-500'
+                isActive('/budgets/weekly') ? 'text-white' : 'text-gray-500'
               }`}
               fill="none"
               stroke="currentColor"
@@ -58,7 +58,7 @@ export default function BottomNav() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
             <span className={`text-xs font-medium ${
-              isActive('/weekly-budget') ? 'text-white' : 'text-gray-600'
+              isActive('/budgets/weekly') ? 'text-white' : 'text-gray-600'
             }`}>
               Weekly
             </span>

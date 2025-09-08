@@ -125,6 +125,8 @@ export default function Budgets() {
     return processBudgetData(budgetRawData, selectedMonth);
   }, [budgetRawData, selectedMonth]);
 
+  
+
 
   // Group budget data based on categories constants with case-insensitive matching
   // AND prevent duplication with category priority

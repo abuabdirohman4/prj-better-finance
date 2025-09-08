@@ -108,7 +108,7 @@ export default function Transactions() {
       </div>
 
       {/* Summary Cards */}
-      <div className="px-3 mt-6 mb-8">
+      <div className="px-3 mt-6 mb-4">
         <div className="grid grid-cols-1 gap-4">
           {/* Net Balance Card */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">

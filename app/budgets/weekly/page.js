@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useMemo, useEffect } from "react";
 import { useTransactions, useBudgets } from "@/utils/hooks";
 import { formatCurrency, getCashValue, getCurrentWeek, getBudgetColors } from "@/utils/helper";
@@ -520,3 +521,5 @@ function calculateWeekSpending(transactions, category, currentWeek) {
     return total + amount;
   }, 0);
 }
+
+

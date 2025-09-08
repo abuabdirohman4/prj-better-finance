@@ -13,9 +13,10 @@ A comprehensive todo list for the development of the Better Finance application 
 - [x] Fix Warning: In HTML, <a> cannot be a descendant of <a>. This will cause a hydration error.
 - [x] Floating "Clear Cache" in web
 - [x] Add back button in page transactions & accounts
+- [ ] Current week automatically change based date
 - [ ] (Balancing) When delete/backspace balancing in the middle number, cursor will move to the end
 - [ ] Update icon weekly & budget (make different)
-- [ ] View in samsung large
+- [ ] App view in samsung larger than xiaomi (make consistent)
 
 ### 💳 LIST IDEA
 - [x] Remove Transactions & Accounts in bottom navbar, access from home
@@ -24,13 +25,15 @@ A comprehensive todo list for the development of the Better Finance application 
 - [ ] Change UI of budgets to have remaining & use long style currency like weekly budget 
 - [ ] When typing digit, keyboard be only number
 - [ ] Add eye hide unhide in home for Assets
+- [ ] Filter for all month
+- [ ] Click accounts to filter, click categories to filter
 
 ### 💳 REFACTORING
 - [ ] Merge formatCurrencyShort to formatCurrency
 - [ ] Remove unused fetchTransactions, fetchBudgets, fetchGoals, fetchAccounts
 - [ ] Remove unused code
 - [ ] Undestanding flow code & each function & code goals
-- [ ] Move file weekly-budget to budgets/weekly
+- [x] Move file weekly-budget to budgets/weekly
 
 ### 💳 Account/Wallet Management (HIGH PRIORITY)
 - [x] **Account Overview**
@@ -86,8 +89,6 @@ A comprehensive todo list for the development of the Better Finance application 
   - [x] When no items, show not found
   - [x] Make Hide & show for filter
   - [x] Sort ascending for accounts & category
-  - [ ] Filter for all month
-  - [ ] Click accounts to filter, click categories to filter
 
 ### 🤖 AI Integration - Google Gemini (HIGH PRIORITY)
 - [ ] **AI Financial Advisor**
@@ -99,6 +100,7 @@ A comprehensive todo list for the development of the Better Finance application 
   - [ ] Goal optimization recommendations
   - [ ] Transaction behavior analysis
   - [ ] Spending habit recommendations
+  - [ ] Financial Check Up
 
 ---
 
