@@ -1,5 +1,9 @@
 import { googleSheetsService } from '@/utils/google';
 
+// Ensure this route is always dynamic and not statically optimized
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // GET /api/budgets - Get budget data for a specific month
 export async function GET(request) {
   try {

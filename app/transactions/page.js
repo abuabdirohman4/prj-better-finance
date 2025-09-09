@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { months } from "@/utils/constants";
@@ -16,7 +16,7 @@ import {
 import { getDefaultSheetName } from "@/utils/google";
 import { groupTransactionsByDate } from "./data";
 
-export default function Transactions() {
+function TransactionsContent() {
   const searchParams = useSearchParams();
   const [selectedMonth, setSelectedMonth] = useState(
     getDefaultSheetName(months)
@@ -350,5 +350,13 @@ export default function Transactions() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function Transactions() {
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-gray-50"><div className="p-4">Loading...</div></main>}>
+      <TransactionsContent />
+    </Suspense>
   );
 }

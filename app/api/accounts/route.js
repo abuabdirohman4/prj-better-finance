@@ -1,5 +1,9 @@
 import { googleSheetsService } from '@/utils/google';
 
+// Ensure this route is always dynamic and not statically optimized
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // GET /api/accounts - Get all accounts data
 export async function GET(request) {
   try {

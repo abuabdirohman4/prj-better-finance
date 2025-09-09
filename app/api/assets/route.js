@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import { fetchAssetData } from '@/app/assets/data';
 
+// Ensure this route is always dynamic and not statically optimized
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
   try {
     const assets = await fetchAssetData();
