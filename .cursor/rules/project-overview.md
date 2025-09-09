@@ -1,9 +1,11 @@
 # Better Finance App - Project Overview
 
 ## Project Description
+
 Better Finance is a Next.js application with Progressive Web App (PWA) capabilities for personal finance management. The app focuses on budgeting, transaction tracking, and financial planning with a user-friendly interface.
 
 ## Tech Stack
+
 - **Framework**: Next.js (App Router)
 - **Styling**: Tailwind CSS
 - **PWA**: Service Worker, Manifest, Offline capabilities
@@ -11,6 +13,7 @@ Better Finance is a Next.js application with Progressive Web App (PWA) capabilit
 - **Build Tool**: Next.js built-in bundler
 
 ## Project Structure
+
 ```
 app/                    # Next.js App Router pages
 ├── budgets/           # Budget management pages
@@ -27,6 +30,7 @@ utils/                 # Utility functions & helpers
 ```
 
 ## Key Features
+
 - Budget planning and tracking
 - Transaction management
 - PWA capabilities (offline, installable)

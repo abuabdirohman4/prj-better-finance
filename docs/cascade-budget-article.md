@@ -1,6 +1,6 @@
 # Cascade Budget: A Revolutionary Algorithm for Dynamic Weekly Budget Management
 
-*How I built a self-adjusting budget system that redistributes overspending penalties across future weeks*
+_How I built a self-adjusting budget system that redistributes overspending penalties across future weeks_
 
 ![Cascade Budget Thumbnail](cascade-budget-thumbnail.png)
 
@@ -21,6 +21,7 @@ This creates a cycle of budget failures and financial stress. I needed a better 
 **Cascade Budget** is a dynamic algorithm that automatically redistributes overspending penalties across future weeks, creating a self-correcting budget system.
 
 ### Core Concept:
+
 When you overspend in Week 1, the excess amount is distributed as a "penalty" across the remaining weeks of the month, reducing your future weekly budgets proportionally.
 
 ---
@@ -30,21 +31,25 @@ When you overspend in Week 1, the excess amount is distributed as a "penalty" ac
 Let's say you have a $400 monthly food budget:
 
 ### Initial Setup:
+
 - **Week 1-4**: $93,333 each (7 days × $13,333/day)
 - **Week 5**: $26,667 (2 days × $13,333/day)
 - **Total**: $400,000 ✅
 
 ### Week 1 Overspending:
+
 - **Budget**: $93,333
 - **Spending**: $163,798
 - **Overspend**: $70,465
 
 ### Penalty Calculation:
+
 - **Remaining days**: 23 days
 - **Penalty per day**: $70,465 ÷ 23 = $3,064
 - **Penalty per week**: $3,064 × 7 = $21,448
 
 ### Adjusted Budgets:
+
 - **Week 2**: $93,333 - $21,448 = **$71,885**
 - **Week 3**: $93,333 - $21,448 = **$71,885**
 - **Week 4**: $93,333 - $21,448 = **$71,885**
@@ -55,41 +60,60 @@ Let's say you have a $400 monthly food budget:
 ## The Algorithm in Code
 
 ```javascript
-function calculateCascadeBudget(monthlyBudget, allWeeksInfo, currentWeek, transactions, category) {
-  // Calculate over budgets for each week based on adjusted budgets
-  const overBudgets = [];
-  for (let i = 0; i < currentWeek; i++) {
-    const weekOriginalBudget = originalWeeklyBudgets[i] || 0;
-    const weekSpending = calculateWeekSpending(transactions, category, allWeeksInfo[i]);
-    
-    // Calculate penalty for this week from previous weeks' over budget
-    let weekPenalty = 0;
-    for (let j = 0; j < i; j++) {
-      if (overBudgets[j] > 0) {
-        const remainingDays = calculateRemainingDays(allWeeksInfo, j + 1);
-        const penaltyPerDay = overBudgets[j] / remainingDays;
-        const penaltyAmount = penaltyPerDay * getDaysInWeek(allWeeksInfo[i]);
-        weekPenalty += penaltyAmount;
-      }
+function calculateCascadeBudget(
+    monthlyBudget,
+    allWeeksInfo,
+    currentWeek,
+    transactions,
+    category
+) {
+    // Calculate over budgets for each week based on adjusted budgets
+    const overBudgets = [];
+    for (let i = 0; i < currentWeek; i++) {
+        const weekOriginalBudget = originalWeeklyBudgets[i] || 0;
+        const weekSpending = calculateWeekSpending(
+            transactions,
+            category,
+            allWeeksInfo[i]
+        );
+
+        // Calculate penalty for this week from previous weeks' over budget
+        let weekPenalty = 0;
+        for (let j = 0; j < i; j++) {
+            if (overBudgets[j] > 0) {
+                const remainingDays = calculateRemainingDays(
+                    allWeeksInfo,
+                    j + 1
+                );
+                const penaltyPerDay = overBudgets[j] / remainingDays;
+                const penaltyAmount =
+                    penaltyPerDay * getDaysInWeek(allWeeksInfo[i]);
+                weekPenalty += penaltyAmount;
+            }
+        }
+
+        const weekAdjustedBudget = Math.max(
+            0,
+            weekOriginalBudget - weekPenalty
+        );
+        const weekOverBudget = Math.max(0, weekSpending - weekAdjustedBudget);
+        overBudgets.push(weekOverBudget);
     }
-    
-    const weekAdjustedBudget = Math.max(0, weekOriginalBudget - weekPenalty);
-    const weekOverBudget = Math.max(0, weekSpending - weekAdjustedBudget);
-    overBudgets.push(weekOverBudget);
-  }
-  
-  // Calculate final budget for current week
-  let currentWeekPenalty = 0;
-  for (let i = 0; i < overBudgets.length - 1; i++) {
-    if (overBudgets[i] > 0) {
-      const remainingDays = calculateRemainingDays(allWeeksInfo, i + 1);
-      const penaltyPerDay = overBudgets[i] / remainingDays;
-      const penaltyAmount = penaltyPerDay * getDaysInCurrentWeek(allWeeksInfo[currentWeek - 1]);
-      currentWeekPenalty += penaltyAmount;
+
+    // Calculate final budget for current week
+    let currentWeekPenalty = 0;
+    for (let i = 0; i < overBudgets.length - 1; i++) {
+        if (overBudgets[i] > 0) {
+            const remainingDays = calculateRemainingDays(allWeeksInfo, i + 1);
+            const penaltyPerDay = overBudgets[i] / remainingDays;
+            const penaltyAmount =
+                penaltyPerDay *
+                getDaysInCurrentWeek(allWeeksInfo[currentWeek - 1]);
+            currentWeekPenalty += penaltyAmount;
+        }
     }
-  }
-  
-  return Math.max(0, originalWeekBudget - currentWeekPenalty);
+
+    return Math.max(0, originalWeekBudget - currentWeekPenalty);
 }
 ```
 
@@ -98,15 +122,19 @@ function calculateCascadeBudget(monthlyBudget, allWeeksInfo, currentWeek, transa
 ## Key Features
 
 ### 1. Non-Cumulative Penalties
+
 Each overspend is calculated separately, not combined. This ensures fair distribution.
 
 ### 2. Proportional Distribution
+
 Penalties are distributed based on remaining days in the month, not equally.
 
 ### 3. Dynamic Response
+
 The system responds to overspending in real-time, adjusting future budgets immediately.
 
 ### 4. Self-Correcting
+
 Multiple overspends are handled gracefully, with each creating its own penalty stream.
 
 ---
@@ -136,16 +164,19 @@ Cascade Budget works because it:
 ## Implementation Challenges
 
 ### Challenge 1: Complex Calculations
+
 The algorithm needs to track multiple penalty streams simultaneously.
 
 **Solution**: Separate calculation of each overspend's penalty distribution.
 
 ### Challenge 2: User Understanding
+
 Users need to understand why their budgets are changing.
 
 **Solution**: Clear visual indicators and explanations in the UI.
 
 ### Challenge 3: Edge Cases
+
 What happens if all remaining weeks have zero budget?
 
 **Solution**: Minimum budget thresholds and rollover mechanisms.
@@ -174,11 +205,13 @@ The algorithm is open-source and ready for implementation. Try it in your next p
 ---
 
 ### About the Author
-*[Your name] is a full-stack developer passionate about personal finance technology. Follow for more articles on fintech innovation and algorithmic solutions.*
+
+_[Your name] is a full-stack developer passionate about personal finance technology. Follow for more articles on fintech innovation and algorithmic solutions._
 
 ---
 
 ### Tags
+
 `#PersonalFinance` `#Algorithm` `#FinTech` `#Budgeting` `#JavaScript` `#Innovation`
 
 ---
