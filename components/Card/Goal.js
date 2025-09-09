@@ -1,4 +1,4 @@
-import { formatCurrencyShort } from "@/utils/helper";
+import { formatCurrency } from "@/utils/helper";
 
 export default function Goal({
   goal,
@@ -140,7 +140,7 @@ export default function Goal({
 
         <div className="text-right flex items-center space-x-2">
           <div className="text-xs font-medium text-gray-900">
-            {formatCurrencyShort(parseFloat(collected) || 0)} / {formatCurrencyShort(parseFloat(target) || 0)}
+            {formatCurrency(parseFloat(collected) || 0, 'short')} / {formatCurrency(parseFloat(target) || 0, 'short')}
           </div>
           {onToggleVisibility && (
             <div className="flex items-center">
@@ -174,7 +174,7 @@ export default function Goal({
       <div className="mt-3 pt-3 border-t border-gray-100">
         <div className="flex items-center justify-between text-xs text-gray-500">
           <div className="flex items-center space-x-4">
-            <span>Monthly: {formatCurrencyShort(parseFloat(monthly) || 0)}</span>
+            <span>Monthly: {formatCurrency(parseFloat(monthly) || 0, 'short')}</span>
             {time && time !== '-' && (
               <span>Time: {time}</span>
             )}

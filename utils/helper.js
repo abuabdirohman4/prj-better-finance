@@ -33,6 +33,20 @@ export function formatCurrency(amount, format = 'rupiah', className = '') {
         return `- ${formatRupiah(absAmount)}`;
       }
       return `+ ${formatRupiah(absAmount)}`;
+    case 'short':
+      if (amount === 0) return 'Rp0';
+      
+      if (absAmount >= 1000000000) {
+        const value = (absAmount / 1000000000).toFixed(1);
+        return `Rp${parseFloat(value)}M`;
+      } else if (absAmount >= 1000000) {
+        const value = (absAmount / 1000000).toFixed(1);
+        return `Rp${parseFloat(value)}jt`;
+      } else if (absAmount >= 1000) {
+        return `Rp${(absAmount / 1000).toFixed(0)}rb`;
+      } else {
+        return `Rp${absAmount.toFixed(0)}`;
+      }
     case 'superscript':
       // Return JSX for superscript format
       if (amount || amount == 0) {
@@ -61,24 +75,6 @@ export function formatCurrency(amount, format = 'rupiah', className = '') {
       return <span className={className}>Rp 0</span>;
     default:
       return formatRupiah(amount);
-  }
-}
-
-export function formatCurrencyShort(amount) {
-  if (amount === 0) return 'Rp0';
-  
-  const absAmount = Math.abs(amount);
-  
-  if (absAmount >= 1000000000) {
-    const value = (absAmount / 1000000000).toFixed(1);
-    return `Rp${parseFloat(value)}M`;
-  } else if (absAmount >= 1000000) {
-    const value = (absAmount / 1000000).toFixed(1);
-    return `Rp${parseFloat(value)}jt`;
-  } else if (absAmount >= 1000) {
-    return `Rp${(absAmount / 1000).toFixed(0)}rb`;
-  } else {
-    return `Rp${absAmount.toFixed(0)}`;
   }
 }
 

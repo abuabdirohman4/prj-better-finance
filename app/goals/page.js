@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useGoals } from "@/utils/hooks";
 import Goal from "@/components/Card/Goal";
 import Cookies from 'js-cookie';
-import { formatCurrency, formatCurrencyShort, getGoalColors } from "@/utils/helper";
+import { formatCurrency, getGoalColors } from "@/utils/helper";
 
 export default function Goals() {
   const { data: goalsData, isLoading, error } = useGoals();
@@ -265,7 +265,7 @@ export default function Goals() {
                           <div className="flex items-center space-x-3">
                             <div className="text-right">
                               <p className="text-sm font-medium text-gray-900">
-                                {formatCurrencyShort(totals.totalCollected)} / {formatCurrencyShort(totals.totalTarget)}
+                                {formatCurrency(totals.totalCollected, 'short')} / {formatCurrency(totals.totalTarget, 'short')}
                               </p>
                             </div>
                             

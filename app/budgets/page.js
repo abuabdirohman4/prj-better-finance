@@ -7,7 +7,6 @@ import { useTransactions, useBudgets } from "@/utils/hooks";
 import { processBudgetData } from "./data";
 import {
   formatCurrency,
-  formatCurrencyShort,
   getBudgetColors,
   toProperCase,
 } from "@/utils/helper";
@@ -317,13 +316,13 @@ export default function Budgets() {
               <div className="text-center">
                 <p className="text-sm text-gray-600 mb-1">Budget</p>
                 <p className="text-lg font-bold text-gray-700">
-                  {formatCurrencyShort(totalBudgetFromSheetAll)}
+                  {formatCurrency(totalBudgetFromSheetAll, 'short')}
                 </p>
               </div>
               <div className="text-center">
                 <p className="text-sm text-gray-600 mb-1">Spending</p>
                 <p className="text-lg font-bold text-gray-700">
-                  {formatCurrencyShort(totalActualFromSheetAll)}
+                  {formatCurrency(totalActualFromSheetAll, 'short')}
                 </p>
               </div>
               <div className="text-center">
@@ -331,7 +330,7 @@ export default function Budgets() {
                 <p className={`text-lg font-bold ${
                   (totalBudgetFromSheetAll - totalActualFromSheetAll) >= 0 ? 'text-gray-700' : 'text-red-600'
                 }`}>
-                  {formatCurrencyShort(totalBudgetFromSheetAll - totalActualFromSheetAll)}
+                  {formatCurrency(totalBudgetFromSheetAll - totalActualFromSheetAll, 'short')}
                 </p>
               </div>
             </div>
@@ -423,7 +422,7 @@ export default function Budgets() {
                                 {categoryKey}
                               </h4>
                               <p className="text-sm text-gray-600">
-                                {formatCurrencyShort(totalsAll.spent)} / {formatCurrencyShort(totalsAll.budget)}
+                                {formatCurrency(totalsAll.spent, 'short')} / {formatCurrency(totalsAll.budget, 'short')}
                               </p>
                             </div>
                           </div>
@@ -435,7 +434,7 @@ export default function Budgets() {
                               <p className={`text-lg font-bold ${
                                 totalsAll.remaining >= 0 ? 'text-gray-700' : 'text-red-600'
                               }`}>
-                                {formatCurrencyShort(totalsAll.remaining)}
+                                {formatCurrency(totalsAll.remaining, 'short')}
                               </p>
                             </div>
                             
