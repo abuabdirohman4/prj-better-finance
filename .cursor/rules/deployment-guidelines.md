@@ -1,0 +1,672 @@
+# Deployment Guidelines & DevOps
+
+## Environment Setup
+
+### Environment Variables
+```bash
+# .env.local (Development)
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+GOOGLE_SHEETS_API_KEY=your_api_key
+GOOGLE_SHEETS_CLIENT_EMAIL=your_service_account_email
+GOOGLE_SHEETS_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+GOOGLE_SHEETS_SPREADSHEET_ID=your_spreadsheet_id
+```
+
+```bash
+# .env.production (Production)
+NEXT_PUBLIC_APP_URL=https://your-domain.com
+GOOGLE_SHEETS_API_KEY=your_production_api_key
+GOOGLE_SHEETS_CLIENT_EMAIL=your_production_service_account_email
+GOOGLE_SHEETS_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+GOOGLE_SHEETS_SPREADSHEET_ID=your_production_spreadsheet_id
+```
+
+### Environment Validation
+```javascript
+// utils/env.js
+const requiredEnvVars = [
+    'NEXT_PUBLIC_APP_URL',
+    'GOOGLE_SHEETS_API_KEY',
+    'GOOGLE_SHEETS_CLIENT_EMAIL',
+    'GOOGLE_SHEETS_PRIVATE_KEY',
+    'GOOGLE_SHEETS_SPREADSHEET_ID'
+];
+
+export function validateEnvironment() {
+    const missing = requiredEnvVars.filter(key => !process.env[key]);
+    
+    if (missing.length > 0) {
+        throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+    }
+    
+    return true;
+}
+
+// Call in API routes
+export async function GET() {
+    try {
+        validateEnvironment();
+        // API logic
+    } catch (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+```
+
+## Build Configuration
+
+### Next.js Configuration
+```javascript
+// next.config.mjs
+import withPWA from "next-pwa";
+
+const nextConfig = {
+    reactStrictMode: false,
+    swcMinify: true,
+    compress: true,
+    poweredByHeader: false,
+    
+    // Image optimization
+    images: {
+        domains: ['your-domain.com'],
+        formats: ['image/webp', 'image/avif'],
+    },
+    
+    // Headers for security
+    async headers() {
+        return [
+            {
+                source: '/(.*)',
+                headers: [
+                    {
+                        key: 'X-Frame-Options',
+                        value: 'DENY',
+                    },
+                    {
+                        key: 'X-Content-Type-Options',
+                        value: 'nosniff',
+                    },
+                    {
+                        key: 'Referrer-Policy',
+                        value: 'origin-when-cross-origin',
+                    },
+                ],
+            },
+        ];
+    },
+    
+    // Redirects
+    async redirects() {
+        return [
+            {
+                source: '/home',
+                destination: '/',
+                permanent: true,
+            },
+        ];
+    },
+    
+    webpack: (config, { isServer }) => {
+        if (!isServer) {
+            config.resolve.fallback = {
+                ...config.resolve.fallback,
+                net: false,
+                tls: false,
+                fs: false,
+                crypto: false,
+                stream: false,
+                url: false,
+                zlib: false,
+                http: false,
+                https: false,
+                assert: false,
+                os: false,
+                path: false,
+            };
+        }
+        return config;
+    },
+};
+
+export default withPWA({
+    dest: 'public',
+    register: true,
+    skipWaiting: true,
+    disable: process.env.NODE_ENV === 'development',
+    runtimeCaching: [
+        // Caching strategies
+    ],
+})(nextConfig);
+```
+
+### Package.json Scripts
+```json
+{
+    "scripts": {
+        "dev": "next dev",
+        "build": "node scripts/build-pwa.js && next build",
+        "build:pwa": "node scripts/build-pwa.js && next build",
+        "start": "next start",
+        "lint": "next lint",
+        "lint:fix": "next lint --fix",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "type-check": "tsc --noEmit",
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "test:coverage": "jest --coverage",
+        "analyze": "ANALYZE=true next build",
+        "preview": "next build && next start"
+    }
+}
+```
+
+## Vercel Deployment
+
+### Vercel Configuration
+```json
+// vercel.json
+{
+    "framework": "nextjs",
+    "buildCommand": "npm run build",
+    "devCommand": "npm run dev",
+    "installCommand": "npm install",
+    "outputDirectory": ".next",
+    "functions": {
+        "app/api/**/*.js": {
+            "maxDuration": 30
+        }
+    },
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "X-Content-Type-Options",
+                    "value": "nosniff"
+                },
+                {
+                    "key": "X-Frame-Options",
+                    "value": "DENY"
+                },
+                {
+                    "key": "X-XSS-Protection",
+                    "value": "1; mode=block"
+                }
+            ]
+        }
+    ],
+    "redirects": [
+        {
+            "source": "/home",
+            "destination": "/",
+            "permanent": true
+        }
+    ]
+}
+```
+
+### Environment Variables in Vercel
+```bash
+# Set in Vercel Dashboard or CLI
+vercel env add NEXT_PUBLIC_APP_URL
+vercel env add GOOGLE_SHEETS_API_KEY
+vercel env add GOOGLE_SHEETS_CLIENT_EMAIL
+vercel env add GOOGLE_SHEETS_PRIVATE_KEY
+vercel env add GOOGLE_SHEETS_SPREADSHEET_ID
+```
+
+### Deployment Commands
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Login to Vercel
+vercel login
+
+# Deploy to preview
+vercel
+
+# Deploy to production
+vercel --prod
+
+# Check deployment status
+vercel ls
+
+# View logs
+vercel logs
+```
+
+## Docker Deployment
+
+### Dockerfile
+```dockerfile
+# Dockerfile
+FROM node:18-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Install dependencies based on the preferred package manager
+COPY package.json package-lock.json* ./
+RUN npm ci --only=production
+
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Build PWA and Next.js
+RUN npm run build:pwa
+
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+
+# Set the correct permission for prerender cache
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
+
+# Automatically leverage output traces to reduce image size
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"]
+```
+
+### Docker Compose
+```yaml
+# docker-compose.yml
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+      - GOOGLE_SHEETS_API_KEY=${GOOGLE_SHEETS_API_KEY}
+      - GOOGLE_SHEETS_CLIENT_EMAIL=${GOOGLE_SHEETS_CLIENT_EMAIL}
+      - GOOGLE_SHEETS_PRIVATE_KEY=${GOOGLE_SHEETS_PRIVATE_KEY}
+      - GOOGLE_SHEETS_SPREADSHEET_ID=${GOOGLE_SHEETS_SPREADSHEET_ID}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+```
+
+### Docker Commands
+```bash
+# Build Docker image
+docker build -t better-finance .
+
+# Run container
+docker run -p 3000:3000 --env-file .env.production better-finance
+
+# Using Docker Compose
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+## Performance Optimization
+
+### Bundle Analysis
+```javascript
+// next.config.mjs
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+    enabled: process.env.ANALYZE === 'true',
+});
+
+module.exports = withBundleAnalyzer({
+    // ... other config
+});
+```
+
+### Performance Monitoring
+```javascript
+// utils/analytics.js
+export function trackPageView(url) {
+    if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('config', 'GA_MEASUREMENT_ID', {
+            page_path: url,
+        });
+    }
+}
+
+export function trackEvent(action, category, label, value) {
+    if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', action, {
+            event_category: category,
+            event_label: label,
+            value: value,
+        });
+    }
+}
+```
+
+### Lighthouse CI
+```yaml
+# .lighthouserc.js
+module.exports = {
+    ci: {
+        collect: {
+            url: ['http://localhost:3000'],
+            numberOfRuns: 3,
+        },
+        assert: {
+            assertions: {
+                'categories:performance': ['warn', { minScore: 0.8 }],
+                'categories:accessibility': ['error', { minScore: 0.9 }],
+                'categories:best-practices': ['warn', { minScore: 0.8 }],
+                'categories:seo': ['warn', { minScore: 0.8 }],
+                'categories:pwa': ['warn', { minScore: 0.8 }],
+            },
+        },
+        upload: {
+            target: 'temporary-public-storage',
+        },
+    },
+};
+```
+
+## Security Best Practices
+
+### Content Security Policy
+```javascript
+// next.config.mjs
+const securityHeaders = [
+    {
+        key: 'Content-Security-Policy',
+        value: `
+            default-src 'self';
+            script-src 'self' 'unsafe-eval' 'unsafe-inline';
+            style-src 'self' 'unsafe-inline';
+            img-src 'self' data: https:;
+            font-src 'self' data:;
+            connect-src 'self' https://sheets.googleapis.com;
+            frame-ancestors 'none';
+        `.replace(/\s{2,}/g, ' ').trim()
+    },
+    {
+        key: 'X-DNS-Prefetch-Control',
+        value: 'on'
+    },
+    {
+        key: 'Strict-Transport-Security',
+        value: 'max-age=63072000; includeSubDomains; preload'
+    },
+    {
+        key: 'X-XSS-Protection',
+        value: '1; mode=block'
+    },
+    {
+        key: 'X-Frame-Options',
+        value: 'DENY'
+    },
+    {
+        key: 'X-Content-Type-Options',
+        value: 'nosniff'
+    },
+    {
+        key: 'Referrer-Policy',
+        value: 'origin-when-cross-origin'
+    }
+];
+
+module.exports = {
+    async headers() {
+        return [
+            {
+                source: '/(.*)',
+                headers: securityHeaders,
+            },
+        ];
+    },
+};
+```
+
+### API Security
+```javascript
+// middleware.js
+import { NextResponse } from 'next/server';
+
+export function middleware(request) {
+    // Rate limiting
+    const rateLimit = new Map();
+    const ip = request.ip || request.headers.get('x-forwarded-for');
+    
+    if (rateLimit.has(ip)) {
+        const { count, resetTime } = rateLimit.get(ip);
+        if (Date.now() < resetTime) {
+            if (count > 100) { // 100 requests per minute
+                return new NextResponse('Too Many Requests', { status: 429 });
+            }
+            rateLimit.set(ip, { count: count + 1, resetTime });
+        } else {
+            rateLimit.set(ip, { count: 1, resetTime: Date.now() + 60000 });
+        }
+    } else {
+        rateLimit.set(ip, { count: 1, resetTime: Date.now() + 60000 });
+    }
+    
+    return NextResponse.next();
+}
+
+export const config = {
+    matcher: '/api/:path*',
+};
+```
+
+## Monitoring and Logging
+
+### Error Tracking
+```javascript
+// utils/errorTracking.js
+export function logError(error, context = {}) {
+    console.error('Error:', error, context);
+    
+    // Send to error tracking service
+    if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'exception', {
+            description: error.message,
+            fatal: false,
+            custom_map: context
+        });
+    }
+}
+
+// Error boundary integration
+export class ErrorBoundary extends React.Component {
+    componentDidCatch(error, errorInfo) {
+        logError(error, {
+            componentStack: errorInfo.componentStack,
+            errorBoundary: this.constructor.name
+        });
+    }
+}
+```
+
+### Health Check Endpoint
+```javascript
+// app/api/health/route.js
+export async function GET() {
+    try {
+        // Check database connection
+        // Check external APIs
+        // Check critical services
+        
+        return NextResponse.json({
+            status: 'healthy',
+            timestamp: new Date().toISOString(),
+            version: process.env.npm_package_version,
+            uptime: process.uptime()
+        });
+    } catch (error) {
+        return NextResponse.json(
+            {
+                status: 'unhealthy',
+                error: error.message,
+                timestamp: new Date().toISOString()
+            },
+            { status: 503 }
+        );
+    }
+}
+```
+
+## CI/CD Pipeline
+
+### GitHub Actions
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run build
+      - run: npm run test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.ORG_ID }}
+          vercel-project-id: ${{ secrets.PROJECT_ID }}
+          vercel-args: '--prod'
+```
+
+### Pre-commit Hooks
+```json
+// package.json
+{
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged",
+            "pre-push": "npm run test"
+        }
+    },
+    "lint-staged": {
+        "*.{js,jsx,ts,tsx}": [
+            "eslint --fix",
+            "prettier --write"
+        ],
+        "*.{json,md}": [
+            "prettier --write"
+        ]
+    }
+}
+```
+
+## Backup and Recovery
+
+### Database Backup
+```bash
+# Backup Google Sheets data
+#!/bin/bash
+DATE=$(date +%Y%m%d_%H%M%S)
+BACKUP_DIR="/backups"
+mkdir -p $BACKUP_DIR
+
+# Export Google Sheets to CSV
+gcloud auth activate-service-account --key-file=service-account.json
+gcloud sheets spreadsheets values get SPREADSHEET_ID --range="Sheet1!A:Z" --format="csv" > $BACKUP_DIR/sheets_backup_$DATE.csv
+
+# Compress backup
+gzip $BACKUP_DIR/sheets_backup_$DATE.csv
+
+# Upload to cloud storage
+gsutil cp $BACKUP_DIR/sheets_backup_$DATE.csv.gz gs://your-backup-bucket/
+
+# Clean old backups (keep last 30 days)
+find $BACKUP_DIR -name "*.gz" -mtime +30 -delete
+```
+
+### Disaster Recovery Plan
+1. **Data Recovery**: Restore from Google Sheets version history
+2. **Application Recovery**: Redeploy from Git repository
+3. **Configuration Recovery**: Restore environment variables
+4. **Domain Recovery**: Update DNS records to point to new deployment
+5. **Monitoring**: Set up alerts for critical failures
+
+## Performance Monitoring
+
+### Real User Monitoring
+```javascript
+// utils/rum.js
+export function initRUM() {
+    if (typeof window === 'undefined') return;
+    
+    // Core Web Vitals
+    import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
+        getCLS(console.log);
+        getFID(console.log);
+        getFCP(console.log);
+        getLCP(console.log);
+        getTTFB(console.log);
+    });
+    
+    // Custom metrics
+    window.addEventListener('load', () => {
+        const loadTime = performance.now();
+        console.log('Page load time:', loadTime);
+    });
+}
+```
+
+### Uptime Monitoring
+```yaml
+# uptime.yml (for external monitoring service)
+checks:
+  - name: "Better Finance App"
+    url: "https://your-domain.com/api/health"
+    interval: 300
+    timeout: 10
+    retries: 3
+    expected_status: 200
+    expected_body: "healthy"
+```

@@ -1,0 +1,629 @@
+# Component Patterns & Architecture
+
+## Component Structure
+
+### Standard Component Pattern
+```jsx
+// components/ComponentName/ComponentName.js
+"use client";
+import { useState, useEffect, useMemo } from "react";
+import { formatCurrency } from "@/utils/helper";
+
+export default function ComponentName({ 
+    data, 
+    isLoading, 
+    error,
+    onAction 
+}) {
+    // State management
+    const [localState, setLocalState] = useState(initialValue);
+    
+    // Computed values
+    const processedData = useMemo(() => {
+        if (!data) return [];
+        return data.map(item => ({
+            ...item,
+            formattedAmount: formatCurrency(item.amount)
+        }));
+    }, [data]);
+    
+    // Effects
+    useEffect(() => {
+        // Side effects
+    }, [dependency]);
+    
+    // Event handlers
+    const handleAction = (item) => {
+        onAction?.(item);
+    };
+    
+    // Loading state
+    if (isLoading) {
+        return <ComponentSkeleton />;
+    }
+    
+    // Error state
+    if (error) {
+        return <ErrorState error={error} />;
+    }
+    
+    // Empty state
+    if (!data || data.length === 0) {
+        return <EmptyState />;
+    }
+    
+    return (
+        <div className="component-container">
+            {/* Component content */}
+        </div>
+    );
+}
+```
+
+### Component Export Pattern
+```jsx
+// components/ComponentName/index.js
+export { default as ComponentName } from "./ComponentName";
+export { default as ComponentSkeleton } from "./ComponentSkeleton";
+export { default as ErrorState } from "./ErrorState";
+export { default as EmptyState } from "./EmptyState";
+```
+
+## Card Components
+
+### Financial Card Pattern
+```jsx
+// components/Card/FinancialCard.js
+export default function FinancialCard({ 
+    title, 
+    amount, 
+    icon, 
+    trend, 
+    onClick,
+    isHidden = false 
+}) {
+    return (
+        <div 
+            className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow duration-200 cursor-pointer"
+            onClick={onClick}
+        >
+            <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-800">
+                    {title}
+                </h2>
+                <div className="flex items-center space-x-2">
+                    {isHidden && (
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                // Toggle visibility
+                            }}
+                            className="p-1 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                            title="Toggle visibility"
+                        >
+                            <EyeIcon />
+                        </button>
+                    )}
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full flex items-center justify-center">
+                        {icon}
+                    </div>
+                </div>
+            </div>
+            
+            <div className="text-3xl font-bold text-gray-900 mb-2">
+                {isHidden ? "••••••" : formatCurrency(amount)}
+            </div>
+            
+            {trend && (
+                <div className={`text-sm ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                    {trend.isPositive ? '+' : '-'} {formatCurrency(trend.value)}
+                </div>
+            )}
+        </div>
+    );
+}
+```
+
+### Account Card Pattern
+```jsx
+// components/Card/Account.js
+export default function AccountCard({ account, showComparison = false }) {
+    const { name, balance, previousBalance, type } = account;
+    
+    const comparison = showComparison ? {
+        difference: balance - previousBalance,
+        percentage: previousBalance > 0 ? ((balance - previousBalance) / previousBalance) * 100 : 0
+    } : null;
+    
+    return (
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+            <div className="p-3">
+                <div className="flex flex-col items-center mb-1">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full flex items-center justify-center mb-1">
+                        <AccountIcon type={type} />
+                    </div>
+                    <h3 className="text-sm font-medium text-gray-900 text-center">
+                        {name}
+                    </h3>
+                </div>
+            </div>
+            
+            <div className="bg-gray-50 px-3 py-1.5">
+                <div className="text-center">
+                    <div className="text-lg font-bold text-gray-900">
+                        {formatCurrency(balance, "short")}
+                    </div>
+                    {showComparison && comparison && (
+                        <div className={`text-xs ${comparison.difference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {comparison.difference >= 0 ? '+' : ''} {formatCurrency(comparison.difference, "short")}
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+```
+
+## List Components
+
+### Transaction List Pattern
+```jsx
+// components/TransactionList/TransactionList.js
+export default function TransactionList({ 
+    transactions, 
+    groupedByDate = true,
+    onTransactionClick 
+}) {
+    const groupedTransactions = useMemo(() => {
+        if (!groupedByDate) return { all: transactions };
+        
+        return transactions.reduce((groups, transaction) => {
+            const date = transaction.date;
+            if (!groups[date]) {
+                groups[date] = [];
+            }
+            groups[date].push(transaction);
+            return groups;
+        }, {});
+    }, [transactions, groupedByDate]);
+    
+    return (
+        <div className="space-y-6">
+            {Object.entries(groupedTransactions)
+                .sort(([a], [b]) => new Date(b) - new Date(a))
+                .map(([date, dateTransactions]) => (
+                    <div key={date} className="space-y-4">
+                        <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                            <h4 className="text-sm font-semibold text-gray-700">
+                                {formatDate(date)}
+                            </h4>
+                            <div className="text-xs text-gray-500">
+                                {dateTransactions.length} transaction{dateTransactions.length !== 1 ? 's' : ''}
+                            </div>
+                        </div>
+                        
+                        <div className="space-y-3">
+                            {dateTransactions.map((transaction, index) => (
+                                <TransactionItem
+                                    key={`${date}-${index}`}
+                                    transaction={transaction}
+                                    onClick={() => onTransactionClick?.(transaction)}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                ))}
+        </div>
+    );
+}
+```
+
+### Transaction Item Pattern
+```jsx
+// components/TransactionItem/TransactionItem.js
+export default function TransactionItem({ transaction, onClick }) {
+    const { type, account, category, note, amount, date } = transaction;
+    const isExpense = type === 'Spending';
+    
+    return (
+        <div 
+            className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+            onClick={onClick}
+        >
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                isExpense ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'
+            }`}>
+                <TransactionIcon type={type} />
+            </div>
+            
+            <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                    {note || category}
+                </p>
+                <p className="text-xs text-gray-500">
+                    {date} • {category}
+                </p>
+            </div>
+            
+            <div className={`text-sm font-semibold ${
+                isExpense ? 'text-red-600' : 'text-green-600'
+            }`}>
+                {isExpense ? '-' : '+'}
+                {formatCurrency(Math.abs(amount), "brackets")}
+            </div>
+        </div>
+    );
+}
+```
+
+## Form Components
+
+### Filter Form Pattern
+```jsx
+// components/FilterForm/FilterForm.js
+export default function FilterForm({ 
+    filters, 
+    onFiltersChange, 
+    onClearFilters 
+}) {
+    const [localFilters, setLocalFilters] = useState(filters);
+    
+    const handleFilterChange = (key, value) => {
+        const newFilters = { ...localFilters, [key]: value };
+        setLocalFilters(newFilters);
+        onFiltersChange?.(newFilters);
+    };
+    
+    const handleClearFilters = () => {
+        setLocalFilters({});
+        onClearFilters?.();
+    };
+    
+    return (
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+                <button
+                    onClick={handleClearFilters}
+                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                >
+                    Clear All
+                </button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FilterDropdown
+                    label="Transaction Type"
+                    value={localFilters.type}
+                    options={[
+                        { value: 'all', label: 'All Types' },
+                        { value: 'Spending', label: 'Spending' },
+                        { value: 'Earning', label: 'Earning' },
+                        { value: 'Transfer', label: 'Transfer' }
+                    ]}
+                    onChange={(value) => handleFilterChange('type', value)}
+                />
+                
+                <FilterDropdown
+                    label="Account"
+                    value={localFilters.account}
+                    options={accountOptions}
+                    onChange={(value) => handleFilterChange('account', value)}
+                />
+            </div>
+        </div>
+    );
+}
+```
+
+### Filter Dropdown Pattern
+```jsx
+// components/FilterDropdown/FilterDropdown.js
+export default function FilterDropdown({ 
+    label, 
+    value, 
+    options, 
+    onChange,
+    placeholder = "Select option"
+}) {
+    return (
+        <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">
+                {label}
+            </label>
+            <select
+                value={value || ''}
+                onChange={(e) => onChange?.(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+                <option value="">{placeholder}</option>
+                {options.map(option => (
+                    <option key={option.value} value={option.value}>
+                        {option.label}
+                    </option>
+                ))}
+            </select>
+        </div>
+    );
+}
+```
+
+## Layout Components
+
+### Page Header Pattern
+```jsx
+// components/PageHeader/PageHeader.js
+export default function PageHeader({ 
+    title, 
+    subtitle, 
+    actions,
+    showBackButton = false,
+    onBack 
+}) {
+    return (
+        <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 px-3 pt-5 pb-4">
+            {/* Background decorations */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+            
+            {/* Wave shape */}
+            <div className="absolute bottom-0 left-0 w-full h-8">
+                <svg viewBox="0 0 400 32" className="w-full h-full" preserveAspectRatio="none">
+                    <path 
+                        d="M0,32 Q100,20 200,32 T400,20 L400,32 Z" 
+                        fill="rgb(249 250 251)" 
+                        className="transition-all duration-300" 
+                    />
+                </svg>
+            </div>
+            
+            <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                        {showBackButton && (
+                            <button
+                                onClick={onBack}
+                                className="p-2 rounded-full hover:bg-white/20 transition-colors duration-200"
+                            >
+                                <BackIcon />
+                            </button>
+                        )}
+                        <div>
+                            <h1 className="text-2xl font-bold text-white mb-1">
+                                {title}
+                            </h1>
+                            {subtitle && (
+                                <p className="text-blue-100 text-sm">
+                                    {subtitle}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                    
+                    {actions && (
+                        <div className="flex items-center space-x-2">
+                            {actions}
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+```
+
+### Bottom Navigation Pattern
+```jsx
+// components/BottomNav/BottomNav.js
+export default function BottomNav() {
+    const pathname = usePathname();
+    
+    const navItems = [
+        { href: '/', icon: HomeIcon, label: 'Home' },
+        { href: '/budgets', icon: BudgetIcon, label: 'Budgets' },
+        { href: '/goals', icon: GoalIcon, label: 'Goals' },
+        { href: '/settings', icon: SettingsIcon, label: 'Settings' }
+    ];
+    
+    return (
+        <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 px-4 py-2 z-50">
+            <div className="flex items-center justify-around">
+                {navItems.map(({ href, icon: Icon, label }) => {
+                    const isActive = pathname === href;
+                    
+                    return (
+                        <Link
+                            key={href}
+                            href={href}
+                            className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-colors duration-200 ${
+                                isActive 
+                                    ? 'text-blue-600 bg-blue-50' 
+                                    : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                        >
+                            <Icon className={`w-6 h-6 ${isActive ? 'text-blue-600' : 'text-gray-500'}`} />
+                            <span className="text-xs font-medium">{label}</span>
+                        </Link>
+                    );
+                })}
+            </div>
+        </nav>
+    );
+}
+```
+
+## State Management Patterns
+
+### Local State with Cookies
+```jsx
+// Pattern for persistent local state
+export function usePersistentState(key, defaultValue) {
+    const [state, setState] = useState(() => {
+        if (typeof window === 'undefined') return defaultValue;
+        
+        try {
+            const saved = Cookies.get(key);
+            return saved ? JSON.parse(saved) : defaultValue;
+        } catch {
+            return defaultValue;
+        }
+    });
+    
+    const setPersistentState = useCallback((newState) => {
+        setState(newState);
+        Cookies.set(key, JSON.stringify(newState), {
+            expires: 365,
+            sameSite: 'strict',
+        });
+    }, [key]);
+    
+    return [state, setPersistentState];
+}
+```
+
+### Collapsible State Pattern
+```jsx
+// Pattern for collapsible sections
+export function useCollapsibleState(initialState = {}) {
+    const [collapsed, setCollapsed] = useState(initialState);
+    
+    const toggle = useCallback((key) => {
+        setCollapsed(prev => ({
+            ...prev,
+            [key]: !prev[key]
+        }));
+    }, []);
+    
+    const isCollapsed = useCallback((key) => {
+        return collapsed[key] ?? true;
+    }, [collapsed]);
+    
+    return { collapsed, toggle, isCollapsed };
+}
+```
+
+## Error and Loading States
+
+### Error Boundary Pattern
+```jsx
+// components/ErrorBoundary/ErrorBoundary.js
+export default class ErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+    
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+    }
+    
+    componentDidCatch(error, errorInfo) {
+        console.error('Error caught by boundary:', error, errorInfo);
+    }
+    
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div className="text-center py-8">
+                    <div className="text-red-500 text-6xl mb-4">⚠️</div>
+                    <h2 className="text-lg font-semibold text-gray-900 mb-2">
+                        Something went wrong
+                    </h2>
+                    <p className="text-gray-600 text-sm mb-4">
+                        We're sorry, but something unexpected happened.
+                    </p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                        Reload Page
+                    </button>
+                </div>
+            );
+        }
+        
+        return this.props.children;
+    }
+}
+```
+
+### Loading Skeleton Pattern
+```jsx
+// components/LoadingSkeleton/LoadingSkeleton.js
+export default function LoadingSkeleton({ type = 'card' }) {
+    if (type === 'card') {
+        return (
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                <div className="animate-pulse">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="h-5 bg-gray-200 rounded w-32"></div>
+                        <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                    </div>
+                    <div className="h-8 bg-gray-200 rounded w-24 mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-16"></div>
+                </div>
+            </div>
+        );
+    }
+    
+    if (type === 'list') {
+        return (
+            <div className="space-y-3">
+                {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="animate-pulse">
+                        <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                            <div className="flex-1">
+                                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                            </div>
+                            <div className="h-4 bg-gray-200 rounded w-16"></div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+    
+    return null;
+}
+```
+
+## Component Testing Patterns
+
+### Component Test Structure
+```jsx
+// __tests__/ComponentName.test.js
+import { render, screen, fireEvent } from '@testing-library/react';
+import ComponentName from '@/components/ComponentName';
+
+describe('ComponentName', () => {
+    const mockProps = {
+        data: mockData,
+        isLoading: false,
+        error: null,
+        onAction: jest.fn()
+    };
+    
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+    
+    it('renders correctly with data', () => {
+        render(<ComponentName {...mockProps} />);
+        expect(screen.getByText('Expected Text')).toBeInTheDocument();
+    });
+    
+    it('shows loading state', () => {
+        render(<ComponentName {...mockProps} isLoading={true} />);
+        expect(screen.getByTestId('loading-skeleton')).toBeInTheDocument();
+    });
+    
+    it('handles user interactions', () => {
+        render(<ComponentName {...mockProps} />);
+        fireEvent.click(screen.getByRole('button'));
+        expect(mockProps.onAction).toHaveBeenCalled();
+    });
+});
+```

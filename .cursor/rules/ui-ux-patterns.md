@@ -2,42 +2,359 @@
 
 ## Design Principles
 
-- **Mobile-First**: Design for mobile devices first
-- **Consistency**: Use consistent design system
+- **Mobile-First**: Design for mobile devices first with responsive scaling
+- **Consistency**: Use consistent design system across all components
 - **Accessibility**: Implement proper ARIA labels and keyboard navigation
 - **Performance**: Prioritize smooth interactions and fast loading
+- **Financial Focus**: Design specifically for financial data visualization and management
 
 ## Tailwind CSS Usage
 
+### Utility-First Approach
 - **Utility Classes**: Prefer utility classes over custom CSS
-- **Responsive Design**: Use responsive prefixes (`sm:`, `md:`, `lg:`)
-- **Color System**: Use consistent Tailwind color palette
+- **Responsive Design**: Use responsive prefixes (`sm:`, `md:`, `lg:`, `xl:`)
+- **Color System**: Use consistent Tailwind color palette with custom financial theme
 - **Spacing**: Use Tailwind spacing scale (4, 8, 12, 16, 20, 24, 32, 48, 64)
+- **Typography**: Use Inter font with proper weight and size hierarchy
+
+### Custom Design System
+```css
+/* Financial App Color Palette */
+- Primary: Blue (blue-600, blue-700, blue-800)
+- Success: Green (green-400, green-500, green-600)
+- Warning: Yellow (yellow-400, yellow-500, yellow-600)
+- Error: Red (red-400, red-500, red-600)
+- Neutral: Gray (gray-50, gray-100, gray-200, gray-800, gray-900)
+- Background: Gradient (from-gray-50 via-blue-50 to-indigo-50)
+```
 
 ## Component Design Patterns
 
-- **Cards**: Use consistent padding, border radius, and shadow
-- **Buttons**: Implement proper hover states and loading states
-- **Forms**: Use consistent input styling and validation feedback
-- **Navigation**: Implement clear visual hierarchy and active states
+### Card Components
+```jsx
+// Standard Card Pattern
+<div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow duration-200">
+    <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-gray-800">Card Title</h2>
+        <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full flex items-center justify-center">
+            {/* Icon */}
+        </div>
+    </div>
+    <div className="text-3xl font-bold text-gray-900 mb-2">
+        {/* Content */}
+    </div>
+</div>
+```
+
+### Button Patterns
+```jsx
+// Primary Button
+<button className="bg-blue-600 text-white text-sm font-medium py-2.5 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+    Button Text
+</button>
+
+// Secondary Button
+<button className="bg-gray-100 text-gray-700 text-sm font-medium py-2.5 px-4 rounded-lg hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+    Button Text
+</button>
+
+// Icon Button
+<button className="p-2 rounded-full hover:bg-white/20 transition-colors duration-200">
+    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {/* Icon path */}
+    </svg>
+</button>
+```
+
+### Form Elements
+```jsx
+// Input Field
+<input 
+    className="appearance-none bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50"
+    placeholder="Enter value"
+/>
+
+// Select Dropdown
+<select className="appearance-none bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 pr-10 cursor-pointer hover:bg-white/30 transition-all duration-200">
+    <option value="option1" className="text-gray-800 bg-white">Option 1</option>
+</select>
+```
 
 ## Layout Patterns
 
-- **Grid System**: Use CSS Grid or Flexbox for layouts
-- **Container**: Implement consistent max-width and padding
-- **Spacing**: Use consistent spacing between sections
-- **Alignment**: Maintain proper alignment for visual balance
+### Page Structure
+```jsx
+// Standard Page Layout
+<main className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+    {/* Header Section */}
+    <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 px-3 pt-5 pb-4">
+        {/* Background decorations */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+        
+        {/* Wave shape at bottom */}
+        <div className="absolute bottom-0 left-0 w-full h-8">
+            <svg viewBox="0 0 400 32" className="w-full h-full" preserveAspectRatio="none">
+                <path d="M0,32 Q100,20 200,32 T400,20 L400,32 Z" fill="rgb(249 250 251)" className="transition-all duration-300" />
+            </svg>
+        </div>
+        
+        <div className="relative z-10">
+            {/* Header content */}
+        </div>
+    </div>
+    
+    {/* Content Section */}
+    <div className="px-3 mt-6 mb-8">
+        {/* Page content */}
+    </div>
+    
+    {/* Bottom spacing for navigation */}
+    <div className="pb-24"></div>
+</main>
+```
+
+### Grid Layouts
+```jsx
+// Financial Cards Grid
+<div className="grid grid-cols-1 gap-4">
+    {/* Single column on mobile */}
+</div>
+
+<div className="grid grid-cols-2 gap-4">
+    {/* Two columns for stats */}
+</div>
+
+<div className="grid grid-cols-3 gap-3">
+    {/* Three columns for account/asset cards */}
+</div>
+```
+
+### Container Patterns
+```jsx
+// Mobile-first container
+<html className="mx-auto max-w-md">
+    <body className="bg-gray-50">
+        {/* Content */}
+    </body>
+</html>
+
+// Content padding
+<div className="px-3 mt-6 mb-8">
+    {/* Page content with consistent padding */}
+</div>
+```
+
+## Financial Data Visualization
+
+### Currency Formatting
+```jsx
+// Currency display patterns
+<div className="text-3xl font-bold text-gray-900 mb-2">
+    {formatCurrency(amount)}
+</div>
+
+// Short currency format
+<div className="text-lg font-bold text-gray-700">
+    {formatCurrency(amount, "short")}
+</div>
+
+// Colored currency (positive/negative)
+<div className={`text-lg font-bold ${amount >= 0 ? "text-green-600" : "text-red-600"}`}>
+    {formatCurrency(amount, "signs")}
+</div>
+```
+
+### Progress Indicators
+```jsx
+// Budget progress bar
+<div className="flex items-center gap-3 mb-2">
+    <div className="flex-1 bg-gray-200 rounded-full h-3">
+        <div 
+            className={`h-3 rounded-full transition-all duration-200 ease-out ${getBudgetColors(percentage).progress}`}
+            style={{ width: `${Math.min(percentage, 100)}%` }}
+        ></div>
+    </div>
+    <span className={`text-sm font-semibold ${getBudgetColors(percentage).text}`}>
+        {percentage.toFixed(0)}%
+    </span>
+</div>
+```
+
+### Status Indicators
+```jsx
+// Status badges
+<div className={`px-2 py-1 rounded-full text-xs font-medium ${statusBg}`}>
+    {status}
+</div>
+
+// Icon with status
+<div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+    status === "success" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
+}`}>
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {/* Icon */}
+    </svg>
+</div>
+```
 
 ## Interactive Elements
 
-- **Hover Effects**: Implement subtle hover animations
-- **Loading States**: Use skeleton loaders or spinners
-- **Error States**: Provide clear error messages and recovery options
-- **Success Feedback**: Implement positive feedback for user actions
+### Loading States
+```jsx
+// Skeleton loader
+<div className="animate-pulse">
+    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+</div>
+
+// Card skeleton
+<div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+    <div className="animate-pulse">
+        <div className="w-8 h-8 bg-gray-200 rounded-full mx-auto mb-2"></div>
+        <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
+        <div className="h-3 bg-gray-200 rounded w-full"></div>
+    </div>
+</div>
+```
+
+### Error States
+```jsx
+// Error message
+<div className="text-center py-8">
+    <div className="text-red-500 text-6xl mb-4">⚠️</div>
+    <p className="text-red-600 font-semibold">Error loading data</p>
+    <p className="text-gray-600 text-sm mt-2">Please try again later</p>
+</div>
+
+// Empty state
+<div className="text-center py-12">
+    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {/* Icon */}
+        </svg>
+    </div>
+    <h3 className="text-lg font-medium text-gray-900 mb-2">No data found</h3>
+    <p className="text-gray-500 text-sm">Start by adding your first item</p>
+</div>
+```
+
+### Hover Effects
+```jsx
+// Card hover
+<div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow duration-200 cursor-pointer">
+    {/* Content */}
+</div>
+
+// Button hover
+<button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+    Button
+</button>
+
+// Icon hover
+<button className="p-1 rounded-full hover:bg-gray-100 transition-colors duration-200">
+    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {/* Icon */}
+    </svg>
+</button>
+```
+
+## Animation Patterns
+
+### Transitions
+```jsx
+// Smooth transitions
+<div className="transition-all duration-200 ease-out">
+    {/* Content */}
+</div>
+
+// Hover animations
+<div className="hover:scale-105 transition-transform duration-200">
+    {/* Content */}
+</div>
+
+// Loading animations
+<div className="animate-pulse">
+    {/* Skeleton content */}
+</div>
+```
+
+### Collapsible Content
+```jsx
+// Collapsible section
+<div className={`overflow-hidden transition-all duration-500 ease-in-out ${
+    isCollapsed ? "max-h-0 opacity-0 scale-95" : "max-h-[2000px] opacity-100 scale-100"
+}`}>
+    <div className={`p-4 bg-gray-50 space-y-3 transition-all duration-500 ease-in-out ${
+        isCollapsed ? "transform -translate-y-2 opacity-0" : "transform translate-y-0 opacity-100"
+    }`}>
+        {/* Content */}
+    </div>
+</div>
+```
 
 ## Accessibility Guidelines
 
-- **Color Contrast**: Ensure sufficient contrast ratio (minimum 4.5:1)
-- **Focus States**: Implement visible focus indicators
-- **Screen Readers**: Use proper semantic HTML and ARIA labels
-- **Keyboard Navigation**: Support full keyboard navigation
+### Color Contrast
+- **Text**: Ensure 4.5:1 contrast ratio for normal text
+- **Large Text**: Ensure 3:1 contrast ratio for large text (18px+)
+- **Interactive Elements**: Ensure 3:1 contrast ratio for buttons and links
+
+### Focus States
+```jsx
+// Focus indicators
+<button className="focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+    Button
+</button>
+
+<input className="focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50" />
+```
+
+### Screen Reader Support
+```jsx
+// ARIA labels
+<button aria-label="Hide amount" title="Hide amount">
+    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {/* Icon */}
+    </svg>
+</button>
+
+// Semantic HTML
+<main role="main">
+    <section aria-labelledby="financial-summary">
+        <h2 id="financial-summary">Financial Summary</h2>
+    </section>
+</main>
+```
+
+### Keyboard Navigation
+- **Tab Order**: Ensure logical tab order through interactive elements
+- **Skip Links**: Provide skip links for main content
+- **Keyboard Shortcuts**: Implement common keyboard shortcuts where appropriate
+- **Focus Management**: Manage focus for dynamic content updates
+
+## Responsive Design Patterns
+
+### Mobile-First Breakpoints
+```jsx
+// Mobile first approach
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {/* Responsive grid */}
+</div>
+
+// Text sizing
+<h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">
+    Responsive Title
+</h1>
+
+// Spacing
+<div className="px-3 md:px-6 lg:px-8">
+    {/* Responsive padding */}
+</div>
+```
+
+### Touch-Friendly Design
+- **Minimum Touch Target**: 44px minimum for touch targets
+- **Spacing**: Adequate spacing between interactive elements
+- **Gesture Support**: Support common mobile gestures
+- **Viewport**: Proper viewport configuration for mobile devices

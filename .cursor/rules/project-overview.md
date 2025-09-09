@@ -2,37 +2,75 @@
 
 ## Project Description
 
-Better Finance is a Next.js application with Progressive Web App (PWA) capabilities for personal finance management. The app focuses on budgeting, transaction tracking, and financial planning with a user-friendly interface.
+Better Finance is a comprehensive Next.js application with Progressive Web App (PWA) capabilities for personal finance management. The app provides complete financial tracking including budgeting, transaction management, goal setting, asset tracking, and account management with Google Sheets integration.
 
 ## Tech Stack
 
-- **Framework**: Next.js (App Router)
-- **Styling**: Tailwind CSS
-- **PWA**: Service Worker, Manifest, Offline capabilities
-- **State Management**: React Hooks (useState, useEffect)
-- **Build Tool**: Next.js built-in bundler
+- **Framework**: Next.js 14 (App Router)
+- **Styling**: Tailwind CSS with custom design system
+- **PWA**: next-pwa, Service Worker, Manifest, Offline capabilities
+- **State Management**: SWR for data fetching, React Hooks for local state
+- **Data Integration**: Google Sheets API, Google APIs Client
+- **Build Tool**: Next.js built-in bundler with PWA optimization
+- **Development**: ESLint, Prettier, PostCSS
 
 ## Project Structure
 
 ```
-app/                    # Next.js App Router pages
-├── budgets/           # Budget management pages
-├── transactions/      # Transaction tracking pages
-└── layout.js         # Root layout
-components/            # Reusable UI components
-├── BottomNav/        # Bottom navigation
-├── Card/             # Card components (Budget, Transaction)
-├── PWA/              # PWA-related components
-└── SplashScreen/     # App splash screen
-configs/               # Configuration files
-public/                # Static assets & PWA files
-utils/                 # Utility functions & helpers
+prj-better-finance/
+├── app/                    # Next.js App Router pages
+│   ├── accounts/          # Account management & balancing
+│   ├── assets/            # Asset tracking & portfolio
+│   ├── budgets/           # Budget management & weekly tracking
+│   ├── goals/             # Financial goals & progress
+│   ├── transactions/      # Transaction history & filtering
+│   ├── settings/          # Application settings
+│   └── layout.js          # Root layout with PWA setup
+├── components/            # Reusable UI components
+│   ├── BottomNav/         # Bottom navigation
+│   ├── Card/              # Card components (Account, Asset, Budget, Goal, Transaction)
+│   ├── Charts/            # Data visualization components
+│   ├── FilterDropdown/    # Filter components
+│   ├── PWA/               # PWA-related components
+│   └── TransactionFilter/ # Advanced transaction filtering
+├── api/                   # Next.js API routes
+│   ├── accounts/          # Account data endpoints
+│   ├── assets/            # Asset data endpoints
+│   ├── budgets/           # Budget data endpoints
+│   ├── goals/             # Goals data endpoints
+│   └── transactions/      # Transaction data endpoints
+├── utils/                 # Utility functions & helpers
+│   ├── hooks.js           # Custom SWR hooks for data fetching
+│   ├── helper.js          # Utility functions (formatting, calculations)
+│   ├── constants.js       # Application constants
+│   ├── fetch.js           # API fetch utilities
+│   └── google.js          # Google Sheets integration
+├── configs/               # Configuration files
+├── docs/                  # Documentation & guides
+└── public/                # Static assets & PWA files
 ```
 
 ## Key Features
 
-- Budget planning and tracking
-- Transaction management
-- PWA capabilities (offline, installable)
-- Responsive design (mobile-first)
-- Dark theme support
+### Core Financial Management
+- **Dashboard**: Real-time financial overview with privacy controls
+- **Account Management**: Multi-account tracking with balance updates
+- **Transaction Tracking**: Comprehensive history with advanced filtering
+- **Budget Management**: Categorized budgeting with progress tracking
+- **Financial Goals**: Goal setting and progress visualization
+- **Asset Management**: Portfolio tracking and net worth calculation
+
+### Advanced Features
+- **PWA Support**: Installable app with offline capabilities
+- **Google Sheets Integration**: Seamless data synchronization
+- **Advanced Filtering**: Multi-criteria transaction filtering
+- **Weekly Budget System**: Dynamic weekly budget allocation
+- **Privacy Controls**: Hide/show sensitive financial information
+- **Responsive Design**: Mobile-first approach with desktop support
+
+### Technical Features
+- **SWR Integration**: Efficient data fetching and caching
+- **Custom Hooks**: Reusable data fetching patterns
+- **Error Handling**: Comprehensive error states and recovery
+- **Performance Optimization**: Code splitting and lazy loading
+- **Type Safety**: Consistent data handling and validation
