@@ -28,7 +28,7 @@ A comprehensive todo list for the development of the Better Finance application 
 - [x] Add eye hide unhide in home for Assets
 - [x] Click categories to filter
 - [x] Click & filter based week 
-- [ ] Filter for all month
+- [x] Filter for all month
 
 ### 💳 REFACTORING
 - [x] Move file weekly-budget to budgets/weekly

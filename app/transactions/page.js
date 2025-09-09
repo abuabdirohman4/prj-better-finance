@@ -21,6 +21,8 @@ function TransactionsContent() {
   const [selectedMonth, setSelectedMonth] = useState(
     getDefaultSheetName(months)
   );
+  const [allMonthsData, setAllMonthsData] = useState({});
+  const [isLoadingAllMonths, setIsLoadingAllMonths] = useState(false);
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [activeFilters, setActiveFilters] = useState({});
   const [showFilters, setShowFilters] = useState(false);
@@ -45,17 +47,71 @@ function TransactionsContent() {
   }, [searchParams]);
 
   // Use SWR hook for data fetching (consistent with budgets page)
-  const { data: transactionData, isLoading, error } = useTransactions(selectedMonth);
+  const { data: transactionData, isLoading, error } = useTransactions(selectedMonth === "All Months" ? null : selectedMonth);
+
+  // Fetch all months data when "All Months" is selected
+  useEffect(() => {
+    if (selectedMonth === "All Months") {
+      setIsLoadingAllMonths(true);
+      const fetchAllMonthsData = async () => {
+        const data = {};
+        
+        for (const month of months) {
+          try {
+            const response = await fetch(`/api/transactions?sheet=${encodeURIComponent(month)}&t=${Date.now()}&force=true`, {
+              headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+              }
+            });
+            if (response.ok) {
+              const result = await response.json();
+              data[month] = result.data || [];
+            } else {
+              data[month] = [];
+            }
+          } catch (error) {
+            console.error(`Error fetching data for ${month}:`, error);
+            data[month] = [];
+          }
+        }
+        
+        setAllMonthsData(data);
+        setIsLoadingAllMonths(false);
+      };
+
+      fetchAllMonthsData();
+    } else {
+      // Clear all months data when switching to single month
+      setAllMonthsData({});
+    }
+  }, [selectedMonth]);
+
+  // Get current data source (single month or all months)
+  const currentDataSource = useMemo(() => {
+    if (selectedMonth === "All Months") {
+      // Combine all months data into single array
+      const allTransactions = [];
+      Object.values(allMonthsData).forEach(monthTransactions => {
+        if (Array.isArray(monthTransactions)) {
+          allTransactions.push(...monthTransactions);
+        }
+      });
+      return allTransactions;
+    }
+    return transactionData || [];
+  }, [selectedMonth, allMonthsData, transactionData]);
 
   // Filter transactions by week if week filter is active
   const weekFilteredTransactions = useMemo(() => {
-    if (!transactionData || !activeFilters.week) {
-      return transactionData || [];
+    if (!currentDataSource || !activeFilters.week) {
+      return currentDataSource || [];
     }
     
     const weekRange = activeFilters.week.split('|');
     if (weekRange.length !== 2) {
-      return transactionData;
+      return currentDataSource;
     }
     
     const [startDateStr, endDateStr] = weekRange;
@@ -64,7 +120,7 @@ function TransactionsContent() {
     const startDate = new Date(startDateStr);
     const endDate = new Date(endDateStr);
     
-    const filtered = transactionData.filter(transaction => {
+    const filtered = currentDataSource.filter(transaction => {
       // Parse transaction date (DD/MM/YYYY format)
       const [day, month, year] = transaction.Date.split('/');
       const transactionDate = new Date(year, month - 1, day);
@@ -74,7 +130,7 @@ function TransactionsContent() {
     });
     
     return filtered;
-  }, [transactionData, activeFilters.week]);
+  }, [currentDataSource, activeFilters.week]);
 
   // Group filtered transactions by date
   const groupedTransactions = useMemo(() => {
@@ -85,8 +141,8 @@ function TransactionsContent() {
     if (activeFilters.week && !showFilters) {
       return groupTransactionsByDate(weekFilteredTransactions);
     }
-    return transactionData ? groupTransactionsByDate(transactionData) : {};
-  }, [filteredTransactions, transactionData, weekFilteredTransactions, activeFilters.week, showFilters]);
+    return currentDataSource ? groupTransactionsByDate(currentDataSource) : {};
+  }, [filteredTransactions, currentDataSource, weekFilteredTransactions, activeFilters.week, showFilters]);
   
   // Calculate financial data with proper type checking (use filtered data for calculations)
   const displayTransactions = useMemo(() => {
@@ -97,8 +153,8 @@ function TransactionsContent() {
     if (activeFilters.week && !showFilters) {
       return weekFilteredTransactions;
     }
-    return transactionData || [];
-  }, [filteredTransactions, transactionData, weekFilteredTransactions, activeFilters.week, showFilters]);
+    return currentDataSource || [];
+  }, [filteredTransactions, currentDataSource, weekFilteredTransactions, activeFilters.week, showFilters]);
   
   const spending = getTotalExpensesWithTransfers(displayTransactions);
   const earning = getTotalCashGroupedByDate(displayTransactions, "Earning");
@@ -164,6 +220,9 @@ function TransactionsContent() {
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
               >
+                <option value="All Months" className="text-gray-800 bg-white">
+                  All Months
+                </option>
                 {months.map((month) => (
                   <option key={month} value={month} className="text-gray-800 bg-white">
                     {month}
@@ -236,10 +295,10 @@ function TransactionsContent() {
       </div>
 
       {/* Transaction Filter */}
-      {transactionData && transactionData.length > 0 && showFilters && (
+      {currentDataSource && currentDataSource.length > 0 && showFilters && (
         <div className="px-3 mb-6">
           <TransactionFilter
-            transactions={activeFilters.week ? weekFilteredTransactions : transactionData}
+            transactions={activeFilters.week ? weekFilteredTransactions : currentDataSource}
             onFilteredTransactions={handleFilteredTransactions}
             onFilterChange={handleFilterChange}
             initialFilters={activeFilters}
@@ -253,7 +312,7 @@ function TransactionsContent() {
           <div className="p-6 pb-3 px-3">
             <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold text-gray-900">Transaction</h3>
-              {transactionData && transactionData.length > 0 && (
+              {currentDataSource && currentDataSource.length > 0 && (
                 <button
                   onClick={toggleFilters}
                   className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
@@ -268,7 +327,7 @@ function TransactionsContent() {
           </div>
           
           <div className="p-3">
-            {isLoading ? (
+            {(isLoading || (selectedMonth === "All Months" && isLoadingAllMonths)) ? (
               <div className="space-y-4">
                 {/* Skeleton for transactions */}
                 {[1, 2, 3, 4].map((i) => (
@@ -352,7 +411,7 @@ function TransactionsContent() {
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No transactions found</h3>
                 <p className="text-gray-500 text-sm">Try adjusting your filter criteria to see more results.</p>
               </div>
-            ) : transactionData && Array.isArray(transactionData) && transactionData.length > 0 ? (
+            ) : currentDataSource && Array.isArray(currentDataSource) && currentDataSource.length > 0 ? (
               <div className="space-y-6">
                 {Object.keys(groupedTransactions).length > 0 ? (
                   Object.keys(groupedTransactions)
@@ -404,7 +463,12 @@ function TransactionsContent() {
                   </svg>
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No transactions found</h3>
-                <p className="text-gray-500 text-sm">There are no transactions for {selectedMonth} yet.</p>
+                <p className="text-gray-500 text-sm">
+                  {selectedMonth === "All Months" 
+                    ? "There are no transactions across all months yet." 
+                    : `There are no transactions for ${selectedMonth} yet.`
+                  }
+                </p>
               </div>
             )}
           </div>
