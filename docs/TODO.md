@@ -23,12 +23,12 @@ A comprehensive todo list for the development of the Better Finance application 
 - [x] Remove Transactions & Accounts in bottom navbar, access from home
 <!-- - [ ] Change transactions to be like Livin' Mandiri -->
 <!-- - [ ] Change count transactions per day to sum of spending per day -->
+<!-- - [ ] Click accounts to filter -->
 - [x] Change UI of budgets to have remaining & use long style currency like weekly budget 
 - [x] Add eye hide unhide in home for Assets
-- [ ] Filter for all month
 - [x] Click categories to filter
-- [ ] Click & filter based week 
-- [ ] Click accounts to filter
+- [x] Click & filter based week 
+- [ ] Filter for all month
 
 ### 💳 REFACTORING
 - [x] Move file weekly-budget to budgets/weekly

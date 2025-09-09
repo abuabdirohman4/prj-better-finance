@@ -7,6 +7,7 @@ import { formatCurrency, getCashValue, getCurrentWeek, getBudgetColors } from "@
 import { months } from "@/utils/constants";
 import { getDefaultSheetName } from "@/utils/google";
 import { processBudgetData } from "@/app/budgets/data";
+import Cookies from 'js-cookie';
 
 // Eating categories configuration
 const EATING_CATEGORIES = [
@@ -65,12 +66,34 @@ export default function WeeklyBudget() {
     return currentWeekInfo.week;
   }, [selectedMonth, currentDate]);
 
-  // Auto-select current week when month changes or component loads
+  // Load selected week from cookies when component loads
   useEffect(() => {
+    const savedWeek = Cookies.get('weekly-budget-selected-week');
+    if (savedWeek) {
+      try {
+        const parsedWeek = parseInt(savedWeek);
+        if (parsedWeek > 0 && parsedWeek <= weeksInMonth) {
+          setSelectedWeek(parsedWeek);
+          return; // Don't auto-select current week if we have saved week
+        }
+      } catch (error) {
+        console.error('Error parsing saved week from cookies:', error);
+      }
+    }
+    
+    // Auto-select current week when month changes or component loads (fallback)
     if (currentWeekNumber > 0 && currentWeekNumber <= weeksInMonth) {
       setSelectedWeek(currentWeekNumber);
     }
   }, [currentWeekNumber, weeksInMonth]);
+
+  // Save selected week to cookies when it changes
+  useEffect(() => {
+    Cookies.set('weekly-budget-selected-week', selectedWeek.toString(), { 
+      expires: 365,
+      sameSite: 'strict'
+    });
+  }, [selectedWeek]);
 
   // Calculate weekly budgets and spending
   const weeklyData = useMemo(() => {
