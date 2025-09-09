@@ -23,10 +23,13 @@ export default function WeeklyBudget() {
   const { data: budgetRawData, isLoading: budgetLoading } = useBudgets(selectedMonth);
   const { data: transactionData, isLoading: transactionLoading } = useTransactions(selectedMonth);
 
-  // Function to navigate to transactions with category filter
+  // Function to navigate to transactions with category and week filter
   const navigateToTransactionsWithFilter = (categoryName) => {
     const encodedCategory = encodeURIComponent(categoryName);
-    router.push(`/transactions?category=${encodedCategory}`);
+    const weekInfo = selectedWeekInfo;
+    const weekRange = `${weekInfo.startDate.toISOString().split('T')[0]}|${weekInfo.endDate.toISOString().split('T')[0]}`;
+    const encodedWeek = encodeURIComponent(weekRange);
+    router.push(`/transactions?category=${encodedCategory}&week=${encodedWeek}`);
   };
 
   // Process budget data

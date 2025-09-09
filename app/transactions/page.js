@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, useEffect, Suspense } from "react";
+import { useState, useMemo, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { months } from "@/utils/constants";
@@ -25,12 +25,21 @@ function TransactionsContent() {
   const [activeFilters, setActiveFilters] = useState({});
   const [showFilters, setShowFilters] = useState(false);
 
-  // Handle URL parameters for category filtering
+  // Handle URL parameters for category and week filtering
   useEffect(() => {
     const categoryParam = searchParams.get('category');
+    const weekParam = searchParams.get('week');
+    
+    const filters = {};
     if (categoryParam) {
-      const decodedCategory = decodeURIComponent(categoryParam);
-      setActiveFilters({ category: decodedCategory });
+      filters.category = decodeURIComponent(categoryParam);
+    }
+    if (weekParam) {
+      filters.week = decodeURIComponent(weekParam);
+    }
+    
+    if (Object.keys(filters).length > 0) {
+      setActiveFilters(filters);
       setShowFilters(true);
     }
   }, [searchParams]);
@@ -38,33 +47,85 @@ function TransactionsContent() {
   // Use SWR hook for data fetching (consistent with budgets page)
   const { data: transactionData, isLoading, error } = useTransactions(selectedMonth);
 
+  // Filter transactions by week if week filter is active
+  const weekFilteredTransactions = useMemo(() => {
+    if (!transactionData || !activeFilters.week) {
+      return transactionData || [];
+    }
+    
+    const weekRange = activeFilters.week.split('|');
+    if (weekRange.length !== 2) {
+      return transactionData;
+    }
+    
+    const [startDateStr, endDateStr] = weekRange;
+    
+    // Parse dates (format: YYYY-MM-DD from weekly budget)
+    const startDate = new Date(startDateStr);
+    const endDate = new Date(endDateStr);
+    
+    const filtered = transactionData.filter(transaction => {
+      // Parse transaction date (DD/MM/YYYY format)
+      const [day, month, year] = transaction.Date.split('/');
+      const transactionDate = new Date(year, month - 1, day);
+      
+      // Check if transaction date is within week range
+      return transactionDate >= startDate && transactionDate <= endDate;
+    });
+    
+    return filtered;
+  }, [transactionData, activeFilters.week]);
+
   // Group filtered transactions by date
   const groupedTransactions = useMemo(() => {
     if (filteredTransactions.length > 0) {
       return groupTransactionsByDate(filteredTransactions);
     }
+    // If we have week filtering but no category filtering, use week-filtered data
+    if (activeFilters.week && !showFilters) {
+      return groupTransactionsByDate(weekFilteredTransactions);
+    }
     return transactionData ? groupTransactionsByDate(transactionData) : {};
-  }, [filteredTransactions, transactionData]);
+  }, [filteredTransactions, transactionData, weekFilteredTransactions, activeFilters.week, showFilters]);
   
   // Calculate financial data with proper type checking (use filtered data for calculations)
-  const displayTransactions = filteredTransactions.length > 0 ? filteredTransactions : (transactionData || []);
+  const displayTransactions = useMemo(() => {
+    if (filteredTransactions.length > 0) {
+      return filteredTransactions;
+    }
+    // If we have week filtering but no category filtering, use week-filtered data
+    if (activeFilters.week && !showFilters) {
+      return weekFilteredTransactions;
+    }
+    return transactionData || [];
+  }, [filteredTransactions, transactionData, weekFilteredTransactions, activeFilters.week, showFilters]);
+  
   const spending = getTotalExpensesWithTransfers(displayTransactions);
   const earning = getTotalCashGroupedByDate(displayTransactions, "Earning");
   const balance = earning + spending;
 
-  const handleFilteredTransactions = (transactions) => {
+  const handleFilteredTransactions = useCallback((transactions) => {
     setFilteredTransactions(transactions);
-  };
+  }, []);
 
-  const handleFilterChange = (filters) => {
-    setActiveFilters(filters);
-  };
+  const handleFilterChange = useCallback((filters) => {
+    // Preserve week filter if it exists in activeFilters but not in new filters
+    const updatedFilters = { ...filters };
+    if (activeFilters.week && !filters.week) {
+      updatedFilters.week = activeFilters.week;
+    }
+    setActiveFilters(updatedFilters);
+  }, [activeFilters.week]);
 
   const toggleFilters = () => {
     if (showFilters) {
-      // When hiding filters, clear all active filters
+      // When hiding filters, preserve week filter but clear others
       setFilteredTransactions([]);
-      setActiveFilters({});
+      const preservedFilters = {};
+      if (activeFilters.week) {
+        preservedFilters.week = activeFilters.week;
+      }
+      setActiveFilters(preservedFilters);
     }
     setShowFilters(!showFilters);
   };
@@ -178,7 +239,7 @@ function TransactionsContent() {
       {transactionData && transactionData.length > 0 && showFilters && (
         <div className="px-3 mb-6">
           <TransactionFilter
-            transactions={transactionData}
+            transactions={activeFilters.week ? weekFilteredTransactions : transactionData}
             onFilteredTransactions={handleFilteredTransactions}
             onFilterChange={handleFilterChange}
             initialFilters={activeFilters}
