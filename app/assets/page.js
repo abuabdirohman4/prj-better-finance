@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useAssets } from "@/utils/hooks";
-import { formatCurrency, getTotalAssets } from "@/utils/helper";
+import { formatCurrency } from "@/utils/helper";
+import { getTotalAssets } from "./utils";
 import AssetCard from "@/components/Card/Asset";
 
 export default function Assets() {

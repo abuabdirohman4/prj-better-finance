@@ -14,7 +14,7 @@ import {
     getTotalExpensesWithTransfers,
 } from "@/utils/helper";
 import { getDefaultSheetName } from "@/utils/google";
-import { groupTransactionsByDate } from "./data";
+import { groupTransactionsByDate } from "./utils";
 
 function TransactionsContent() {
     const searchParams = useSearchParams();

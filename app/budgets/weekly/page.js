@@ -11,7 +11,7 @@ import {
 } from "@/utils/helper";
 import { months } from "@/utils/constants";
 import { getDefaultSheetName } from "@/utils/google";
-import { processBudgetData } from "@/app/budgets/data";
+import { processBudgetData } from "@/app/budgets/utils";
 import Cookies from "js-cookie";
 
 // Eating categories configuration

@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { categories, months } from "@/utils/constants";
 import { useTransactions, useBudgets } from "@/utils/hooks";
-import { processBudgetData } from "./data";
+import { processBudgetData } from "./utils";
 import { formatCurrency, getBudgetColors, toProperCase } from "@/utils/helper";
 import { getDefaultSheetName } from "@/utils/google";
 import Cookies from "js-cookie";
@@ -1084,6 +1084,7 @@ export default function Budgets() {
                                                                                 {subPercentageUsed.toFixed(
                                                                                     0
                                                                                 )}
+
                                                                                 %
                                                                             </span>
                                                                         </div>

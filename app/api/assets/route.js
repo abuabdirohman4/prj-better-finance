@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchAssetData } from "@/app/assets/data";
+import { fetchAssetData } from "@/app/assets/utils";
 
 // Ensure this route is always dynamic and not statically optimized
 export const dynamic = "force-dynamic";

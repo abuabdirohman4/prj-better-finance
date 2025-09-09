@@ -297,43 +297,6 @@ export function getTotalBalance(accounts) {
     );
 }
 
-export function getTotalAssets(assets) {
-    if (!Array.isArray(assets)) return 0;
-    return assets.reduce(
-        (total, asset) => total + (asset.balance || asset.value || 0),
-        0
-    );
-}
-
-export function categorizeAccounts(accounts) {
-    if (!Array.isArray(accounts))
-        return { wallet: [], atm: [], platform: [], other: [] };
-
-    const categories = {
-        wallet: [],
-        atm: [],
-        platform: [],
-        other: [],
-    };
-
-    // Import accountCategories from constants
-    const { accountCategories } = require("./constants");
-
-    accounts.forEach((account) => {
-        if (accountCategories.wallet.includes(account.name)) {
-            categories.wallet.push(account);
-        } else if (accountCategories.atm.includes(account.name)) {
-            categories.atm.push(account);
-        } else if (accountCategories.platform.includes(account.name)) {
-            categories.platform.push(account);
-        } else {
-            categories.other.push(account);
-        }
-    });
-
-    return categories;
-}
-
 export function getBudgetColors(percent) {
     if (percent <= 100 && percent < 80) {
         return {

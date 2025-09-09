@@ -4,7 +4,7 @@ import { useGoals, useBudgets } from "@/utils/hooks";
 import { categories, months } from "@/utils/constants";
 import { toProperCase } from "@/utils/helper";
 import { getDefaultSheetName } from "@/utils/google";
-import { processBudgetData } from "@/app/budgets/data";
+import { processBudgetData } from "@/app/budgets/utils";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import ClearCache from "@/components/PWA/ClearCache";
