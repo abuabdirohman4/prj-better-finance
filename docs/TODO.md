@@ -29,7 +29,7 @@ A comprehensive todo list for the development of the Better Finance application 
 - [x] Move file weekly-budget to budgets/weekly
 - [x] Merge formatCurrencyShort to formatCurrency
 - [ ] Remove unused fetchTransactions, fetchBudgets, fetchGoals, fetchAccounts
-- [ ] Remove unused code
+- [ ] Remove unused code & comment
 - [ ] Undestanding flow code & each function & code goals
 
 ### 💳 Account/Wallet Management (HIGH PRIORITY)

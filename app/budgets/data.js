@@ -1,40 +1,4 @@
-import { googleSheetsService } from "@/utils/google";
 import Papa from "papaparse";
-
-export const fetchBudgets = async (month) => {
-  try {
-    const [spendingData, earningData, transferData, spendingTFData] = await Promise.all([
-      googleSheetsService.read("Spending"),
-      googleSheetsService.read("Earning"),
-      googleSheetsService.read("Transfer"),
-      googleSheetsService.read("SpendingTF")
-    ]);
-
-    const rawData = {
-      spendingData,
-      earningData,
-      transferData,
-      spendingTFData
-    };
-
-    return processBudgetData(rawData, month);
-
-  } catch (error) {
-    console.error('Error fetching budget data:', error);
-    return {
-      spending: {},
-      earning: {},
-      transfer: {},
-      spendingTF: {},
-      summary: {
-        totalEarning: 0,
-        totalSpending: 0,
-        totalTransfer: 0,
-        totalSpendingTF: 0
-      }
-    };
-  }
-};
 
 // Helper function to process budget data (reusable)
 export const processBudgetData = (rawData, month) => {

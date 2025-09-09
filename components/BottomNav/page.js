@@ -115,33 +115,6 @@ export default function BottomNav() {
               Goals
             </span>
           </Link>
-
-          {/* Transactions */}
-          {/* <Link
-            href="/transactions"
-            className={`flex flex-col items-center justify-center w-20 h-12 rounded-xl transition-all duration-200 ${
-              isActive('/transactions') 
-                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg scale-105' 
-                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
-            }`}
-          >
-            <svg
-              className={`w-5 h-5 mb-1 ${
-                isActive('/transactions') ? 'text-white' : 'text-gray-500'
-              }`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            <span className={`text-xs font-medium ${
-              isActive('/transactions') ? 'text-white' : 'text-gray-600'
-            }`}>
-              Trans
-            </span>
-          </Link> */}
-
         </div>
       </div>
     </div>

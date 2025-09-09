@@ -15,7 +15,6 @@ export default function ClearCache() {
         const cacheNames = await caches.keys();
         await Promise.all(
           cacheNames.map(cacheName => {
-            console.log('Deleting cache:', cacheName);
             return caches.delete(cacheName);
           })
         );
@@ -25,8 +24,6 @@ export default function ClearCache() {
         await Promise.all(
           registrations.map(registration => registration.unregister())
         );
-        
-        console.log('All caches cleared and service worker unregistered!');
         
         // Reload page after a short delay
         setTimeout(() => {
