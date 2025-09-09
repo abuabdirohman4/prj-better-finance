@@ -76,7 +76,7 @@ export default function SplashScreen() {
       <div className={`absolute bottom-8 left-0 right-0 text-center transition-all duration-1000 delay-1000 ${
         isAnimating ? 'opacity-0' : 'opacity-100'
       }`}>
-        <p className="text-sm text-blue-200">Powered by Next.js</p>
+        <p className="text-sm text-blue-200">Created By Abu Abdirohman</p>
       </div>
     </div>
   );

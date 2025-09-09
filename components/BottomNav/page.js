@@ -8,7 +8,7 @@ export default function BottomNav() {
   const isActive = (path) => pathname === path;
 
   return (
-    <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md">
+    <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-10 w-full max-w-md">
       {/* Background with blur effect */}
       <div className="bg-white/80 backdrop-blur-xl border-t border-gray-200/50 shadow-2xl">
         <div className="flex h-16 justify-around items-center px-4">
