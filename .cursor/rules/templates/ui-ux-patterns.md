@@ -1,0 +1,447 @@
+# UI/UX Design Patterns & [CSS_FRAMEWORK]
+
+## Design Principles
+
+- **Mobile-First**: Design for mobile devices first with responsive scaling
+- **Consistency**: Use consistent design system across all components
+- **Accessibility**: Implement proper ARIA labels and keyboard navigation
+- **Performance**: Prioritize smooth interactions and fast loading
+- **[DOMAIN_FOCUS]**: Design specifically for [DOMAIN] data visualization and management
+
+## [CSS_FRAMEWORK] Usage
+
+### Utility-First Approach
+- **Utility Classes**: Prefer utility classes over custom CSS
+- **Responsive Design**: Use responsive prefixes (`[RESPONSIVE_PREFIXES]`)
+- **Color System**: Use consistent [CSS_FRAMEWORK] color palette with [DESIGN_SYSTEM]
+- **Spacing**: Use [CSS_FRAMEWORK] spacing scale ([SPACING_SCALE])
+- **Typography**: Use [FONT_FAMILY] with proper weight and size hierarchy
+
+### Custom Design System
+```css
+/* [APP_NAME] Color Palette */
+- Primary: [PRIMARY_COLOR] ([PRIMARY_VARIANTS])
+- Success: [SUCCESS_COLOR] ([SUCCESS_VARIANTS])
+- Warning: [WARNING_COLOR] ([WARNING_VARIANTS])
+- Error: [ERROR_COLOR] ([ERROR_VARIANTS])
+- Neutral: [NEUTRAL_COLOR] ([NEUTRAL_VARIANTS])
+- Background: [BACKGROUND_GRADIENT]
+```
+
+## Component Design Patterns
+
+### Card Components
+```jsx
+// Standard Card Pattern
+<div className="[CARD_CONTAINER_CLASSES]">
+    <div className="[CARD_HEADER_CLASSES]">
+        <h2 className="[CARD_TITLE_CLASSES]">[CARD_TITLE]</h2>
+        <div className="[CARD_ICON_CONTAINER_CLASSES]">
+            {/* Icon */}
+        </div>
+    </div>
+    <div className="[CARD_CONTENT_CLASSES]">
+        {/* Content */}
+    </div>
+</div>
+```
+
+### Button Patterns
+```jsx
+// Primary Button
+<button className="[PRIMARY_BUTTON_CLASSES]">
+    [BUTTON_TEXT]
+</button>
+
+// Secondary Button
+<button className="[SECONDARY_BUTTON_CLASSES]">
+    [BUTTON_TEXT]
+</button>
+
+// Icon Button
+<button className="[ICON_BUTTON_CLASSES]">
+    <svg className="[ICON_CLASSES]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {/* Icon path */}
+    </svg>
+</button>
+```
+
+### Form Elements
+```jsx
+// Input Field
+<input 
+    className="[INPUT_CLASSES]"
+    placeholder="[PLACEHOLDER_TEXT]"
+/>
+
+// Select Dropdown
+<select className="[SELECT_CLASSES]">
+    <option value="[OPTION_VALUE]" className="[OPTION_CLASSES]">[OPTION_LABEL]</option>
+</select>
+```
+
+## Layout Patterns
+
+### Page Structure
+```jsx
+// Standard Page Layout
+<main className="[MAIN_CONTAINER_CLASSES]">
+    {/* Header Section */}
+    <div className="[HEADER_CONTAINER_CLASSES]">
+        {/* Background decorations */}
+        <div className="[DECORATION_1_CLASSES]"></div>
+        <div className="[DECORATION_2_CLASSES]"></div>
+        
+        {/* Wave shape at bottom */}
+        <div className="[WAVE_CONTAINER_CLASSES]">
+            <svg viewBox="0 0 400 32" className="[WAVE_SVG_CLASSES]" preserveAspectRatio="none">
+                <path d="[WAVE_PATH]" fill="[WAVE_COLOR]" className="[WAVE_ANIMATION_CLASSES]" />
+            </svg>
+        </div>
+        
+        <div className="[HEADER_CONTENT_CLASSES]">
+            {/* Header content */}
+        </div>
+    </div>
+    
+    {/* Content Section */}
+    <div className="[CONTENT_CONTAINER_CLASSES]">
+        {/* Page content */}
+    </div>
+    
+    {/* Bottom spacing for navigation */}
+    <div className="[BOTTOM_SPACING_CLASSES]"></div>
+</main>
+```
+
+### Grid Layouts
+```jsx
+// [GRID_TYPE] Grid
+<div className="[GRID_CONTAINER_CLASSES]">
+    {/* [GRID_DESCRIPTION] */}
+</div>
+
+<div className="[GRID_2_COLUMNS_CLASSES]">
+    {/* Two columns for [PURPOSE] */}
+</div>
+
+<div className="[GRID_3_COLUMNS_CLASSES]">
+    {/* Three columns for [PURPOSE] */}
+</div>
+```
+
+### Container Patterns
+```jsx
+// Mobile-first container
+<html className="[HTML_CONTAINER_CLASSES]">
+    <body className="[BODY_CONTAINER_CLASSES]">
+        {/* Content */}
+    </body>
+</html>
+
+// Content padding
+<div className="[CONTENT_PADDING_CLASSES]">
+    {/* Page content with consistent padding */}
+</div>
+```
+
+## [DOMAIN] Data Visualization
+
+### [DATA_TYPE] Formatting
+```jsx
+// [DATA_TYPE] display patterns
+<div className="[DATA_DISPLAY_CLASSES]">
+    {[FORMAT_FUNCTION]([DATA_VALUE])}
+</div>
+
+// Short [DATA_TYPE] format
+<div className="[SHORT_DATA_CLASSES]">
+    {[FORMAT_FUNCTION]([DATA_VALUE], "[SHORT_FORMAT]")}
+</div>
+
+// Colored [DATA_TYPE] (positive/negative)
+<div className={`[DATA_CLASSES] ${[DATA_VALUE] >= 0 ? "[POSITIVE_CLASSES]" : "[NEGATIVE_CLASSES]"}`}>
+    {[FORMAT_FUNCTION]([DATA_VALUE], "[SIGNS_FORMAT]")}
+</div>
+```
+
+### Progress Indicators
+```jsx
+// [PROGRESS_TYPE] progress bar
+<div className="[PROGRESS_CONTAINER_CLASSES]">
+    <div className="[PROGRESS_BAR_CONTAINER_CLASSES]">
+        <div 
+            className={`[PROGRESS_BAR_CLASSES] ${[GET_COLOR_FUNCTION]([PERCENTAGE]).progress}`}
+            style={{ width: `${Math.min([PERCENTAGE], 100)}%` }}
+        ></div>
+    </div>
+    <span className={`[PROGRESS_TEXT_CLASSES] ${[GET_COLOR_FUNCTION]([PERCENTAGE]).text}`}>
+        {[PERCENTAGE].toFixed(0)}%
+    </span>
+</div>
+```
+
+### Status Indicators
+```jsx
+// Status badges
+<div className={`[STATUS_BADGE_CLASSES] ${[STATUS_BG_CLASSES]}`}>
+    {[STATUS]}
+</div>
+
+// Icon with status
+<div className={`[STATUS_ICON_CONTAINER_CLASSES] ${
+    [STATUS] === "[SUCCESS_STATUS]" ? "[SUCCESS_ICON_CLASSES]" : "[ERROR_ICON_CLASSES]"
+}`}>
+    <svg className="[STATUS_ICON_CLASSES]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {/* Icon */}
+    </svg>
+</div>
+```
+
+## Interactive Elements
+
+### Loading States
+```jsx
+// Skeleton loader
+<div className="[LOADING_CONTAINER_CLASSES]">
+    <div className="[SKELETON_1_CLASSES]"></div>
+    <div className="[SKELETON_2_CLASSES]"></div>
+</div>
+
+// Card skeleton
+<div className="[CARD_SKELETON_CONTAINER_CLASSES]">
+    <div className="[CARD_SKELETON_ANIMATION_CLASSES]">
+        <div className="[CARD_SKELETON_ICON_CLASSES]"></div>
+        <div className="[CARD_SKELETON_TITLE_CLASSES]"></div>
+        <div className="[CARD_SKELETON_CONTENT_CLASSES]"></div>
+    </div>
+</div>
+```
+
+### Error States
+```jsx
+// Error message
+<div className="[ERROR_CONTAINER_CLASSES]">
+    <div className="[ERROR_ICON_CLASSES]">[ERROR_ICON]</div>
+    <p className="[ERROR_MESSAGE_CLASSES]">[ERROR_MESSAGE]</p>
+    <p className="[ERROR_DETAILS_CLASSES]">[ERROR_DETAILS]</p>
+</div>
+
+// Empty state
+<div className="[EMPTY_CONTAINER_CLASSES]">
+    <div className="[EMPTY_ICON_CONTAINER_CLASSES]">
+        <svg className="[EMPTY_ICON_CLASSES]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {/* Icon */}
+        </svg>
+    </div>
+    <h3 className="[EMPTY_TITLE_CLASSES]">[EMPTY_TITLE]</h3>
+    <p className="[EMPTY_DESCRIPTION_CLASSES]">[EMPTY_DESCRIPTION]</p>
+</div>
+```
+
+### Hover Effects
+```jsx
+// Card hover
+<div className="[CARD_HOVER_CLASSES]">
+    {/* Content */}
+</div>
+
+// Button hover
+<button className="[BUTTON_HOVER_CLASSES]">
+    [BUTTON_TEXT]
+</button>
+
+// Icon hover
+<button className="[ICON_HOVER_CLASSES]">
+    <svg className="[ICON_CLASSES]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {/* Icon */}
+    </svg>
+</button>
+```
+
+## Animation Patterns
+
+### Transitions
+```jsx
+// Smooth transitions
+<div className="[TRANSITION_CLASSES]">
+    {/* Content */}
+</div>
+
+// Hover animations
+<div className="[HOVER_ANIMATION_CLASSES]">
+    {/* Content */}
+</div>
+
+// Loading animations
+<div className="[LOADING_ANIMATION_CLASSES]">
+    {/* Skeleton content */}
+</div>
+```
+
+### Collapsible Content
+```jsx
+// Collapsible section
+<div className={`[COLLAPSIBLE_CONTAINER_CLASSES] ${
+    [IS_COLLAPSED] ? "[COLLAPSED_CLASSES]" : "[EXPANDED_CLASSES]"
+}`}>
+    <div className={`[COLLAPSIBLE_CONTENT_CLASSES] ${
+        [IS_COLLAPSED] ? "[COLLAPSED_CONTENT_CLASSES]" : "[EXPANDED_CONTENT_CLASSES]"
+    }`}>
+        {/* Content */}
+    </div>
+</div>
+```
+
+## Accessibility Guidelines
+
+### Color Contrast
+- **Text**: Ensure [TEXT_CONTRAST_RATIO] contrast ratio for normal text
+- **Large Text**: Ensure [LARGE_TEXT_CONTRAST_RATIO] contrast ratio for large text ([LARGE_TEXT_SIZE]+)
+- **Interactive Elements**: Ensure [INTERACTIVE_CONTRAST_RATIO] contrast ratio for buttons and links
+
+### Focus States
+```jsx
+// Focus indicators
+<button className="[FOCUS_BUTTON_CLASSES]">
+    [BUTTON_TEXT]
+</button>
+
+<input className="[FOCUS_INPUT_CLASSES]" />
+```
+
+### Screen Reader Support
+```jsx
+// ARIA labels
+<button aria-label="[ARIA_LABEL]" title="[TOOLTIP_TEXT]">
+    <svg className="[ICON_CLASSES]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {/* Icon */}
+    </svg>
+</button>
+
+// Semantic HTML
+<main role="main">
+    <section aria-labelledby="[SECTION_ID]">
+        <h2 id="[SECTION_ID]">[SECTION_TITLE]</h2>
+    </section>
+</main>
+```
+
+### Keyboard Navigation
+- **Tab Order**: Ensure logical tab order through interactive elements
+- **Skip Links**: Provide skip links for main content
+- **Keyboard Shortcuts**: Implement common keyboard shortcuts where appropriate
+- **Focus Management**: Manage focus for dynamic content updates
+
+## Responsive Design Patterns
+
+### Mobile-First Breakpoints
+```jsx
+// Mobile first approach
+<div className="[RESPONSIVE_GRID_CLASSES]">
+    {/* Responsive grid */}
+</div>
+
+// Text sizing
+<h1 className="[RESPONSIVE_TITLE_CLASSES]">
+    [RESPONSIVE_TITLE]
+</h1>
+
+// Spacing
+<div className="[RESPONSIVE_PADDING_CLASSES]">
+    {/* Responsive padding */}
+</div>
+```
+
+### Touch-Friendly Design
+- **Minimum Touch Target**: [MIN_TOUCH_TARGET] minimum for touch targets
+- **Spacing**: Adequate spacing between interactive elements
+- **Gesture Support**: Support common mobile gestures
+- **Viewport**: Proper viewport configuration for mobile devices
+
+## Customization Guide
+
+### Required Replacements
+1. **[CSS_FRAMEWORK]** → Your CSS framework (Tailwind, Bootstrap, etc.)
+2. **[DOMAIN_FOCUS]** → Your domain focus (Financial, E-commerce, etc.)
+3. **[DOMAIN]** → Your domain (finance, ecommerce, etc.)
+4. **[APP_NAME]** → Your app name
+5. **[FONT_FAMILY]** → Your font family
+6. **[PRIMARY_COLOR]** → Your primary color
+7. **[SUCCESS_COLOR]** → Your success color
+8. **[WARNING_COLOR]** → Your warning color
+9. **[ERROR_COLOR]** → Your error color
+10. **[NEUTRAL_COLOR]** → Your neutral color
+
+### CSS Framework Examples
+
+#### Tailwind CSS
+```css
+/* Color Palette */
+- Primary: Blue (blue-600, blue-700, blue-800)
+- Success: Green (green-400, green-500, green-600)
+- Warning: Yellow (yellow-400, yellow-500, yellow-600)
+- Error: Red (red-400, red-500, red-600)
+- Neutral: Gray (gray-50, gray-100, gray-200, gray-800, gray-900)
+
+/* Spacing Scale */
+- 4, 8, 12, 16, 20, 24, 32, 48, 64
+
+/* Responsive Prefixes */
+- sm:, md:, lg:, xl:, 2xl:
+```
+
+#### Bootstrap
+```css
+/* Color Palette */
+- Primary: Blue (#007bff, #0056b3, #004085)
+- Success: Green (#28a745, #1e7e34, #155724)
+- Warning: Yellow (#ffc107, #e0a800, #d39e00)
+- Error: Red (#dc3545, #c82333, #bd2130)
+- Neutral: Gray (#f8f9fa, #e9ecef, #dee2e6, #6c757d, #343a40)
+
+/* Spacing Scale */
+- 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+
+/* Responsive Prefixes */
+- sm-, md-, lg-, xl-, xxl-
+```
+
+#### Material-UI
+```css
+/* Color Palette */
+- Primary: Blue (#1976d2, #1565c0, #0d47a1)
+- Success: Green (#2e7d32, #1b5e20, #0d3e0d)
+- Warning: Orange (#ed6c02, #e65100, #bf360c)
+- Error: Red (#d32f2f, #c62828, #b71c1c)
+- Neutral: Gray (#fafafa, #f5f5f5, #eeeeee, #757575, #212121)
+
+/* Spacing Scale */
+- 8px grid system (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+
+/* Responsive Prefixes */
+- xs, sm, md, lg, xl
+```
+
+## Template Variables
+
+| Variable | Description | Tailwind Example | Bootstrap Example | Material-UI Example |
+|----------|-------------|------------------|-------------------|---------------------|
+| `[CSS_FRAMEWORK]` | CSS framework | "Tailwind CSS" | "Bootstrap" | "Material-UI" |
+| `[DOMAIN_FOCUS]` | Domain focus | "Financial Focus" | "E-commerce Focus" | "Admin Focus" |
+| `[DOMAIN]` | Domain | "finance" | "ecommerce" | "admin" |
+| `[APP_NAME]` | App name | "Better Finance" | "E-Commerce Store" | "Admin Dashboard" |
+| `[FONT_FAMILY]` | Font family | "Inter" | "Roboto" | "Roboto" |
+| `[PRIMARY_COLOR]` | Primary color | "Blue" | "Blue" | "Blue" |
+| `[SUCCESS_COLOR]` | Success color | "Green" | "Green" | "Green" |
+| `[WARNING_COLOR]` | Warning color | "Yellow" | "Yellow" | "Orange" |
+| `[ERROR_COLOR]` | Error color | "Red" | "Red" | "Red" |
+| `[NEUTRAL_COLOR]` | Neutral color | "Gray" | "Gray" | "Gray" |
+| `[RESPONSIVE_PREFIXES]` | Responsive prefixes | "sm:, md:, lg:, xl:" | "sm-, md-, lg-, xl-" | "xs, sm, md, lg, xl" |
+| `[SPACING_SCALE]` | Spacing scale | "4, 8, 12, 16, 20, 24, 32, 48, 64" | "1, 2, 3, 4, 5, 6, 7, 8, 9, 10" | "8px grid system" |
+| `[TEXT_CONTRAST_RATIO]` | Text contrast | "4.5:1" | "4.5:1" | "4.5:1" |
+| `[LARGE_TEXT_CONTRAST_RATIO]` | Large text contrast | "3:1" | "3:1" | "3:1" |
+| `[INTERACTIVE_CONTRAST_RATIO]` | Interactive contrast | "3:1" | "3:1" | "3:1" |
+| `[LARGE_TEXT_SIZE]` | Large text size | "18px+" | "18px+" | "18px+" |
+| `[MIN_TOUCH_TARGET]` | Min touch target | "44px" | "44px" | "44px" |
+
