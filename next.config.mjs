@@ -164,7 +164,7 @@ const config = withPWA({
             handler: "NetworkFirst", // Always fetch from network first
             options: {
                 cacheName: "apis-no-cache",
-                networkTimeoutSeconds: 10,
+                networkTimeoutSeconds: 30, // Increased from 10 to 30 seconds for cold start
                 expiration: {
                     maxEntries: 0, // No cache entries
                     maxAgeSeconds: 0, // No cache time

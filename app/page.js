@@ -11,13 +11,19 @@ import Cookies from "js-cookie";
 
 export default function Home() {
     const selectedMonth = getDefaultSheetName(months);
+    
+    // Staggered loading to reduce concurrent load on cold start
     const {
         data: transactionData,
         isLoading,
         error,
     } = useTransactions(selectedMonth);
-    const { data: accountData, isLoading: accountsLoading } = useAccounts();
-    const { data: assetData, isLoading: assetsLoading } = useAssets();
+    
+    // Delay accounts loading by 500ms
+    const { data: accountData, isLoading: accountsLoading } = useAccounts(500);
+    
+    // Delay assets loading by 1000ms
+    const { data: assetData, isLoading: assetsLoading } = useAssets(1000);
     const totalAssets = getTotalAssets(assetData || []);
 
     // State for hiding/showing total assets

@@ -1,4 +1,5 @@
 import useSWR from "swr";
+import { useState, useEffect } from "react";
 
 // Custom hook for fetching transaction data
 export const useTransactions = (sheetName) => {
@@ -7,38 +8,56 @@ export const useTransactions = (sheetName) => {
         async () => {
             if (!sheetName) return null;
 
-            try {
-                const cacheBuster = `?sheet=${encodeURIComponent(sheetName)}&t=${Date.now()}&force=true`;
-                const response = await fetch(
-                    `/api/transactions${cacheBuster}`,
-                    {
-                        headers: {
-                            "Cache-Control":
-                                "no-cache, no-store, must-revalidate",
-                            Pragma: "no-cache",
-                            Expires: "0",
-                        },
-                    }
-                );
-                const result = await response.json();
+            const maxRetries = 3;
+            let lastError;
 
-                if (!response.ok) {
-                    throw new Error(
-                        result.error || "Failed to fetch transactions"
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    const cacheBuster = `?sheet=${encodeURIComponent(sheetName)}&t=${Date.now()}&force=true`;
+                    const response = await fetch(
+                        `/api/transactions${cacheBuster}`,
+                        {
+                            headers: {
+                                "Cache-Control":
+                                    "no-cache, no-store, must-revalidate",
+                                Pragma: "no-cache",
+                                Expires: "0",
+                            },
+                            // Increase timeout for cold start
+                            signal: AbortSignal.timeout(30000), // 30 seconds timeout
+                        }
                     );
-                }
+                    const result = await response.json();
 
-                return result.data;
-            } catch (error) {
-                console.error("❌ Error fetching transaction data:", error);
-                return [];
+                    if (!response.ok) {
+                        throw new Error(
+                            result.error || "Failed to fetch transactions"
+                        );
+                    }
+
+                    return result.data;
+                } catch (error) {
+                    lastError = error;
+                    console.error(`❌ Error fetching transaction data (attempt ${attempt}/${maxRetries}):`, error);
+                    
+                    // If it's the last attempt, return empty array
+                    if (attempt === maxRetries) {
+                        return [];
+                    }
+                    
+                    // Wait before retry with exponential backoff
+                    const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
             }
+            
+            return [];
         },
         {
             revalidateOnFocus: true,
             revalidateOnReconnect: true,
             dedupingInterval: 5000, // 5 seconds
-            errorRetryCount: 2,
+            errorRetryCount: 0, // Disable SWR retry since we handle it manually
             refreshInterval: 15000, // Auto-refresh every 15 seconds
             fetcher: undefined, // Use inline fetcher instead
         }
@@ -53,38 +72,75 @@ export const useTransactions = (sheetName) => {
     };
 };
 
+// Custom hook for staggered loading
+export const useStaggeredLoading = (delay = 0) => {
+    const [shouldLoad, setShouldLoad] = useState(delay === 0);
+    
+    useEffect(() => {
+        if (delay > 0) {
+            const timer = setTimeout(() => {
+                setShouldLoad(true);
+            }, delay);
+            return () => clearTimeout(timer);
+        }
+    }, [delay]);
+    
+    return shouldLoad;
+};
+
 // Custom hook for fetching account data
-export const useAccounts = () => {
+export const useAccounts = (delay = 0) => {
+    const shouldLoad = useStaggeredLoading(delay);
     const { data, error, isLoading, mutate } = useSWR(
-        "accounts",
+        shouldLoad ? "accounts" : null,
         async () => {
-            try {
-                // Add cache busting parameter to prevent caching
-                const cacheBuster = `?t=${Date.now()}&force=true`;
-                const response = await fetch(`/api/accounts${cacheBuster}`, {
-                    headers: {
-                        "Cache-Control": "no-cache, no-store, must-revalidate",
-                        Pragma: "no-cache",
-                        Expires: "0",
-                    },
-                });
-                const result = await response.json();
+            if (!shouldLoad) return null;
+            const maxRetries = 3;
+            let lastError;
 
-                if (!response.ok) {
-                    throw new Error(result.error || "Failed to fetch accounts");
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    // Add cache busting parameter to prevent caching
+                    const cacheBuster = `?t=${Date.now()}&force=true`;
+                    const response = await fetch(`/api/accounts${cacheBuster}`, {
+                        headers: {
+                            "Cache-Control": "no-cache, no-store, must-revalidate",
+                            Pragma: "no-cache",
+                            Expires: "0",
+                        },
+                        // Increase timeout for cold start
+                        signal: AbortSignal.timeout(30000), // 30 seconds timeout
+                    });
+                    
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.error || "Failed to fetch accounts");
+                    }
+
+                    return result.data;
+                } catch (error) {
+                    lastError = error;
+                    console.error(`❌ Error fetching account data (attempt ${attempt}/${maxRetries}):`, error);
+                    
+                    // If it's the last attempt, return empty array
+                    if (attempt === maxRetries) {
+                        return [];
+                    }
+                    
+                    // Wait before retry with exponential backoff
+                    const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+                    await new Promise(resolve => setTimeout(resolve, delay));
                 }
-
-                return result.data;
-            } catch (error) {
-                console.error("❌ Error fetching account data:", error);
-                return [];
             }
+            
+            return [];
         },
         {
             revalidateOnFocus: true,
             revalidateOnReconnect: true,
             dedupingInterval: 5000, // Reduced to 5 seconds for faster updates
-            errorRetryCount: 2,
+            errorRetryCount: 0, // Disable SWR retry since we handle it manually
             refreshInterval: 10000, // Auto-refresh every 10 seconds
             fetcher: undefined, // Use inline fetcher instead
         }
@@ -192,36 +248,56 @@ export const useGoals = () => {
 };
 
 // Custom hook for fetching assets data
-export const useAssets = () => {
+export const useAssets = (delay = 0) => {
+    const shouldLoad = useStaggeredLoading(delay);
     const { data, error, isLoading, mutate } = useSWR(
-        "assets",
+        shouldLoad ? "assets" : null,
         async () => {
-            try {
-                const cacheBuster = `?t=${Date.now()}&force=true`;
-                const response = await fetch(`/api/assets${cacheBuster}`, {
-                    headers: {
-                        "Cache-Control": "no-cache, no-store, must-revalidate",
-                        Pragma: "no-cache",
-                        Expires: "0",
-                    },
-                });
-                const result = await response.json();
+            if (!shouldLoad) return null;
+            const maxRetries = 3;
+            let lastError;
 
-                if (!response.ok) {
-                    throw new Error(result.error || "Failed to fetch assets");
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    const cacheBuster = `?t=${Date.now()}&force=true`;
+                    const response = await fetch(`/api/assets${cacheBuster}`, {
+                        headers: {
+                            "Cache-Control": "no-cache, no-store, must-revalidate",
+                            Pragma: "no-cache",
+                            Expires: "0",
+                        },
+                        // Increase timeout for cold start
+                        signal: AbortSignal.timeout(30000), // 30 seconds timeout
+                    });
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.error || "Failed to fetch assets");
+                    }
+
+                    return result.data;
+                } catch (error) {
+                    lastError = error;
+                    console.error(`❌ Error fetching assets data (attempt ${attempt}/${maxRetries}):`, error);
+                    
+                    // If it's the last attempt, return empty array
+                    if (attempt === maxRetries) {
+                        return [];
+                    }
+                    
+                    // Wait before retry with exponential backoff
+                    const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+                    await new Promise(resolve => setTimeout(resolve, delay));
                 }
-
-                return result.data;
-            } catch (error) {
-                console.error("❌ Error fetching assets data:", error);
-                return [];
             }
+            
+            return [];
         },
         {
             revalidateOnFocus: true,
             revalidateOnReconnect: true,
             dedupingInterval: 5000, // 5 seconds
-            errorRetryCount: 2,
+            errorRetryCount: 0, // Disable SWR retry since we handle it manually
             refreshInterval: 10000, // Auto-refresh every 10 seconds
             fetcher: undefined, // Use inline fetcher instead
         }
