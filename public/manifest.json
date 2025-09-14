@@ -5,12 +5,12 @@
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8fafc",
-  "theme_color": "#1e40af",
+  "theme_color": "#f8fafc",
   "orientation": "any",
   "categories": ["finance", "productivity", "utilities"],
   "lang": "en",
   "scope": "/",
-  "display_override": ["window-controls-overlay", "standalone"],
+  "display_override": ["standalone"],
   "icons": [
     {
       "src": "/img/logo.svg",
