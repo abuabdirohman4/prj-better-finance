@@ -3,6 +3,7 @@ import "../styles/globals.css";
 import BottomNav from "@/components/BottomNav/page";
 import PWAComponents from "@/components/PWA";
 import SplashScreen from "@/components/PWA/SplashScreen";
+import DesktopInstall from "@/components/PWA/DesktopInstall";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { SWRConfig } from "swr";
 import { swrConfig } from "@/configs";
@@ -76,6 +77,7 @@ export default function RootLayout({ children }) {
                         <SplashScreen />
                         {children}
                         <BottomNav />
+                        <DesktopInstall />
                     </SWRConfig>
                 </ErrorBoundary>
             </body>
