@@ -49,12 +49,6 @@ body {
     border-radius: 3px;
 }
 
-/* PWA Desktop Install - Only show on desktop */
-@media (max-width: 1023px) {
-    .pwa-install-prompt {
-        display: none !important;
-    }
-}
 
 ::-webkit-scrollbar-thumb {
     background: #cbd5e1;
