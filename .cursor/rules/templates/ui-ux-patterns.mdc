@@ -1,3 +1,9 @@
+---
+description: "UI/UX design patterns, [CSS_FRAMEWORK] usage, [DOMAIN] data visualization, and accessibility guidelines"
+globs: ["**/components/**/*.js", "**/pages/**/*.js", "**/styles/**/*.css"]
+alwaysApply: true
+---
+
 # UI/UX Design Patterns & [CSS_FRAMEWORK]
 
 ## Design Principles

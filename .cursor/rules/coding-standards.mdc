@@ -1,3 +1,9 @@
+---
+description: "Coding standards, React patterns, file organization, and development best practices"
+globs: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
+alwaysApply: true
+---
+
 # Coding Standards & Best Practices
 
 ## Code Style

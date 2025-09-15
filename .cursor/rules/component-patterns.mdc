@@ -1,3 +1,9 @@
+---
+description: "React component patterns, card designs, form components, and reusable UI patterns"
+globs: ["**/components/**/*.js", "**/app/**/page.js", "**/app/**/layout.js"]
+alwaysApply: true
+---
+
 # Component Patterns & Architecture
 
 ## Component Structure

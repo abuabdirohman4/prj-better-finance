@@ -1,3 +1,9 @@
+---
+description: "PWA development patterns, service worker configuration, manifest setup, and offline functionality"
+globs: ["**/components/PWA/**/*.js", "**/public/manifest.json", "**/next.config.mjs", "**/public/sw*.js"]
+alwaysApply: true
+---
+
 # PWA Development Guidelines
 
 ## PWA Core Features

@@ -1,3 +1,9 @@
+---
+description: "Project overview, tech stack, architecture, and key features of Better Finance app"
+globs: ["**/*.js", "**/*.md", "**/README.md"]
+alwaysApply: true
+---
+
 # Better Finance App - Project Overview
 
 ## Project Description

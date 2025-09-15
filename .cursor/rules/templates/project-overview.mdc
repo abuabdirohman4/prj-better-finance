@@ -1,3 +1,9 @@
+---
+description: "Project overview, tech stack, architecture, and key features of [PROJECT_NAME]"
+globs: ["**/*.js", "**/*.md", "**/README.md"]
+alwaysApply: true
+---
+
 # [PROJECT_NAME] - Project Overview
 
 ## Project Description

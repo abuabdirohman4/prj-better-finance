@@ -1,3 +1,9 @@
+---
+description: "Deployment guidelines, build configuration, environment setup, and DevOps best practices"
+globs: ["**/next.config.mjs", "**/package.json", "**/vercel.json", "**/Dockerfile", "**/.env*"]
+alwaysApply: true
+---
+
 # Deployment Guidelines & DevOps
 
 ## Environment Setup

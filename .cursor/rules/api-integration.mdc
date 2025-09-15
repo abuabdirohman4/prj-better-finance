@@ -1,3 +1,9 @@
+---
+description: "API integration patterns, Google Sheets setup, data fetching with SWR, and error handling guidelines"
+globs: ["**/api/**/*.js", "**/utils/google.js", "**/utils/hooks.js", "**/utils/fetch.js", "**/utils/helper.js"]
+alwaysApply: true
+---
+
 # API Integration & Data Management
 
 ## Google Sheets Integration
