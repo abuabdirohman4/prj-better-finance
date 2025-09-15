@@ -49,6 +49,25 @@ body {
     border-radius: 3px;
 }
 
+/* PWA Standalone Mode - Optimize for desktop */
+@media (display-mode: standalone) {
+    /* Make title bar area draggable on macOS */
+    body {
+        -webkit-app-region: no-drag;
+    }
+    
+    /* Optimize layout for PWA */
+    html, body {
+        height: 100vh;
+        height: 100dvh; /* Dynamic viewport height */
+    }
+    
+    /* Add some top padding to account for title bar */
+    .pwa-content {
+        padding-top: env(titlebar-area-height, 0px);
+    }
+}
+
 
 ::-webkit-scrollbar-thumb {
     background: #cbd5e1;

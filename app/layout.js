@@ -20,6 +20,7 @@ export const metadata = {
         capable: true,
         statusBarStyle: "default",
         title: "Better Finance",
+        standalone: true,
     },
     formatDetection: {
         telephone: false,
@@ -63,7 +64,8 @@ export const viewport = {
     initialScale: 1,
     maximumScale: 1,
     userScalable: false,
-    themeColor: "#2563eb",
+    themeColor: "#f8fafc",
+    viewportFit: "cover",
 };
 
 export default function RootLayout({ children }) {

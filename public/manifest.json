@@ -10,7 +10,7 @@
   "categories": ["finance", "productivity", "utilities"],
   "lang": "en",
   "scope": "/",
-  "display_override": ["standalone"],
+  "display_override": ["window-controls-overlay"],
   "icons": [
     {
       "src": "/img/logo.svg",
